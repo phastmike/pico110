@@ -4,6 +4,7 @@
  * This example allows the pico to act as a 256byte RAM
  * 
  * Author: Graham Smith (graham@smithg.co.uk)
+ * https://forums.raspberrypi.com/viewtopic.php?f=144&t=304074
  */
 
 
@@ -18,12 +19,13 @@
 // N.B. if the current address reaches 255, it will autoincrement to 0 after next read / write
 
 
+#include "eeprom.h"
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "hardware/irq.h"
 
 // define I2C addresses to be used for this peripheral
-#define I2C0_PERIPHERAL_ADDR 0x30
+#define I2C0_PERIPHERAL_ADDR 0x50
 
 // GPIO pins to use for I2C
 #define GPIO_SDA0 12
@@ -35,8 +37,16 @@
 uint8_t ram_addr = 0;
 
 // ram is the storage for the RAM data
-uint8_t ram[256];
+uint8_t ram[128] = {
+   0x52, 0x53, 0x41, 0x31, 0x35, 0x32, 0x35, 0x45, 
+   0x5a, 0x41, 0xdf, 0x02, 0x00, 0x00, 0x00, 0x67,
+   0x58, 0x00, 0x50, 0x16, 0x81, 0x12, 0x01, 0x02,
+   0x21, 0x02, 0x20, 0x02, 0x7c, 0xe6, 0x41, 0xa2,
+   0x00, 0x00, 0x4e, 0x32, 0x6c, 0x02, 0x7c, 0xe6, 
+   0x41, 0xa2, 0x13, 0x06, 0x4e, 0x32, 0x7c, 0x00,
+};
 
+// INIT EEPROM WITH CONTENTS
 
 // Interrupt handler implements the RAM
 void i2c0_irq_handler() {
@@ -81,10 +91,16 @@ void i2c0_irq_handler() {
 
 // Main loop - initilises system and then loops while interrupts get on with processing the data
 int main() {
+   eeprom *ee = eeprom_new_with_data(ram);
 
     // Setup I2C0 as slave (peripheral)
     i2c_init(i2c0, 100 * 1000);
     i2c_set_slave_mode(i2c0, true, I2C0_PERIPHERAL_ADDR);
+
+    // Enable slave clock stretching
+    //i2c0->hw->enable = 0;
+    //hw_set_bits(&i2c0->hw->con, I2C_IC_CON_RX_FIFO_FULL_HLD_CTRL_BITS);
+    //i2c0->hw->enable = 1;
 
     // Setup GPIO pins to use and add pull up resistors
     gpio_set_function(GPIO_SDA0, GPIO_FUNC_I2C);
