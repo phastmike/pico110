@@ -91,7 +91,7 @@ void i2c0_irq_handler() {
 
 // Main loop - initilises system and then loops while interrupts get on with processing the data
 int main() {
-   eeprom *ee = eeprom_new_with_data(ram);
+    eeprom_t *eeprom = eeprom_new_with_data(ram);
 
     // Setup I2C0 as slave (peripheral)
     i2c_init(i2c0, 100 * 1000);

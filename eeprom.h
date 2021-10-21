@@ -12,10 +12,14 @@
 extern "C" {
 #endif
 
-typedef struct _eeprom eeprom;
+typedef struct _eeprom_t eeprom_t;
 
-eeprom * eeprom_new();
-eeprom * eeprom_new_with_data(uint8_t *data);
+eeprom_t * eeprom_new();
+eeprom_t * eeprom_new_with_data(uint8_t *data);
+
+void       eeprom_addr_set(eeprom_t *eeprom, uint16_t addr);
+uint8_t	  eeprom_read_byte(eeprom_t *eeprom);
+void       eeprom_write_byte(eeprom_t *eeprom, uint8_t value);
 
 #ifdef __cplusplus
 }
