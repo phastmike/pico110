@@ -11,6 +11,7 @@ pico_sdk_init()
 add_executable(test
 	test.c
 	eeprom.c
+	m110.c
 )
 
 #This will enable output via USB and UART

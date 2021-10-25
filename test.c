@@ -19,10 +19,12 @@
 // N.B. if the current address reaches 255, it will autoincrement to 0 after next read / write
 
 
-#include "eeprom.h"
+//#include "eeprom.h"
+#include "m110.h"
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "hardware/irq.h"
+#include <stdio.h>
 
 // define I2C addresses to be used for this peripheral
 #define I2C0_PERIPHERAL_ADDR 0x50
@@ -31,6 +33,12 @@
 #define GPIO_SDA0 12
 #define GPIO_SCK0 13
 
+// GPIO SWITCH
+#define GPIO_SWITCH  9
+#define GPIO_SWITCH2 8
+
+// ADDED LED PIN
+const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
 // ram_addr is the current address to be used when writing / reading the RAM
 // N.B. the address auto increments, as stored in 8 bit value it automatically rolls round when reaches 255
@@ -47,9 +55,13 @@ uint8_t ram[128] = {
 };
 
 // INIT EEPROM WITH CONTENTS
+m110_t   *m110;
+
+double   freq = 460.0;
+
 
 // Interrupt handler implements the RAM
-void i2c0_irq_handler() {
+void i2c0_irq_handler0() {
 
     // Get interrupt status
     uint32_t status = i2c0->hw->intr_stat;
@@ -89,9 +101,103 @@ void i2c0_irq_handler() {
 }
 
 
+void i2c0_irq_handler() {
+
+    // Get interrupt status
+    uint32_t status = i2c0->hw->intr_stat;
+
+    // Check to see if we have received data from the I2C controller
+    if (status & I2C_IC_INTR_STAT_R_RX_FULL_BITS) {
+
+        // Read the data (this will clear the interrupt)
+        uint32_t value = i2c0->hw->data_cmd;
+
+        // Check if this is the 1st byte we have received
+        if (value & I2C_IC_DATA_CMD_FIRST_DATA_BYTE_BITS) {
+
+            // If so treat it as the address to use
+            eeprom_addr_set(m110_eeprom_get(m110), (uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
+            //eeprom_addr_set((eeprom_t *) m110, (uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
+        } else {
+            // If not 1st byte then store the data in the RAM
+            // and increment the address to point to next byte
+            eeprom_write_byte(m110_eeprom_get(m110), (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
+            //eeprom_write_byte((eeprom_t *) m110, (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
+        }
+    }
+
+    // Check to see if the I2C controller is requesting data from the RAM
+    if (status & I2C_IC_INTR_STAT_R_RD_REQ_BITS) {
+
+        // Write the data from the current address in RAM
+        i2c0->hw->data_cmd = (uint32_t) eeprom_read_byte(m110_eeprom_get(m110));
+        //i2c0->hw->data_cmd = (uint32_t) eeprom_read_byte((eeprom_t *) m110);
+
+        // Clear the interrupt
+        i2c0->hw->clr_rd_req;
+    }
+}
+
+void gpio_callback(uint gpio, uint32_t events) {
+    bool active;
+    double new_freq;
+    char dir_up[]="UP";
+    char dir_down[]="DOWN";
+    char *dir = NULL;
+
+    //printf("** events = %d | gpioactive = %d\n", events, active);
+    
+    if ((events & 4) != 0 ) { // Low Edge
+       // debounce
+       uint64_t t1 = time_us_32();
+       uint64_t t2 = t1;
+       while (t2 - t1 < 100000) {
+         t2 = time_us_32();
+       }
+       
+       if (gpio == GPIO_SWITCH) {
+          active = !gpio_get(GPIO_SWITCH);
+          new_freq = freq+0.0125;
+          dir = dir_up;
+       } else if (gpio == GPIO_SWITCH2) {
+          active = !gpio_get(GPIO_SWITCH2);
+          new_freq = freq-0.0125;
+          dir = dir_down;
+       } else {
+         return;
+       }
+
+       if (active) {
+          freq = new_freq;
+          printf("%s: freq = %.4f MHz\n", dir, freq);
+          m110_channel_frequencies_set(m110, 1, freq, freq);
+          m110_channel_frequencies_set(m110, 2, freq, freq);
+       }
+    }
+}
+
 // Main loop - initilises system and then loops while interrupts get on with processing the data
 int main() {
-    eeprom_t *eeprom = eeprom_new_with_data(ram);
+    m110 = m110_new_with_data(ram);
+
+    stdio_init_all();
+
+    gpio_init(LED_PIN);
+    gpio_set_dir(LED_PIN, GPIO_OUT);
+
+    gpio_init(GPIO_SWITCH);
+    gpio_set_dir(GPIO_SWITCH, GPIO_IN);
+    gpio_pull_up(GPIO_SWITCH);
+
+    gpio_set_irq_enabled_with_callback(GPIO_SWITCH, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+
+    // 2
+    gpio_init(GPIO_SWITCH2);
+    gpio_set_dir(GPIO_SWITCH2, GPIO_IN);
+    gpio_pull_up(GPIO_SWITCH2);
+
+    gpio_set_irq_enabled_with_callback(GPIO_SWITCH2, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
+
 
     // Setup I2C0 as slave (peripheral)
     i2c_init(i2c0, 100 * 1000);
@@ -101,6 +207,7 @@ int main() {
     //i2c0->hw->enable = 0;
     //hw_set_bits(&i2c0->hw->con, I2C_IC_CON_RX_FIFO_FULL_HLD_CTRL_BITS);
     //i2c0->hw->enable = 1;
+    //-----------------------------------------------------------------
 
     // Setup GPIO pins to use and add pull up resistors
     gpio_set_function(GPIO_SDA0, GPIO_FUNC_I2C);
@@ -112,6 +219,7 @@ int main() {
     i2c0->hw->intr_mask = (I2C_IC_INTR_MASK_M_RD_REQ_BITS | I2C_IC_INTR_MASK_M_RX_FULL_BITS);
 
     // Set up the interrupt handler to service I2C interrupts
+    //irq_set_exclusive_handler(I2C0_IRQ, i2c0_irq_handler0);
     irq_set_exclusive_handler(I2C0_IRQ, i2c0_irq_handler);
 
     // Enable I2C interrupt
@@ -120,6 +228,11 @@ int main() {
     // Do nothing in main loop
     while (true) {
         tight_loop_contents();
+
+        gpio_put(LED_PIN, 1);
+        sleep_ms(250);
+        gpio_put(LED_PIN, 0);
+        sleep_ms(250);
     }
     return 0;
 }
