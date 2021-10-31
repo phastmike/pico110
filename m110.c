@@ -17,11 +17,14 @@
 //#include <assert.h>
 //#include <stdio.h>
 
+#define M110_FREQ_MIN   403.0
+#define M110_FREQ_MAX   470.0
+
 struct _m110_t {
    eeprom_t *eeprom;
 
-   float RX_FI;
-   float PLL_REF_STEP;
+   double RX_FI;
+   double PLL_REF_STEP;
    unsigned char CH1_INDEX;
    unsigned char CH2_INDEX;
    unsigned char PRESCALER;
@@ -102,10 +105,15 @@ void m110_eeprom_regenerate_checksum(m110_t *m110) {
    m110_eeprom_set_checksum(m110, (0x100 - value) & 0xff);
 }
 
-
 void m110_channel_frequencies_set(m110_t *m110, unsigned char channel, double freq_mhz_rx, double freq_mhz_tx) {
    unsigned char index;
    
+   // VALIDATE FREQUENCIES
+   if (freq_mhz_rx < M110_FREQ_MIN || freq_mhz_tx < M110_FREQ_MIN ||
+       freq_mhz_rx > M110_FREQ_MAX || freq_mhz_tx > M110_FREQ_MAX) {
+      return;
+   }
+
    if (channel == 1) {   
       index = m110->CH1_INDEX;
    } else if (channel = 2) {
@@ -140,3 +148,59 @@ void m110_channel_frequencies_set(m110_t *m110, unsigned char channel, double fr
 
    m110_eeprom_regenerate_checksum(m110);
 }
+
+void m110_ctcss_rx_set(m110_t *m110, unsigned char channel, double ctcss) {
+   eeprom_t *eeprom;
+   unsigned char index;
+   double tmp, decimal;
+   unsigned int tone_int;
+   
+   if (channel == 1) {   
+      index = m110->CH1_INDEX;
+   } else if (channel = 2) {
+      index = m110->CH2_INDEX;
+   } else {
+      return;
+   }
+
+   tmp = ctcss / 0.016365413;
+   tone_int = (int) tmp;
+   decimal = tmp - tone_int;
+   if (decimal >= 0.5) {
+      tone_int +=1;
+   } 
+
+   eeprom = m110_eeprom_get(m110);
+   eeprom_raw_write_byte(eeprom, index+5, ((tone_int) >> 8) & 0xff);
+   eeprom_raw_write_byte(eeprom, index+6, ((tone_int) >> 8) & 0xff);
+   m110_eeprom_regenerate_checksum(m110);
+}
+
+
+void m110_ctcss_tx_set(m110_t *m110, unsigned char channel, double ctcss) {
+   eeprom_t *eeprom;
+   unsigned char index;
+   double tmp, decimal;
+   unsigned int tone_int;
+   
+   if (channel == 1) {   
+      index = m110->CH1_INDEX;
+   } else if (channel = 2) {
+      index = m110->CH2_INDEX;
+   } else {
+      return;
+   }
+
+   tmp = ctcss / 0.125233645;
+   tone_int = (int) tmp;
+   decimal = tmp - tone_int;
+   if (decimal >= 0.5) {
+      tone_int +=1;
+   } 
+
+   eeprom = m110_eeprom_get(m110);
+   eeprom_raw_write_byte(eeprom, index, ((tone_int) >> 8) & 0xff);
+   eeprom_raw_write_byte(eeprom, index+1, ((tone_int) >> 8) & 0xff);
+   m110_eeprom_regenerate_checksum(m110);
+}
+

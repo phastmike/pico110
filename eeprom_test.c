@@ -51,7 +51,7 @@ void main(void) {
 
 
    m110_t *m110 = m110_new_with_data(ram);
-   m110_channel_frequencies_set(m110, 1, 467.275, 467.275);
+   m110_channel_frequencies_set(m110, 1, 467.775, 467.775);
    m110_channel_frequencies_set(m110, 2, 467.400, 467.400);
    //m110_eeprom_set_checksum(m110, 0x5b);
 
