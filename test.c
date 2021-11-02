@@ -56,66 +56,6 @@ m110_t      *m110;
 double      freq = 446.00625;
 tune_step_t *tune_step = NULL; 
 
-/*
-#define   FSTEP_6_25kHz  0.00625
-#define   FSTEP_12_5kHz  0.0125
-#define   FSTEP_25kHz    0.025
-#define   FSTEP_50khz    0.05
-#define   FSTEP_100kHz   0.1
-#define   FSTEP_500kHz   0.5
-#define   FSTEP_1MHz     1
-#define   FSTEP_N        7
-
-double fsteps[] = {
-   FSTEP_6_25kHz, FSTEP_12_5kHz, FSTEP_25kHz, FSTEP_50khz, FSTEP_100kHz,
-   FSTEP_500kHz, FSTEP_1MHz
-};
-
-char step = 1;
-
-void step_next() {
-   step += 1;
-   if (step == FSTEP_N) {
-      step = 0;
-   }
-}
-
-void step_prev() {
-   step -= 1;
-   if (step == -1) {
-      step = FSTEP_N - 1;
-   }
-}
-
-double step_get() {
-   return fsteps[step];
-}
-
-unsigned char *step_get_as_string() {
-   unsigned char *string = calloc(1, 6);
-
-   switch (step) {
-      case 0: sprintf(string, " 6.25");
-              break;
-      case 1: sprintf(string, " 12.5");
-              break;
-      case 2: sprintf(string, "  25");
-              break;
-      case 3: sprintf(string, "  50");
-              break;
-      case 4: sprintf(string, " 100");
-              break;
-      case 5: sprintf(string, " 500");
-              break;
-      case 6: sprintf(string, "1000");
-              break;
-      default: sprintf(string," Err");
-               break;
-   }
-
-   return string;
-}
-*/
 void i2c0_irq_handler() {
 
    // Get interrupt status
