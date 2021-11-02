@@ -33,19 +33,20 @@
 #include "tm1638.h"
 #include "tune_step.h"
 #include "pico/stdlib.h"
-#include "hardware/i2c.h"
-#include "hardware/irq.h"
+//#include "hardware/i2c.h"
+//#include "hardware/irq.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "rom_init.h"
+#include "i2c0.h"
 
 // define I2C addresses to be used for this peripheral
-#define I2C0_PERIPHERAL_ADDR 0x50
+//#define I2C0_PERIPHERAL_ADDR 0x50
 
 // GPIO pins to use for I2C
-#define GPIO_SDA0 12
-#define GPIO_SCK0 13
+//#define GPIO_SDA0 12
+//#define GPIO_SCK0 13
 
 // ADDED LED PIN
 const uint LED_PIN = PICO_DEFAULT_LED_PIN;
@@ -56,6 +57,7 @@ m110_t      *m110;
 double      freq = 446.00625;
 tune_step_t *tune_step = NULL; 
 
+/*
 void i2c0_irq_handler() {
 
    // Get interrupt status
@@ -92,6 +94,7 @@ void i2c0_irq_handler() {
       i2c0->hw->clr_rd_req;
    }
 }
+*/
 
 unsigned char *freq2string(double freq) {
    unsigned char i, j;
@@ -126,6 +129,8 @@ int main() {
    gpio_init(LED_PIN);
    gpio_set_dir(LED_PIN, GPIO_OUT);
 
+   i2c0_init(0);
+   /*
    // Setup I2C0 as slave (peripheral)
    i2c_init(i2c0, 100 * 1000);
    i2c_set_slave_mode(i2c0, true, I2C0_PERIPHERAL_ADDR);
@@ -151,6 +156,7 @@ int main() {
 
    // Enable I2C interrupt
    irq_set_enabled(I2C0_IRQ, true);
+   */
 
    // Do nothing in main loop
    tm1638_t *tm1638;

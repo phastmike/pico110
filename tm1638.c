@@ -15,13 +15,15 @@
 #include <string.h>
 #include <pico/stdlib.h>
 
-#define TM1638_DATA_CMD 0x40
-#define TM1638_ADDR_CMD 0xC0
-#define TM1638_CTRL_CMD 0x80
-#define TM1638_DISP_CMD 0x08
-#define TM1638_RKEY_CMD 0x02
-#define TM1638_FIX_ADDR 0x04
-#define DWAIT           1
+#define TM1638_DATA_CMD    0x40
+#define TM1638_ADDR_CMD    0xC0
+#define TM1638_CTRL_CMD    0x80
+
+#define TM1638_DISPL_ON    0x08
+#define TM1638_READ_KEY    0x02
+#define TM1638_FIX_ADDR    0x04
+
+#define DWAIT              1
 
 unsigned char tm1638_font[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,
    0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71,0x3D,0x76,0x06,0x1E,0x76,0x38,0x55,0x54,
@@ -42,7 +44,7 @@ tm1638_t *tm1638_new(unsigned char stb, unsigned char clk, unsigned char dio, un
 
    tm1638_t *tm1638 = (tm1638_t *) calloc(1, sizeof(tm1638_t));
 
-   tm1638->on = TM1638_DISP_CMD;
+   tm1638->on = TM1638_DISPL_ON;
    tm1638->stb = stb;
    tm1638->clk = clk;
    tm1638->dio = dio;
@@ -106,12 +108,12 @@ void tm1638_write_ctrl_cmd(tm1638_t *tm1638) {
 }
 
 unsigned char tm1638_power_get(tm1638_t *tm1638) {
-   return tm1638->on == TM1638_DISP_CMD;
+   return tm1638->on == TM1638_DISPL_ON;
 }
 
 void tm1638_power_set(tm1638_t *tm1638, unsigned char onoff) {
    if (onoff != 0) {
-      tm1638->on = TM1638_DISP_CMD;
+      tm1638->on = TM1638_DISPL_ON;
    } else {
       tm1638->on = 0;
    }
@@ -207,7 +209,7 @@ unsigned int tm1638_keys(tm1638_t *tm1638) {
    keys = 0;
    gpio_put(tm1638->stb, 0);
    sleep_us(DWAIT);
-   tm1638_byte(tm1638, TM1638_DATA_CMD | TM1638_RKEY_CMD);
+   tm1638_byte(tm1638, TM1638_DATA_CMD | TM1638_READ_KEY);
    for(i = 0; i < 4; i++) {
       keys |= tm1638_scan_keys(tm1638) << i;
    }

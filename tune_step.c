@@ -107,7 +107,8 @@ unsigned char *tune_step_get_as_string(tune_step_t *tune_step) {
    return string;
 }
 
-void tune_step_on_changed_connect(tune_step_t * tune_step, void (*callback)(tune_step_t *, void *), void *user_data) {
+//void tune_step_on_changed_connect(tune_step_t * tune_step, void (*callback)(tune_step_t *, void *), void *user_data) {
+void tune_step_on_changed_connect(tune_step_t * tune_step, tune_step_changed_cb_t callback, void *user_data) {
    if (callback != NULL) {
       tune_step->changed = callback;
       tune_step->changed_user_data = user_data;
