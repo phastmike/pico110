@@ -31,6 +31,7 @@
 
 #include "m110.h"
 #include "tm1638.h"
+#include "tune_step.h"
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "hardware/irq.h"
@@ -46,75 +47,75 @@
 #define GPIO_SDA0 12
 #define GPIO_SCK0 13
 
-// GPIO SWITCH
-#define GPIO_SWITCH  9
-#define GPIO_SWITCH2 8
-
 // ADDED LED PIN
 const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
-// ram_addr is the current address to be used when writing / reading the RAM
-// N.B. the address auto increments, as stored in 8 bit value it automatically rolls round when reaches 255
-uint8_t ram_addr = 0;
+// INIT EEPROM WITH CONTENTS
+m110_t      *m110;
 
-// ram is the storage for the RAM data
-uint8_t ram[128] = {
-   0x52, 0x53, 0x41, 0x31, 0x35, 0x32, 0x35, 0x45, 
-   0x5a, 0x41, 0xdf, 0x02, 0x00, 0x00, 0x00, 0x67,
-   0x58, 0x00, 0x50, 0x16, 0x81, 0x12, 0x01, 0x02,
-   0x21, 0x02, 0x20, 0x02, 0x7c, 0xe6, 0x41, 0xa2,
-   0x00, 0x00, 0x4e, 0x32, 0x6c, 0x02, 0x7c, 0xe6, 
-   0x41, 0xa2, 0x13, 0x06, 0x4e, 0x32, 0x7c, 0x00,
+double      freq = 446.00625;
+tune_step_t *tune_step = NULL; 
+
+/*
+#define   FSTEP_6_25kHz  0.00625
+#define   FSTEP_12_5kHz  0.0125
+#define   FSTEP_25kHz    0.025
+#define   FSTEP_50khz    0.05
+#define   FSTEP_100kHz   0.1
+#define   FSTEP_500kHz   0.5
+#define   FSTEP_1MHz     1
+#define   FSTEP_N        7
+
+double fsteps[] = {
+   FSTEP_6_25kHz, FSTEP_12_5kHz, FSTEP_25kHz, FSTEP_50khz, FSTEP_100kHz,
+   FSTEP_500kHz, FSTEP_1MHz
 };
 
+char step = 1;
 
-// INIT EEPROM WITH CONTENTS
-m110_t   *m110;
-
-double   freq = 446.00625;
-
-
-// Interrupt handler implements the RAM
-void i2c0_irq_handler0() {
-
-   // Get interrupt status
-   uint32_t status = i2c0->hw->intr_stat;
-
-   // Check to see if we have received data from the I2C controller
-   if (status & I2C_IC_INTR_STAT_R_RX_FULL_BITS) {
-
-      // Read the data (this will clear the interrupt)
-      uint32_t value = i2c0->hw->data_cmd;
-
-      // Check if this is the 1st byte we have received
-      if (value & I2C_IC_DATA_CMD_FIRST_DATA_BYTE_BITS) {
-
-         // If so treat it as the address to use
-         ram_addr = (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS);
-
-      } else {
-         // If not 1st byte then store the data in the RAM
-         // and increment the address to point to next byte
-         ram[ram_addr] = (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS);
-         ram_addr++;
-      }
-   }
-
-   // Check to see if the I2C controller is requesting data from the RAM
-   if (status & I2C_IC_INTR_STAT_R_RD_REQ_BITS) {
-
-      // Write the data from the current address in RAM
-      i2c0->hw->data_cmd = (uint32_t)ram[ram_addr];
-
-      // Clear the interrupt
-      i2c0->hw->clr_rd_req;
-
-      // Increment the address
-      ram_addr++;
+void step_next() {
+   step += 1;
+   if (step == FSTEP_N) {
+      step = 0;
    }
 }
 
+void step_prev() {
+   step -= 1;
+   if (step == -1) {
+      step = FSTEP_N - 1;
+   }
+}
 
+double step_get() {
+   return fsteps[step];
+}
+
+unsigned char *step_get_as_string() {
+   unsigned char *string = calloc(1, 6);
+
+   switch (step) {
+      case 0: sprintf(string, " 6.25");
+              break;
+      case 1: sprintf(string, " 12.5");
+              break;
+      case 2: sprintf(string, "  25");
+              break;
+      case 3: sprintf(string, "  50");
+              break;
+      case 4: sprintf(string, " 100");
+              break;
+      case 5: sprintf(string, " 500");
+              break;
+      case 6: sprintf(string, "1000");
+              break;
+      default: sprintf(string," Err");
+               break;
+   }
+
+   return string;
+}
+*/
 void i2c0_irq_handler() {
 
    // Get interrupt status
@@ -152,44 +153,6 @@ void i2c0_irq_handler() {
    }
 }
 
-void gpio_callback(uint gpio, uint32_t events) {
-   bool active;
-   double new_freq;
-   char dir_up[]="UP";
-   char dir_down[]="DOWN";
-   char *dir = NULL;
-
-   //printf("** events = %d | gpioactive = %d\n", events, active);
-   
-   if ((events & 4) != 0 ) { // Low Edge
-      // debounce
-      uint64_t t1 = time_us_32();
-      uint64_t t2 = t1;
-      while (t2 - t1 < 100000) {
-        t2 = time_us_32();
-      }
-       
-      if (gpio == GPIO_SWITCH) {
-         active = !gpio_get(GPIO_SWITCH);
-         new_freq = freq+0.0125;
-         dir = dir_up;
-      } else if (gpio == GPIO_SWITCH2) {
-         active = !gpio_get(GPIO_SWITCH2);
-         new_freq = freq-0.0125;
-         dir = dir_down;
-      } else {
-        return;
-      }
-
-      if (active) {
-         freq = new_freq;
-         printf("%s: freq = %.4f MHz\n", dir, freq);
-         m110_channel_frequencies_set(m110, 1, freq, freq);
-         m110_channel_frequencies_set(m110, 2, freq, freq);
-      }
-   }
-}
-
 unsigned char *freq2string(double freq) {
    unsigned char i, j;
    unsigned char *ft, *string;
@@ -212,24 +175,12 @@ unsigned char *freq2string(double freq) {
 int main() {
    m110 = m110_new_with_data(rom_init);
 
+   tune_step = tune_step_new();
+
    stdio_init_all();
 
    gpio_init(LED_PIN);
    gpio_set_dir(LED_PIN, GPIO_OUT);
-
-   gpio_init(GPIO_SWITCH);
-   gpio_set_dir(GPIO_SWITCH, GPIO_IN);
-   gpio_pull_up(GPIO_SWITCH);
-
-   gpio_set_irq_enabled_with_callback(GPIO_SWITCH, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
-
-   // 2
-   gpio_init(GPIO_SWITCH2);
-   gpio_set_dir(GPIO_SWITCH2, GPIO_IN);
-   gpio_pull_up(GPIO_SWITCH2);
-
-   gpio_set_irq_enabled_with_callback(GPIO_SWITCH2, GPIO_IRQ_EDGE_RISE | GPIO_IRQ_EDGE_FALL, true, &gpio_callback);
-
 
    // Setup I2C0 as slave (peripheral)
    i2c_init(i2c0, 100 * 1000);
@@ -268,36 +219,55 @@ int main() {
    m110_channel_frequencies_set(m110, 1, freq, freq);
    m110_channel_frequencies_set(m110, 2, freq, freq);
 
+   unsigned char opt_function_state = false;
+
    while (true) {
       tight_loop_contents();
       gpio_put(LED_PIN, 1);
       sleep_ms(50);
       keys = tm1638_keys(tm1638);
+      sleep_ms(50);
        
+      // Add 1 to offset F led
+      tm1638_led(tm1638, tune_step_get_index(tune_step) + 1, 1);
+
       if (keys & 1) {
-         tm1638_led(tm1638, 0, 1);
-         sleep_ms(50);
-         tm1638_led(tm1638, 1, 1);
-         sleep_ms(50);
-         tm1638_led(tm1638, 2, 1);
-         sleep_ms(50);
-         tm1638_led(tm1638, 3, 1);
-         sleep_ms(50);
-         tm1638_led(tm1638, 4, 1);
-         sleep_ms(50);
-         tm1638_led(tm1638, 5, 1);
-         sleep_ms(50);
-         tm1638_led(tm1638, 6, 1);
-         sleep_ms(50);
-         tm1638_led(tm1638, 7, 1);
-         sleep_ms(50);
+         opt_function_state = !opt_function_state; 
+         tm1638_led(tm1638, 0, opt_function_state);
+
+         if (!opt_function_state) {
+            unsigned char *si = freq2string(freq);
+            tm1638_show(tm1638, si, 0);
+            free(si);
+            m110_channel_frequencies_set(m110, 1, freq, freq);
+            m110_channel_frequencies_set(m110, 2, freq, freq);
+         } else {
+            unsigned char *str = calloc(1, 8);
+            unsigned char *step_str = tune_step_get_as_string(tune_step);
+            sprintf(str, "TS  %s", step_str);
+            tm1638_show(tm1638, str, 0);
+            free(str);
+            free(step_str);
+         }
       } else if (keys & 2) {
-         tm1638_clear(tm1638);
+         if (opt_function_state) {
+            tm1638_led(tm1638, tune_step_get_index(tune_step) + 1, 0); 
+            tune_step_next(tune_step);
+            tm1638_led(tm1638, tune_step_get_index(tune_step) + 1, 0); 
+            unsigned char *str = calloc(1, 8);
+            unsigned char *step_str = tune_step_get_as_string(tune_step);
+            sprintf(str, "TS  %s",step_str);
+            tm1638_show(tm1638, str, 0);
+            free(str);
+            free(step_str);
+         } else {
+            tm1638_clear(tm1638);
+         }
       } else if (keys & 4) {
          tm1638_power_set(tm1638, !tm1638_power_get(tm1638));
          sleep_ms(50);
       } else if (keys & 8) {
-         tm1638_show(tm1638, "Hello110", 0);
+         tm1638_show(tm1638, "Press F", 0);
       } else if (keys & 16) {
          unsigned char b = tm1638_brightness_get(tm1638);
          b -= 1;
@@ -314,15 +284,16 @@ int main() {
          unsigned char *str = calloc(1, 8);
          sprintf(str, "Bright %d", b);
          tm1638_show(tm1638, str, 0);
+         free(str);
       } else if (keys & 64) {
-         freq -= 0.0062500;
+         freq -= tune_step_get_as_MHz(tune_step);
          unsigned char *s = freq2string(freq);
          tm1638_show(tm1638, s, 0);
          free(s);
          m110_channel_frequencies_set(m110, 1, freq, freq);
          m110_channel_frequencies_set(m110, 2, freq, freq);
       } else if (keys & 128) {
-         freq += 0.0062500;
+         freq += tune_step_get_as_MHz(tune_step);
          unsigned char *s = freq2string(freq);
          tm1638_show(tm1638, s, 0);
          free(s);
@@ -331,7 +302,6 @@ int main() {
       } 
       gpio_put(LED_PIN, 0);
       sleep_ms(50);
-      tm1638_leds(tm1638, 0x00);
    }
    return 0;
 }

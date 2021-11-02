@@ -13,6 +13,7 @@ add_executable(test
 	eeprom.c
 	m110.c
 	tm1638.c
+	tune_step.c
 )
 
 #This will enable output via USB and UART
