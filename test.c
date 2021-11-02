@@ -110,12 +110,16 @@ unsigned char *freq2string(double freq) {
    return string;
 }
 
+void on_step_changed(tune_step_t *tune_step, void *user_data) {
+   printf("Step Changed, userdata: %s, step is now at %s kHz\n", (char *) user_data, tune_step_get_as_string(tune_step));
+}
 
 // Main loop - initilises system and then loops while interrupts get on with processing the data
 int main() {
    m110 = m110_new_with_data(rom_init);
 
    tune_step = tune_step_new();
+   tune_step_on_changed_connect(tune_step, on_step_changed, "test userdata");
 
    stdio_init_all();
 

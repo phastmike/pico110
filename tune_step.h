@@ -18,5 +18,5 @@ void              tune_step_next(tune_step_t *tune_step);
 void              tune_step_prev(tune_step_t *tune_step);
 double            tune_step_get_as_MHz(tune_step_t *tune_step);
 unsigned char *   tune_step_get_as_string(tune_step_t *tune_step);
-void              tune_step_on_changed_connect(tune_step_t * tune_step, void (*callback)(tune_step_t *));
+void              tune_step_on_changed_connect(tune_step_t * tune_step, void (*callback)(tune_step_t *, void *), void *user_data);
 void              tune_step_on_changed_clear(tune_step_t *tune_step);

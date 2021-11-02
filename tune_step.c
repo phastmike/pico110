@@ -27,7 +27,8 @@
 struct _tune_step_t {
    char index;
 
-   void (*changed)(tune_step_t *tune_step);
+   void (*changed)(tune_step_t *tune_step, void *user_data);
+   void *changed_user_data;
 };
 
 
@@ -40,6 +41,8 @@ tune_step_t *  tune_step_new() {
    tune_step_t *tune_step = calloc(1, sizeof(tune_step_t));
    
    tune_step->index = TUNE_STEP_DEFAULT_INDEX;
+   tune_step->changed = NULL;
+   tune_step->changed_user_data = NULL;
 
    return tune_step;
 }
@@ -59,7 +62,7 @@ void tune_step_next(tune_step_t *tune_step) {
    }
 
    if (tune_step->changed != NULL) {
-      tune_step->changed(tune_step);
+      tune_step->changed(tune_step, tune_step->changed_user_data);
    }
 }
 
@@ -70,7 +73,7 @@ void tune_step_prev(tune_step_t *tune_step) {
    }
 
    if (tune_step->changed != NULL) {
-      tune_step->changed(tune_step);
+      tune_step->changed(tune_step, tune_step->changed_user_data);
    }
 }
 
@@ -104,12 +107,14 @@ unsigned char *tune_step_get_as_string(tune_step_t *tune_step) {
    return string;
 }
 
-void tune_step_on_changed_connect(tune_step_t * tune_step, void (*callback)(tune_step_t *)) {
+void tune_step_on_changed_connect(tune_step_t * tune_step, void (*callback)(tune_step_t *, void *), void *user_data) {
    if (callback != NULL) {
       tune_step->changed = callback;
+      tune_step->changed_user_data = user_data;
    }
 }
 
 void tune_step_on_changed_clear(tune_step_t *tune_step) {
    tune_step->changed = NULL;
+   tune_step->changed_user_data = NULL;
 }
