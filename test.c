@@ -34,6 +34,7 @@
 #include "tune_step.h"
 #include "rom_init.h"
 #include "i2c0.h"
+#include "ctcss.h"
 #include <pico/stdlib.h>
 //#include "hardware/i2c.h"
 //#include "hardware/irq.h"
@@ -48,6 +49,7 @@ const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 m110_t        *m110;
 double         freq = 446.00625;
 tune_step_t   *tune_step = NULL; 
+ctcss_t       *ctcss = NULL;
 
 
 /* Convert a frequency into a string.
@@ -74,6 +76,13 @@ unsigned char *freq2string(double freq) {
 void radio_set_frequency(m110_t *m110, double freq_rx, double freq_tx) {
    m110_channel_frequencies_set(m110, 1, freq_rx, freq_tx);
    m110_channel_frequencies_set(m110, 2, freq_rx, freq_tx);
+}
+
+void radio_set_ctcss(m110_t *m110, double ctcss) {
+   m110_ctcss_rx_set(m110, 1, ctcss);
+   m110_ctcss_rx_set(m110, 2, ctcss);
+   m110_ctcss_tx_set(m110, 1, ctcss);
+   m110_ctcss_tx_set(m110, 2, ctcss);
 }
 
 void display_show_frequency(tm1638_t *tm1638, double freq) {
@@ -115,6 +124,21 @@ void display_show_brightness(tm1638_t *tm1638) {
    }
 }
 
+void display_show_ctcss(tm1638_t *tm1638, unsigned char type,ctcss_t * ctcss) {
+   if (type != 0 && type != 1) return;
+
+   unsigned char *str = calloc(1, 8);
+   
+   if (type == 0) {
+      sprintf(str, "Enc %s", ctcss_get_as_string(ctcss));
+   } else {
+      sprintf(str, "Dec %s", ctcss_get_as_string(ctcss));
+   } 
+   tm1638_show(tm1638, str, 0);
+   free(str);
+}
+
+
 void on_step_changed(tune_step_t *tune_step, void *user_data) {
    printf("Step Changed, userdata: %s, step is now at %s kHz\n", (char *) user_data, tune_step_get_as_string(tune_step));
 }
@@ -125,6 +149,9 @@ int main() {
    unsigned char opt_function_state = false;
 
    m110 = m110_new_with_data(rom_init);
+   radio_set_frequency(m110, freq, freq);
+   ctcss = ctcss_new();
+   radio_set_ctcss(m110, ctcss_get_as_hz(ctcss));
 
    tune_step = tune_step_new();
    tune_step_on_changed_connect(tune_step, on_step_changed, "[This is userdata]");
@@ -143,7 +170,6 @@ int main() {
    tm1638_show(tm1638, si, 0);
    free(si);
 
-   radio_set_frequency(m110, freq, freq);
 
    while (true) {
       tight_loop_contents();
@@ -172,7 +198,10 @@ int main() {
             tm1638_led(tm1638, tune_step_get_index(tune_step) + 1, 0); 
             display_show_tune_step(tm1638, tune_step);
          } else {
-            display_show_eeprom_n_and_a(tm1638, m110);
+            //display_show_eeprom_n_and_a(tm1638, m110);
+            ctcss_next(ctcss);
+            display_show_ctcss(tm1638, 0, ctcss);
+            radio_set_ctcss(m110, ctcss_get_as_hz(ctcss));
          }
       } else if (keys & 4) {
          tm1638_power_set(tm1638, !tm1638_power_get(tm1638));

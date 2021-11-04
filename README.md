@@ -16,7 +16,7 @@
 - TxAdmit (Tad = MO/AL/NC/NC.PL)
 
 - Display Brightness
-- Screen on/off
+- Screen On/Off
 
 ### Missing
 - Memories (Name and Frequency)
@@ -28,8 +28,15 @@
 
 ## Links
 
+### I2C
+
+- https://github.com/vmilea/pico_i2c_slave/
+
+### TM1638
+
+- https://github.com/mcauser/micropython-tm1638
+- https://github.com/rjbatista/tm1638-library
 - https://github.com/thilaire/rpi-TM1638
 - https://github.com/wahlencraft/TM1637-pico
 - https://github.com/lpodkalicki/attiny-tm1638-library
 - https://github.com/gavinlyonsrepo/TM1638plus
-- https://github.com/rjbatista/tm1638-library

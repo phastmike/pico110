@@ -15,6 +15,7 @@ add_executable(test
 	tm1638.c
 	tune_step.c
 	i2c0.c
+	ctcss.c
 )
 
 #This will enable output via USB and UART

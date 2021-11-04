@@ -46,6 +46,7 @@ m110_t * m110_new(void) {
   m110->REKEY_INDEX = 0x19;
   m110->CHECKSUM_INDEX = 0x0f;
   
+  assert(m110 != NULL);
   return m110;
 }
 
@@ -72,10 +73,12 @@ m110_t * m110_new_with_eeprom(eeprom_t *eeprom) {
 }
 
 eeprom_t * m110_eeprom_get(m110_t *m110) {
+   assert(m110 != NULL);
    return m110->eeprom;
 }
 
 void m110_eeprom_set(m110_t *m110, eeprom_t *eeprom) {
+   assert(m110 != NULL);
    if (m110->eeprom != NULL) {
       free(m110->eeprom);
    }
@@ -84,6 +87,7 @@ void m110_eeprom_set(m110_t *m110, eeprom_t *eeprom) {
 }
 
 void m110_eeprom_set_checksum(m110_t *m110, unsigned char checksum) {
+   assert(m110 != NULL);
    assert(checksum >=0 && checksum <= 0xFF);
 
    eeprom_t *eeprom = m110_eeprom_get(m110);
@@ -92,7 +96,8 @@ void m110_eeprom_set_checksum(m110_t *m110, unsigned char checksum) {
 
 void m110_eeprom_regenerate_checksum(m110_t *m110) {
    unsigned int sum, iter, value;
-   //unsigned char iter;
+
+   assert(m110 != NULL);
 
    sum = 0;
    m110_eeprom_set_checksum(m110, 0xff);
@@ -108,6 +113,8 @@ void m110_eeprom_regenerate_checksum(m110_t *m110) {
 void m110_channel_frequencies_set(m110_t *m110, unsigned char channel, double freq_mhz_rx, double freq_mhz_tx) {
    unsigned char index;
    
+   assert(m110 != NULL);
+
    // VALIDATE FREQUENCIES
    if (freq_mhz_rx < M110_FREQ_MIN || freq_mhz_tx < M110_FREQ_MIN ||
        freq_mhz_rx > M110_FREQ_MAX || freq_mhz_tx > M110_FREQ_MAX) {
@@ -154,6 +161,8 @@ void m110_ctcss_rx_set(m110_t *m110, unsigned char channel, double ctcss) {
    unsigned char index;
    double tmp, decimal;
    unsigned int tone_int;
+
+   assert(m110 != NULL);
    
    if (channel == 1) {   
       index = m110->CH1_INDEX;
@@ -172,7 +181,7 @@ void m110_ctcss_rx_set(m110_t *m110, unsigned char channel, double ctcss) {
 
    eeprom = m110_eeprom_get(m110);
    eeprom_raw_write_byte(eeprom, index+5, ((tone_int) >> 8) & 0xff);
-   eeprom_raw_write_byte(eeprom, index+6, ((tone_int) >> 8) & 0xff);
+   eeprom_raw_write_byte(eeprom, index+6, (tone_int & 0xff));
    m110_eeprom_regenerate_checksum(m110);
 }
 
@@ -183,6 +192,8 @@ void m110_ctcss_tx_set(m110_t *m110, unsigned char channel, double ctcss) {
    double tmp, decimal;
    unsigned int tone_int;
    
+   assert(m110 != NULL);
+
    if (channel == 1) {   
       index = m110->CH1_INDEX;
    } else if (channel = 2) {
@@ -200,7 +211,124 @@ void m110_ctcss_tx_set(m110_t *m110, unsigned char channel, double ctcss) {
 
    eeprom = m110_eeprom_get(m110);
    eeprom_raw_write_byte(eeprom, index, ((tone_int) >> 8) & 0xff);
-   eeprom_raw_write_byte(eeprom, index+1, ((tone_int) >> 8) & 0xff);
+   eeprom_raw_write_byte(eeprom, index+1, (tone_int & 0xff));
    m110_eeprom_regenerate_checksum(m110);
 }
 
+unsigned int m110_timeout_get(m110_t *m110) {
+   if (m110 == NULL) return 0;
+   return (eeprom_raw_read_byte(m110_eeprom_get(m110), m110->TOT_INDEX) * 5);
+}
+
+void m110_timeout_set(m110_t *m110, unsigned char time) {
+   assert(m110 != NULL);
+   /* time must be multiple of 5 and max is 255 * 5 */
+   if (!(time >= 0 && time <= 255 * 5 && time % 5 == 0)) return;
+
+   eeprom_raw_write_byte(m110_eeprom_get(m110), m110->TOT_INDEX, (unsigned char) time / 5);
+   m110_eeprom_regenerate_checksum(m110);
+}
+
+unsigned int m110_rekey_get(m110_t *m110) {
+   assert(m110 != NULL);
+   return eeprom_raw_read_byte(m110_eeprom_get(m110), m110->REKEY_INDEX);
+}
+
+void m110_rekey_set(m110_t *m110, unsigned char time) {
+   assert(m110 != NULL);
+   if (!(time >= 0 && time <= 0xff)) return;
+
+   eeprom_raw_write_byte(m110_eeprom_get(m110), m110->REKEY_INDEX, (unsigned char) time);
+   m110_eeprom_regenerate_checksum(m110);
+
+}
+
+unsigned char m110_channel_low_power_get(m110_t *m110, unsigned char channel) {
+   // Labeled internally as clockshift but seems to also control the power - needs testing
+   // Binary value, If active, then it's low power
+   unsigned char index;
+
+   assert(m110 != NULL);
+
+   if (channel != 1 && channel != 2) return 2;
+
+   if (channel == 1) {   
+      index = m110->CH1_INDEX;
+   } else if (channel = 2) {
+      index = m110->CH2_INDEX;
+   } else {
+      return 2;
+   }
+
+   return (eeprom_raw_read_byte(m110_eeprom_get(m110), index + 7) & 0x80) != 0;
+}
+
+void m110_channel_low_power_set(m110_t *m110, unsigned char channel, unsigned char low_power) {
+   // Clockshift, if active is low power
+   unsigned char index, value;
+
+   assert(m110 != NULL);
+
+   if (channel != 1 && channel != 2) return;
+
+   if (channel == 1) {   
+      index = m110->CH1_INDEX;
+   } else if (channel = 2) {
+      index = m110->CH2_INDEX;
+   } else {
+      return;
+   }
+   
+   if (low_power == 0) {
+      value = eeprom_raw_read_byte(m110_eeprom_get(m110), index + 7);
+      eeprom_raw_write_byte(m110_eeprom_get(m110), index + 7, value & 0x7F);
+   } else {
+      value = eeprom_raw_read_byte(m110_eeprom_get(m110), index + 7);
+      eeprom_raw_write_byte(m110_eeprom_get(m110), index + 7, value | 0x80);
+   }
+}
+
+unsigned char m110_channel_monitor_enabled_get(m110_t *m110, unsigned char channel) {
+   // Labeled internally as clockshift but seems to also control the power - needs testing
+   // Binary value, If active, then it's low power
+   unsigned char index;
+
+   assert(m110 != NULL);
+
+   if (channel != 1 && channel != 2) return 2;
+
+   if (channel == 1) {   
+      index = m110->CH1_INDEX;
+   } else if (channel = 2) {
+      index = m110->CH2_INDEX;
+   } else {
+      return 2;
+   }
+
+   return (eeprom_raw_read_byte(m110_eeprom_get(m110), index + 7) & 0x08) != 0;
+}
+
+void m110_channel_monitor_enabled_set(m110_t *m110, unsigned char channel, unsigned char enabled) {
+   // Clockshift, if active is low power
+   unsigned char index, value;
+
+   assert(m110 != NULL);
+
+   if (channel != 1 && channel != 2) return;
+
+   if (channel == 1) {   
+      index = m110->CH1_INDEX;
+   } else if (channel = 2) {
+      index = m110->CH2_INDEX;
+   } else {
+      return;
+   }
+   
+   if (enabled == 0) {
+      value = eeprom_raw_read_byte(m110_eeprom_get(m110), index + 7);
+      eeprom_raw_write_byte(m110_eeprom_get(m110), index + 7, value & 0xF7);
+   } else {
+      value = eeprom_raw_read_byte(m110_eeprom_get(m110), index + 7);
+      eeprom_raw_write_byte(m110_eeprom_get(m110), index + 7, value | 0x08);
+   }
+}
