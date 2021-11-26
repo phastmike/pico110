@@ -16,6 +16,24 @@ add_executable(test
 	tune_step.c
 	i2c0.c
 	ctcss.c
+	radio_channel.c
+	memory_channel.c
+	radio.c
+	hmi.c
+	key.c
+	view_controller.c
+	vc_brightness.c
+	vc_tune_step.c
+	vc_timeout.c
+	vc_rekey.c
+	vc_txadmit.c
+	vc_freq.c
+	vc_dup.c
+	vc_enc.c
+	vc_dec.c
+	vc_version.c
+	vc_shift.c
+	vc_apo.c
 )
 
 #This will enable output via USB and UART

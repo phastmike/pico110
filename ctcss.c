@@ -1,5 +1,5 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
-/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
 /*
  * ctcss.c
  * 
@@ -16,8 +16,7 @@
 #include <stdlib.h>
 #include "ctcss.h"
 
-#define CTCSS_NTONES 51
-#define CTCSS_DEFAULT_INDEX 0 // Array index for default ctccs, OFF
+#define CTCSS_NTONES          51
 
 struct _ctcss_t {
    char index;
@@ -27,6 +26,7 @@ struct _ctcss_t {
 };
 
 
+// set as static
 double ctcss_tones[] = {
    0,
    67.0, 69.3,
@@ -55,10 +55,18 @@ double ctcss_tones[] = {
 
 ctcss_t *  ctcss_new() {
    ctcss_t *ctcss = calloc(1, sizeof(ctcss_t));
+   if (ctcss == NULL) return NULL;
    
-   ctcss->index = CTCSS_DEFAULT_INDEX;
+   ctcss->index = CTCSS_OFF;
    ctcss->changed = NULL;
    ctcss->changed_user_data = NULL;
+
+   return ctcss;
+}
+
+ctcss_t * ctcss_new_with_tone(ctcss_tone_t tone) {
+   ctcss_t *ctcss = ctcss_new();
+   ctcss->index = tone;
 
    return ctcss;
 }
@@ -71,10 +79,19 @@ char ctcss_get_index(ctcss_t *ctcss) {
    return ctcss->index;
 }
 
+void ctcss_set_tone(ctcss_t *ctcss, ctcss_tone_t tone) {
+   ctcss->index = tone;
+
+   if (ctcss->changed != NULL) {
+      ctcss->changed(ctcss, ctcss->changed_user_data);
+   }
+}
+
 void ctcss_next(ctcss_t *ctcss) {
-   ctcss->index += 1;
-   if (ctcss_get_index(ctcss) == CTCSS_NTONES) {
+   if (ctcss_get_index(ctcss) == CTCSS_NTONES - 1) {
       ctcss->index = 0;
+   } else {
+      ctcss->index += 1;
    }
 
    if (ctcss->changed != NULL) {
@@ -83,9 +100,10 @@ void ctcss_next(ctcss_t *ctcss) {
 }
 
 void ctcss_prev(ctcss_t *ctcss) {
-   ctcss->index -=1;
-   if (ctcss_get_index(ctcss) == -1) {
+   if (ctcss_get_index(ctcss) == 0) {
       ctcss->index = CTCSS_NTONES - 1;
+   } else {
+      ctcss->index -=1;
    }
 
    if (ctcss->changed != NULL) {
@@ -98,7 +116,7 @@ double ctcss_get_as_hz(ctcss_t *ctcss) {
    return ctcss_tones[ctcss_get_index(ctcss)];
 }
 
-unsigned char *ctcss_get_as_string(ctcss_t *ctcss) {
+char *ctcss_get_as_string(ctcss_t *ctcss) {
    unsigned char *string = calloc(1, 6);
 
    if (ctcss_get_index(ctcss) == 0) {

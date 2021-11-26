@@ -1,5 +1,5 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
-/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
 /*
  * eeprom.c
  * 
@@ -17,35 +17,26 @@
 //#include <assert.h>
 //#include <stdio.h>
 
-#define M110_FREQ_MIN   403.0
-#define M110_FREQ_MAX   470.0
+#define M110_FREQ_MIN         403.0
+#define M110_FREQ_MAX         470.0
+
+#define M110_RX_FI            21.4
+#define M110_PLL_REF_STEP     6.25
+#define M110_CH1_INDEX        0x1b
+#define M110_CH2_INDEX        0x25
+#define M110_PRESCALER        127
+#define M110_TOT_INDEX        0x18
+#define M110_REKEY_INDEX      0x19
+#define M110_CHECKSUM_INDEX   0x0f
 
 struct _m110_t {
    eeprom_t *eeprom;
-
-   double RX_FI;
-   double PLL_REF_STEP;
-   unsigned char CH1_INDEX;
-   unsigned char CH2_INDEX;
-   unsigned char PRESCALER;
-   unsigned char TOT_INDEX;
-   unsigned char REKEY_INDEX;
-   unsigned char CHECKSUM_INDEX;
 };
 
 
 m110_t * m110_new(void) {
   m110_t *m110 = (m110_t *) calloc(1, sizeof(m110_t));
   m110->eeprom = eeprom_new();
-  m110->RX_FI = 21.4;
-  m110->PLL_REF_STEP = 6.25; // kHz
-  m110->CH1_INDEX = 0x1b;
-  m110->CH2_INDEX = 0x25;
-  m110->PRESCALER = 127;
-  m110->TOT_INDEX = 0x18;
-  m110->REKEY_INDEX = 0x19;
-  m110->CHECKSUM_INDEX = 0x0f;
-  
   assert(m110 != NULL);
   return m110;
 }
@@ -72,6 +63,16 @@ m110_t * m110_new_with_eeprom(eeprom_t *eeprom) {
    return m110;
 }
 
+void m110_destroy(m110_t *m110) {
+   assert(m110 != NULL);
+
+   if (m110->eeprom != NULL) {
+      free(m110->eeprom);
+   }
+
+   free(m110);
+}
+
 eeprom_t * m110_eeprom_get(m110_t *m110) {
    assert(m110 != NULL);
    return m110->eeprom;
@@ -91,7 +92,7 @@ void m110_eeprom_set_checksum(m110_t *m110, unsigned char checksum) {
    assert(checksum >=0 && checksum <= 0xFF);
 
    eeprom_t *eeprom = m110_eeprom_get(m110);
-   eeprom_raw_write_byte(eeprom, m110->CHECKSUM_INDEX, checksum);
+   eeprom_raw_write_byte(eeprom, M110_CHECKSUM_INDEX, checksum);
 }
 
 void m110_eeprom_regenerate_checksum(m110_t *m110) {
@@ -122,9 +123,9 @@ void m110_channel_frequencies_set(m110_t *m110, unsigned char channel, double fr
    }
 
    if (channel == 1) {   
-      index = m110->CH1_INDEX;
+      index = M110_CH1_INDEX;
    } else if (channel = 2) {
-      index = m110->CH2_INDEX;
+      index = M110_CH2_INDEX;
    } else {
       return;
    }
@@ -136,19 +137,19 @@ void m110_channel_frequencies_set(m110_t *m110, unsigned char channel, double fr
 
    eeprom_t *eeprom = m110_eeprom_get(m110);
 
-   freq_mhz_rx -= 21.4;
+   freq_mhz_rx -= M110_RX_FI;
    freq_khz_rx = freq_mhz_rx * 1000;
-   ft = freq_khz_rx / m110->PLL_REF_STEP;
-   N = ((unsigned int) (ft / m110->PRESCALER));
-   A = ((unsigned int) ft % m110->PRESCALER) << 1;
+   ft = freq_khz_rx / M110_PLL_REF_STEP;
+   N = ((unsigned int) (ft / M110_PRESCALER));
+   A = ((unsigned int) ft % M110_PRESCALER) << 1;
    eeprom_raw_write_byte(eeprom, index+7, (eeprom_raw_read_byte(eeprom, index+7) & 0xfc) + ((N >> 8) & 0x03));
    eeprom_raw_write_byte(eeprom, index+8, N & 0xFF);
    eeprom_raw_write_byte(eeprom, index+9, A);
 
    freq_khz_tx = freq_mhz_tx * 1000;
-   ft = freq_khz_tx / m110->PLL_REF_STEP;
-   N = ((unsigned int) (ft / m110->PRESCALER));
-   A = ((unsigned int) ft % m110->PRESCALER) << 1;
+   ft = freq_khz_tx / M110_PLL_REF_STEP;
+   N = ((unsigned int) (ft / M110_PRESCALER));
+   A = ((unsigned int) ft % M110_PRESCALER) << 1;
    eeprom_raw_write_byte(eeprom, index+2, (eeprom_raw_read_byte(eeprom, index+2) & 0xfc) + ((N >> 8) & 0x03));
    eeprom_raw_write_byte(eeprom, index+3, N & 0xFF);
    eeprom_raw_write_byte(eeprom, index+4, A);
@@ -165,9 +166,9 @@ void m110_ctcss_rx_set(m110_t *m110, unsigned char channel, double ctcss) {
    assert(m110 != NULL);
    
    if (channel == 1) {   
-      index = m110->CH1_INDEX;
+      index = M110_CH1_INDEX;
    } else if (channel = 2) {
-      index = m110->CH2_INDEX;
+      index = M110_CH2_INDEX;
    } else {
       return;
    }
@@ -195,9 +196,9 @@ void m110_ctcss_tx_set(m110_t *m110, unsigned char channel, double ctcss) {
    assert(m110 != NULL);
 
    if (channel == 1) {   
-      index = m110->CH1_INDEX;
+      index = M110_CH1_INDEX;
    } else if (channel = 2) {
-      index = m110->CH2_INDEX;
+      index = M110_CH2_INDEX;
    } else {
       return;
    }
@@ -215,30 +216,30 @@ void m110_ctcss_tx_set(m110_t *m110, unsigned char channel, double ctcss) {
    m110_eeprom_regenerate_checksum(m110);
 }
 
-unsigned int m110_timeout_get(m110_t *m110) {
+unsigned char m110_timeout_get(m110_t *m110) {
    if (m110 == NULL) return 0;
-   return (eeprom_raw_read_byte(m110_eeprom_get(m110), m110->TOT_INDEX) * 5);
+   return (eeprom_raw_read_byte(m110_eeprom_get(m110), M110_TOT_INDEX));
 }
 
 void m110_timeout_set(m110_t *m110, unsigned char time) {
    assert(m110 != NULL);
-   /* time must be multiple of 5 and max is 255 * 5 */
-   if (!(time >= 0 && time <= 255 * 5 && time % 5 == 0)) return;
+   /* Value is multiple of 5 seconds */
+   if (!(time >= 0 && time <= 255)) return;
 
-   eeprom_raw_write_byte(m110_eeprom_get(m110), m110->TOT_INDEX, (unsigned char) time / 5);
+   eeprom_raw_write_byte(m110_eeprom_get(m110), M110_TOT_INDEX, time);
    m110_eeprom_regenerate_checksum(m110);
 }
 
-unsigned int m110_rekey_get(m110_t *m110) {
+unsigned char m110_rekey_get(m110_t *m110) {
    assert(m110 != NULL);
-   return eeprom_raw_read_byte(m110_eeprom_get(m110), m110->REKEY_INDEX);
+   return eeprom_raw_read_byte(m110_eeprom_get(m110), M110_REKEY_INDEX);
 }
 
 void m110_rekey_set(m110_t *m110, unsigned char time) {
    assert(m110 != NULL);
    if (!(time >= 0 && time <= 0xff)) return;
 
-   eeprom_raw_write_byte(m110_eeprom_get(m110), m110->REKEY_INDEX, (unsigned char) time);
+   eeprom_raw_write_byte(m110_eeprom_get(m110), M110_REKEY_INDEX, time);
    m110_eeprom_regenerate_checksum(m110);
 
 }
@@ -253,9 +254,9 @@ unsigned char m110_channel_low_power_get(m110_t *m110, unsigned char channel) {
    if (channel != 1 && channel != 2) return 2;
 
    if (channel == 1) {   
-      index = m110->CH1_INDEX;
+      index = M110_CH1_INDEX;
    } else if (channel = 2) {
-      index = m110->CH2_INDEX;
+      index = M110_CH2_INDEX;
    } else {
       return 2;
    }
@@ -272,9 +273,9 @@ void m110_channel_low_power_set(m110_t *m110, unsigned char channel, unsigned ch
    if (channel != 1 && channel != 2) return;
 
    if (channel == 1) {   
-      index = m110->CH1_INDEX;
+      index = M110_CH1_INDEX;
    } else if (channel = 2) {
-      index = m110->CH2_INDEX;
+      index = M110_CH2_INDEX;
    } else {
       return;
    }
@@ -298,9 +299,9 @@ unsigned char m110_channel_monitor_enabled_get(m110_t *m110, unsigned char chann
    if (channel != 1 && channel != 2) return 2;
 
    if (channel == 1) {   
-      index = m110->CH1_INDEX;
+      index = M110_CH1_INDEX;
    } else if (channel = 2) {
-      index = m110->CH2_INDEX;
+      index = M110_CH2_INDEX;
    } else {
       return 2;
    }
@@ -317,9 +318,9 @@ void m110_channel_monitor_enabled_set(m110_t *m110, unsigned char channel, unsig
    if (channel != 1 && channel != 2) return;
 
    if (channel == 1) {   
-      index = m110->CH1_INDEX;
+      index = M110_CH1_INDEX;
    } else if (channel = 2) {
-      index = m110->CH2_INDEX;
+      index = M110_CH2_INDEX;
    } else {
       return;
    }
@@ -331,4 +332,43 @@ void m110_channel_monitor_enabled_set(m110_t *m110, unsigned char channel, unsig
       value = eeprom_raw_read_byte(m110_eeprom_get(m110), index + 7);
       eeprom_raw_write_byte(m110_eeprom_get(m110), index + 7, value | 0x08);
    }
+}
+
+tx_admit_t m110_tx_admit_get(m110_t *m110, unsigned char channel) {
+   unsigned char index;
+
+   assert(m110 != NULL);
+
+   if (channel != 1 && channel != 2) return TXADMIT_MONITOR;
+
+   if (channel == 1) {   
+      index = M110_CH1_INDEX;
+   } else if (channel = 2) {
+      index = M110_CH2_INDEX;
+   } else {
+      return TXADMIT_MONITOR;
+   }
+
+   return (((eeprom_raw_read_byte(m110_eeprom_get(m110), index + 2)) >> 3) & 0x7);
+}
+
+void m110_tx_admit_set(m110_t *m110, unsigned char channel, tx_admit_t txadmit) {
+   unsigned char index;
+
+   assert(m110 != NULL);
+   if (channel != 1 && channel != 2) return;
+   if (txadmit != TXADMIT_MONITOR && txadmit != TXADMIT_ALWAYS &&
+       txadmit != TXADMIT_NO_CARRIER && txadmit != TXADMIT_PL_NO_CARRIER) return;
+
+   if (channel == 1) {   
+      index = M110_CH1_INDEX;
+   } else if (channel = 2) {
+      index = M110_CH2_INDEX;
+   } else {
+      return;
+   }
+
+   unsigned char fbits = eeprom_raw_read_byte(m110_eeprom_get(m110), index + 2);
+   fbits &= 0x03;
+   eeprom_raw_write_byte(m110_eeprom_get(m110), index + 2, 0xc4 + (txadmit << 3) + fbits);
 }

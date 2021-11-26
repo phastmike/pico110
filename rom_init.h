@@ -1,3 +1,20 @@
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
+/*
+ * rom_init.h
+ *
+ * Default eeprom contents
+ *
+ * José Miguel Fonte
+ */
+
+#ifndef _ROM_INIT_H_
+#define _ROM_INIT_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 unsigned char rom_init[128] = {
    0x52,0x53,0x41,0x31,0x35,0x32,0x35,0x45,
    0x5a,0x41,0xdf,0x02,0x00,0x00,0x00,0x06,
@@ -17,3 +34,8 @@ unsigned char rom_init[128] = {
    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 };
    
+#ifdef __cplusplus
+}
+#endif
+
+#endif //_ROM_INIT_H_

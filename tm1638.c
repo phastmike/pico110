@@ -1,5 +1,5 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
-/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
 /*
  * tm1638.c
  * 
@@ -25,9 +25,11 @@
 
 #define DWAIT              1
 
-unsigned char tm1638_font[] = {0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,
-   0x6F,0x77,0x7C,0x39,0x5E,0x79,0x71,0x3D,0x76,0x06,0x1E,0x76,0x38,0x55,0x54,
-   0x3F,0x73,0x67,0x50,0x6D,0x78,0x3E,0x1C,0x2A,0x76,0x6E,0x5B,0x00,0x40,0x63};
+unsigned char tm1638_font[] = {
+   0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F,0x77,0x7C,0x39,
+   0x5E,0x79,0x71,0x3D,0x76,0x06,0x1E,0x76,0x38,0x55,0x54,0x3F,0x73,
+   0x67,0x50,0x6D,0x78,0x3E,0x1C,0x2A,0x76,0x6E,0x5B,0x00,0x40,0x63
+};
 
 struct _tm1638_t {
    unsigned char on;
@@ -40,7 +42,7 @@ struct _tm1638_t {
 void tm1638_write_ctrl_cmd(tm1638_t *tm1638);
 
 tm1638_t *tm1638_new(unsigned char stb, unsigned char clk, unsigned char dio, unsigned char brightness) {
-   if (!(brightness >= 0 && brightness <= 7)) return NULL;
+   if (!(brightness >= 1 && brightness <= 8)) return NULL;
 
    tm1638_t *tm1638 = (tm1638_t *) calloc(1, sizeof(tm1638_t));
 
@@ -107,12 +109,12 @@ void tm1638_write_ctrl_cmd(tm1638_t *tm1638) {
    tm1638_command(tm1638, TM1638_CTRL_CMD | tm1638->on | tm1638->brightness);
 }
 
-unsigned char tm1638_power_get(tm1638_t *tm1638) {
+unsigned char tm1638_display_enabled_get(tm1638_t *tm1638) {
    return tm1638->on == TM1638_DISPL_ON;
 }
 
-void tm1638_power_set(tm1638_t *tm1638, unsigned char onoff) {
-   if (onoff != 0) {
+void tm1638_display_enabled_set(tm1638_t *tm1638, unsigned char enabled) {
+   if (enabled != 0) {
       tm1638->on = TM1638_DISPL_ON;
    } else {
       tm1638->on = 0;
@@ -121,13 +123,13 @@ void tm1638_power_set(tm1638_t *tm1638, unsigned char onoff) {
 }
 
 unsigned char tm1638_brightness_get(tm1638_t *tm1638) {
-   return tm1638->brightness;
+   return tm1638->brightness + 1;
 }
 
 void tm1638_brightness_set(tm1638_t *tm1638, unsigned char brightness) {
-   if (!(brightness >= 0 && brightness <=7)) return;
+   if (!(brightness >=1 && brightness <=8)) return;
 
-   tm1638->brightness = brightness;
+   tm1638->brightness = brightness - 1;
    tm1638_write_ctrl_cmd(tm1638);
 }
 
@@ -202,7 +204,7 @@ void tm1638_leds(tm1638_t *tm1638, unsigned char value) {
    }
 }
 
-unsigned int tm1638_keys(tm1638_t *tm1638) {
+unsigned char tm1638_keys(tm1638_t *tm1638) {
    unsigned char i;
    unsigned int keys;
 
@@ -284,7 +286,7 @@ unsigned char * tm1638_encode_string(unsigned char *string, unsigned int *new_le
    return nstr;
 }
 
-void tm1638_show(tm1638_t *tm1638, unsigned char *string, unsigned char pos) {
+void tm1638_show(tm1638_t *tm1638, unsigned char pos, unsigned char *string) {
    unsigned char *nstr;
    unsigned int new_len;
 

@@ -1,5 +1,5 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
-/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
 /*
  * tune_step.c
  * 
@@ -56,9 +56,10 @@ char tune_step_get_index(tune_step_t *tune_step) {
 }
 
 void tune_step_next(tune_step_t *tune_step) {
-   tune_step->index += 1;
-   if (tune_step_get_index(tune_step) == FSTEP_N) {
+   if (tune_step_get_index(tune_step) == FSTEP_N - 1) {
       tune_step->index = 0;
+   } else {
+      tune_step->index += 1;
    }
 
    if (tune_step->changed != NULL) {
@@ -67,9 +68,10 @@ void tune_step_next(tune_step_t *tune_step) {
 }
 
 void tune_step_prev(tune_step_t *tune_step) {
-   tune_step->index -=1;
-   if (tune_step_get_index(tune_step) == -1) {
+   if (tune_step_get_index(tune_step) == 0) {
       tune_step->index = FSTEP_N - 1;
+   } else {
+      tune_step->index -=1;
    }
 
    if (tune_step->changed != NULL) {
@@ -82,8 +84,8 @@ double tune_step_get_as_MHz(tune_step_t *tune_step) {
    return tune_step_steps[tune_step_get_index(tune_step)];
 }
 
-unsigned char *tune_step_get_as_string(tune_step_t *tune_step) {
-   unsigned char *string = calloc(1, 6);
+char *tune_step_get_as_string(tune_step_t *tune_step) {
+   char *string = calloc(1, 6);
 
    switch (tune_step_get_index(tune_step)) {
       case 0: sprintf(string, " 6.25");

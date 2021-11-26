@@ -1,9 +1,10 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
-/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
 /*
  * i2c0.c
  * 
  * I2C Peripheral Controller0 routines
+ * Original routines by user in raspberry pi forum (check it)
  *
  *
  * José Miguel Fonte
@@ -21,7 +22,14 @@
 #define GPIO_SDA0 12
 #define GPIO_SCK0 13
 
-extern m110_t *m110;
+//extern m110_t *m110;
+
+void     (*i2c_on_addr_set)(uint16_t addr, void *user_data);
+void     *i2c_on_addr_set_user_data;
+void     (*i2c_on_write_byte)(uint8_t byte, void *user_data);
+void     *i2c_on_write_byte_user_data;
+uint8_t  (*i2c_on_read_byte)(void *user_data);
+void     *i2c_on_read_byte_user_data;
 
 void i2c0_irq_handler(void) {
 
@@ -38,13 +46,17 @@ void i2c0_irq_handler(void) {
       if (value & I2C_IC_DATA_CMD_FIRST_DATA_BYTE_BITS) {
 
          // If so treat it as the address to use
-         eeprom_addr_set(m110_eeprom_get(m110), (uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
-         //eeprom_addr_set((eeprom_t *) m110, (uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
+         if (i2c_on_addr_set) {
+            i2c_on_addr_set((uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS), i2c_on_addr_set_user_data);
+         }
+         //eeprom_addr_set(m110_eeprom_get(m110), (uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
       } else {
          // If not 1st byte then store the data in the RAM
          // and increment the address to point to next byte
-         eeprom_write_byte(m110_eeprom_get(m110), (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
-         //eeprom_write_byte((eeprom_t *) m110, (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
+         if (i2c_on_write_byte) {
+            i2c_on_write_byte((uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS), i2c_on_write_byte_user_data);
+         }
+         //eeprom_write_byte(m110_eeprom_get(m110), (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
       }
    }
 
@@ -52,8 +64,10 @@ void i2c0_irq_handler(void) {
    if (status & I2C_IC_INTR_STAT_R_RD_REQ_BITS) {
 
       // Write the data from the current address in RAM
-      i2c0->hw->data_cmd = (uint32_t) eeprom_read_byte(m110_eeprom_get(m110));
-      //i2c0->hw->data_cmd = (uint32_t) eeprom_read_byte((eeprom_t *) m110);
+      if (i2c_on_read_byte) {
+         i2c0->hw->data_cmd = i2c_on_read_byte(i2c_on_read_byte_user_data);
+      }
+      //i2c0->hw->data_cmd = (uint32_t) eeprom_read_byte(m110_eeprom_get(m110));
 
       // Clear the interrupt
       i2c0->hw->clr_rd_req;
@@ -87,4 +101,19 @@ void i2c0_init(unsigned char clock_streching_enabled) {
 
    // Enable I2C interrupt
    irq_set_enabled(I2C0_IRQ, true);
+}
+
+void i2c_on_addr_set_connect(void (*callback)(uint16_t addr, void *user_data), void *user_data) {
+   i2c_on_addr_set = callback;
+   i2c_on_addr_set_user_data = user_data;
+}
+
+void i2c_on_write_byte_connect(void (*callback)(uint8_t byte, void *user_data), void *user_data) {
+   i2c_on_write_byte = callback;
+   i2c_on_write_byte_user_data = user_data;
+}
+
+void i2c_on_read_byte_connect(uint8_t (*callback)(void *user_data), void *user_data) {
+   i2c_on_read_byte = callback;
+   i2c_on_read_byte_user_data = user_data;
 }

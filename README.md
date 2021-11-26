@@ -10,15 +10,16 @@
 - Decode (Dec) (Hz + OFF)
 - Timeout Timer (TOT) (s)
 - Timeout Rekey (DLY/TPY/Pen) (s)
-- Reverse (Rev) (+/-)
-- Repeater Mode/Duplex (Dup) +/- Shift MHz/kHz
+- Reverse (Rev) (+/-) ***
+- Repeater Mode/Duplex (Dup) +/- Shift MHz/kHz ***
 - Power (P/PA/PO) Hi/Lo (Watts)
 - TxAdmit (Tad = MO/AL/NC/NC.PL)
 
-- Display Brightness
-- Screen On/Off
+- Display Brightness **
+- Screen On/Off (Or a clear so we can keep Leds) ** 
 
 ### Missing
+- Scanning
 - Memories (Name and Frequency)
 - How to memorize, Edit, Remove Memories (CRUD)
 - Dual VFO with same/distinct steps etc.
@@ -40,3 +41,10 @@
 - https://github.com/wahlencraft/TM1637-pico
 - https://github.com/lpodkalicki/attiny-tm1638-library
 - https://github.com/gavinlyonsrepo/TM1638plus
+
+
+---
+
+## NOTES
+
+- Why cannot invoke tm1638 methods on hmi's tn1638 subclass ???

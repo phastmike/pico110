@@ -1,5 +1,5 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
-/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
 /*
  * eeprom.c
  * 
@@ -22,6 +22,7 @@ struct _eeprom_t {
 
 eeprom_t * eeprom_new(void) {
    eeprom_t *eeprom = (eeprom_t *) calloc(1, sizeof(eeprom_t));
+   assert(eeprom != NULL);
    eeprom_addr_set(eeprom, 0); // redundant
    return eeprom;
 }
@@ -34,6 +35,11 @@ eeprom_t * eeprom_new_with_data(unsigned char *data) {
    memcpy(eeprom->mem, data, EEPROM_SIZE);
 
    return eeprom;
+}
+
+void eeprom_destroy(eeprom_t *eeprom) {
+   assert(eeprom != NULL);
+   free(eeprom);
 }
 
 unsigned int eeprom_addr_get(eeprom_t *eeprom) {

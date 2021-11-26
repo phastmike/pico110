@@ -1,5 +1,5 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
-/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :               */
 /*
  * eeprom.h
  * 
@@ -16,9 +16,12 @@
 #include <pico/stdlib.h> // pico
 //#include <assert.h> // pc
 
+#define EEPROM(x) ((eeprom_t *) x)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 typedef struct _eeprom_t eeprom_t;
 
