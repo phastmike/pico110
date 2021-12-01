@@ -199,11 +199,11 @@ int main() {
       
       keys = hmi_keys_scan(hmi);
 
-      if (keys & 1 && hmi_display_get_enabled(hmi)) {
+      if (keys & HMI_KEY_1 && hmi_display_get_enabled(hmi)) {
          if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) vc_id = 0;
          else vc_id += 1;
          view_controller_present(vcs[vc_id]);
-      } else if (keys & 2 && hmi_display_get_enabled(hmi)) {
+      } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi)) {
          vc_id = 0;
          view_controller_present(vcs[vc_id]);
       }

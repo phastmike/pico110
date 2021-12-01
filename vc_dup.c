@@ -18,7 +18,6 @@
 
 struct _vc_dup_t {
    view_controller_t *vc;
-   dup_t dup;
 };
 
 void vc_dup_present(view_controller_t *vc);
@@ -26,7 +25,6 @@ void vc_dup_present(view_controller_t *vc);
 vc_dup_t *vc_dup_new(hmi_t *hmi, radio_t *radio) {
    vc_dup_t *vc_dup = (vc_dup_t *) calloc (1, sizeof(vc_dup_t));
    vc_dup = (vc_dup_t *) view_controller_new(hmi, radio);
-   vc_dup->dup = radio_channel_dup_get(radio_get_active_channel(radio));
    VIEW_CONTROLLER(vc_dup)->present = vc_dup_present;
 
    return vc_dup;
@@ -34,7 +32,8 @@ vc_dup_t *vc_dup_new(hmi_t *hmi, radio_t *radio) {
 
 void vc_dup_show(view_controller_t *vc) {
    char *string = (char *) calloc (1,9);
-   switch (((vc_dup_t *) vc)->dup) {
+   dup_t dup = radio_channel_dup_get(radio_get_active_channel(vc->radio));
+   switch (dup) {
       case DUP_DOWN:
          sprintf(string, "DUP    -");
          break;
@@ -42,7 +41,11 @@ void vc_dup_show(view_controller_t *vc) {
          sprintf(string, "DUP  OFF");
          break;
       case DUP_UP:
-         sprintf(string, "DUP   UP");
+         sprintf(string, "DUP   -+");
+         break;
+      default:
+         sprintf(string, "DUP ????");
+         break;
    }
    hmi_display_text(vc->hmi, 0, string);
    free(string);
@@ -51,12 +54,12 @@ void vc_dup_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_dup_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   radio_timeout_down(VIEW_CONTROLLER(user_data)->radio);
+   radio_dup_down(VIEW_CONTROLLER(user_data)->radio);
    vc_dup_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_dup_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   radio_timeout_up(VIEW_CONTROLLER(user_data)->radio);
+   radio_dup_up(VIEW_CONTROLLER(user_data)->radio);
    vc_dup_show(VIEW_CONTROLLER(user_data));
 }
 

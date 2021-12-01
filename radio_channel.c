@@ -122,6 +122,11 @@ dup_t radio_channel_dup_get(radio_channel_t *radio_channel) {
    return radio_channel->dup;
 }
 
+void radio_channel_dup_set(radio_channel_t *radio_channel, dup_t dup) {
+   assert(radio_channel != NULL);
+   radio_channel->dup = dup;
+}
+
 tx_admit_t radio_channel_tx_admit_get(radio_channel_t *radio_channel) {
    assert(radio_channel != NULL);
    return radio_channel->tx_admit;

@@ -326,6 +326,8 @@ void radio_radio_channel_up(radio_t *radio) {
    int i,j;
    int count;
    int found = -1;
+
+   assert(radio != NULL);
   
    if (radio->mode == RADIO_MODE_MEMORY) { 
 
@@ -352,3 +354,30 @@ void radio_radio_channel_up(radio_t *radio) {
    }
 }
 
+void radio_dup_down(radio_t *radio) {
+   assert(radio != NULL);
+
+   dup_t dup = radio_channel_dup_get(radio->ch_ptr);
+   
+   if (dup == DUP_DOWN) {
+     dup = DUP_UP; 
+   } else {
+     dup--;
+   }
+
+   radio_channel_dup_set(radio->ch_ptr, dup);
+}
+
+void radio_dup_up(radio_t *radio) {
+   assert(radio != NULL);
+
+   dup_t dup = radio_channel_dup_get(radio->ch_ptr);
+   
+   if (dup == DUP_UP) {
+     dup = DUP_DOWN; 
+   } else {
+     dup++;
+   }
+
+   radio_channel_dup_set(radio->ch_ptr, dup);
+}
