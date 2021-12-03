@@ -55,6 +55,7 @@
 #include "vc_version.h"
 #include "vc_shift.h"
 #include "vc_apo.h"
+#include "vc_pll_na.h"
 
 // ADDED LED PIN
 const uint LED_PIN = PICO_DEFAULT_LED_PIN;
@@ -65,20 +66,6 @@ tune_step_t   *tune_step = NULL;
 ctcss_t       *ctcss = NULL;
 
 
-/*
-void display_show_eeprom_n_and_a(hmi_t *hmi, m110_t *m110) {
-   unsigned char b1 = eeprom_raw_read_byte(m110_eeprom_get(m110), 0x22);
-   unsigned char b2 = eeprom_raw_read_byte(m110_eeprom_get(m110), 0x23);
-   unsigned char b3 = eeprom_raw_read_byte(m110_eeprom_get(m110), 0x24);
-   unsigned int N = ((b1 & 2) << 8) + b2;
-   unsigned int A = b3 >> 1;
-   unsigned char *str = calloc(1, 8);
-   sprintf(str, "N.%3dA.%3d",N,A);
-   printf("str=[%s]\n", str);
-   hmi_display_text(hmi, 0, str);
-   free(str);
-}
-*/
 
 void display_intro(hmi_t *hmi) {
    assert(hmi != NULL);
@@ -186,6 +173,7 @@ int main() {
       VIEW_CONTROLLER(vc_dup_new(hmi, radio)),
       VIEW_CONTROLLER(vc_shift_new(hmi, radio)),
       VIEW_CONTROLLER(vc_version_new(hmi, radio)),
+      VIEW_CONTROLLER(vc_pll_na_new(hmi, radio)),
    };
    
    int vc_id = 0;
