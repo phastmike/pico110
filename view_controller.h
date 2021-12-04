@@ -34,6 +34,7 @@ struct _view_controller_t {
 };
 
 view_controller_t *  view_controller_new(hmi_t *hmi, radio_t *radio);
+void                 view_controller_destroy(view_controller_t *vc);
 void                 view_controller_present(view_controller_t *vc);
 
 

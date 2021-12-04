@@ -23,6 +23,11 @@ view_controller_t *view_controller_new(hmi_t *hmi, radio_t *radio) {
    return vc;
 }
 
+void view_controller_destroy(view_controller_t *vc) {
+   assert(vc != NULL);
+   free(vc);
+}
+
 void view_controller_present(view_controller_t *vc) {
    if (vc != NULL) {
       if (vc->present) vc->present(vc);

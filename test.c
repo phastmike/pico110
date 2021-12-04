@@ -56,88 +56,43 @@
 #include "vc_shift.h"
 #include "vc_apo.h"
 #include "vc_pll_na.h"
+#include "vc_intro.h"
 
-// ADDED LED PIN
 const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
-// INIT EEPROM WITH CONTENTS
-radio_t       *radio;
-tune_step_t   *tune_step = NULL; 
-ctcss_t       *ctcss = NULL;
-
-
-
-void display_intro(hmi_t *hmi) {
-   assert(hmi != NULL);
-
-   hmi_display_text(hmi, 0, " RADIUS ");
-   for(int j = 0; j < HMI_NUMBER_OF_KEYS; j++) {
-      hmi_leds_set(hmi, 1 << j);
-      sleep_ms(80);
-   }
-
-   hmi_display_text(hmi, 0, "PICO 110");
-   for(int k = 0; k < HMI_NUMBER_OF_KEYS; k++) {
-      hmi_leds_set(hmi, 0x80 >> k);
-      sleep_ms(80);
-   }
-
-   hmi_leds_set(hmi, 0);
-
-   hmi_display_text(hmi, 0, " CT1ENQ ");
-   sleep_ms(1000);
-}
-
-
-void on_step_changed(tune_step_t *tune_step, void *user_data) {
-   printf("Step Changed, userdata: %s, step is now at %s kHz\n", (char *) user_data, tune_step_get_as_string(tune_step));
-}
-
-void on_ctcss_changed(ctcss_t *ctcss, void *user_data) {
-   printf("CTCSS Changed, index: %d tone %f (%s)\n", ctcss_get_index(ctcss), ctcss_get_as_hz(ctcss), ctcss_get_as_string(ctcss));
-}
-
 void pause_iteration(void) {
-      while (true) {
-         tight_loop_contents();
-         gpio_put(LED_PIN, 1);
-         sleep_ms(50);
-         gpio_put(LED_PIN, 0);
-         sleep_ms(50);
-         printf("\titeration...\n");
-      }
+   while (true) {
+      tight_loop_contents();
+      gpio_put(LED_PIN, 1);
+      sleep_ms(50);
+      gpio_put(LED_PIN, 0);
+      sleep_ms(50);
+      printf("\titeration...\n");
+   }
 }
-
 
 void on_i2c_addr_request(uint16_t addr, void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = (m110_t *) user_data;
-   //eeprom_addr_set(EEPROM(user_data), addr);
    eeprom_addr_set(m110_eeprom_get(m110), addr);
 }
 
 void on_i2c_write_byte(uint8_t byte, void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = (m110_t *) user_data;
-
-   //eeprom_write_byte(EEPROM(user_data), byte);
    eeprom_write_byte(m110_eeprom_get(m110), byte);
 }
 
 uint8_t on_i2c_read_byte(void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = (m110_t *) user_data;
-
-   //return eeprom_read_byte(EEPROM(user_data));
    return eeprom_read_byte(m110_eeprom_get(m110));
-
 }
 
-// Main loop - initilises system and then loops while interrupts get on with processing the data
+// MAINLOOP //
+
 int main() {
    unsigned int keys;
-   unsigned char opt_function_state = false;
-   unsigned char opt_function_ctcss = false;
 
    stdio_init_all();
 
@@ -147,9 +102,10 @@ int main() {
    //pause_iteration
 
 
-   i2c0_init(false); // init without clock streching
-   radio = radio_new_with_defaults();
+   radio_t *radio = radio_new_with_defaults();
    hmi_t *hmi = hmi_new();
+
+   i2c0_init(false); // init without clock streching
 
    i2c_on_addr_set_connect(on_i2c_addr_request,radio_get_m110(radio));
    i2c_on_write_byte_connect(on_i2c_write_byte,radio_get_m110(radio));
@@ -158,7 +114,9 @@ int main() {
    gpio_init(LED_PIN);
    gpio_set_dir(LED_PIN, GPIO_OUT);
 
-   display_intro(hmi);
+   vc_intro_t *intro = vc_intro_new(hmi, radio);
+   view_controller_present(VIEW_CONTROLLER(intro));
+   view_controller_destroy(VIEW_CONTROLLER(intro));
 
    view_controller_t *vcs[] = {
       VIEW_CONTROLLER(vc_freq_new(hmi, radio)),
@@ -173,7 +131,7 @@ int main() {
       VIEW_CONTROLLER(vc_dup_new(hmi, radio)),
       VIEW_CONTROLLER(vc_shift_new(hmi, radio)),
       VIEW_CONTROLLER(vc_version_new(hmi, radio)),
-      VIEW_CONTROLLER(vc_pll_na_new(hmi, radio)),
+      //VIEW_CONTROLLER(vc_pll_na_new(hmi, radio)),
    };
    
    int vc_id = 0;

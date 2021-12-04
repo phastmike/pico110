@@ -35,6 +35,7 @@ add_executable(test
 	vc_shift.c
 	vc_apo.c
 	vc_pll_na.c
+	vc_intro.c
 )
 
 #This will enable output via USB and UART
