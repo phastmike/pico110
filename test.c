@@ -91,8 +91,14 @@ uint8_t on_i2c_read_byte(void *user_data) {
 
 // MAINLOOP //
 
+typedef enum {
+   VMODE_FREQ,
+   VMODE_FUNC
+} vmode_t;
+
 int main() {
    unsigned int keys;
+   vmode_t  view_mode;
 
    stdio_init_all();
 
@@ -136,6 +142,7 @@ int main() {
    
    int vc_id = 0;
 
+   view_mode = VMODE_FREQ;
    view_controller_present(vcs[vc_id]);
 
    while(true) {
@@ -146,12 +153,31 @@ int main() {
       keys = hmi_keys_scan(hmi);
 
       if (keys & HMI_KEY_1 && hmi_display_get_enabled(hmi)) {
-         if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) vc_id = 0;
-         else vc_id += 1;
-         view_controller_present(vcs[vc_id]);
-      } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi)) {
+         if (view_mode == VMODE_FREQ) {
+            hmi_led_set(hmi, HMI_LED_FMENU, 1); // Already set in view_controller  
+            view_mode = VMODE_FUNC;
+         } else if (view_mode == VMODE_FUNC) {
+            if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) {
+               vc_id = 0;
+               view_mode = VMODE_FREQ;
+            } else {
+               vc_id += 1;
+            }
+            view_controller_present(vcs[vc_id]);
+         }
+      } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC) {
          vc_id = 0;
          view_controller_present(vcs[vc_id]);
+         view_mode = VMODE_FREQ;
+      } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0){
+        vc_id = 3;
+        view_controller_present(vcs[vc_id]);
+      } else if (keys & HMI_KEY_5 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0){
+        vc_id = 4;
+        view_controller_present(vcs[vc_id]);
+      } else if (keys & HMI_KEY_6 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0){
+        vc_id = 9;
+        view_controller_present(vcs[vc_id]);
       }
 
       gpio_put(LED_PIN, 0);
