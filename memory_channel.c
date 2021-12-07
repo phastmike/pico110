@@ -42,3 +42,7 @@ void memory_channel_destroy(memory_channel_t *memory_channel) {
 radio_channel_t * memory_channel_get_radio_channel(memory_channel_t *memory_channel) {
    return memory_channel->radio_channel;
 }
+
+unsigned int memory_channel_get_size() {
+   return sizeof(memory_channel_t);
+}

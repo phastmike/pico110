@@ -47,6 +47,7 @@ void              radio_channel_dup_set(radio_channel_t *radio_channel, dup_t du
 tx_admit_t        radio_channel_tx_admit_get(radio_channel_t *radio_channel);
 unsigned char     radio_channel_low_power_get(radio_channel_t *radio_channel);
 tune_step_t     * radio_channel_tune_step_get(radio_channel_t *radio_channel);
+unsigned int      radio_channel_get_size(void);
 
 #ifdef __cplusplus
 }

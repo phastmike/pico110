@@ -381,3 +381,9 @@ void radio_dup_up(radio_t *radio) {
 
    radio_channel_dup_set(radio->ch_ptr, dup);
 }
+
+void radio_get_size(void) {
+   printf("SizeOf(radio_channel_t) = %d\n", radio_channel_get_size());
+   printf("SizeOf(memory_channel_t) = %d\n", memory_channel_get_size());
+   printf("SizeOf(radio_t) = %d\n", sizeof(radio_t));
+}

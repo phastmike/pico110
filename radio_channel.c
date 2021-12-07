@@ -147,3 +147,6 @@ tune_step_t *radio_channel_tune_step_get(radio_channel_t *radio_channel) {
    return radio_channel->tune_step;
 }
 
+unsigned int radio_channel_get_size(void) {
+   return sizeof(radio_channel_t);
+}
