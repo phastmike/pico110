@@ -48,7 +48,7 @@ unsigned char *freq2string(double freq) {
 
 void vc_freq_show(view_controller_t *vc) {
    // Should check for TX and show frequency accordingly
-   double freq = radio_get_frequency(vc->radio);
+   double freq = radio_channel_freq_rx_get(radio_get_active_channel(vc->radio));
    unsigned char *s = freq2string(freq);
    hmi_display_text(vc->hmi, 0, s);
    free(s);

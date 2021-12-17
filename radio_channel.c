@@ -100,9 +100,21 @@ ctcss_t *radio_channel_ctcss_rx_get(radio_channel_t *radio_channel) {
    return radio_channel->ctcss_rx;
 }
 
+void radio_channel_ctcss_rx_set(radio_channel_t *radio_channel, ctcss_tone_t tone) {
+   assert(radio_channel != NULL);
+   //verify if valid tone !?
+   ctcss_set_tone(radio_channel->ctcss_rx, tone); 
+}
+
 ctcss_t *radio_channel_ctcss_tx_get(radio_channel_t *radio_channel) {
    assert(radio_channel != NULL);
    return radio_channel->ctcss_tx;
+}
+
+void radio_channel_ctcss_tx_set(radio_channel_t *radio_channel, ctcss_tone_t tone) {
+   assert(radio_channel != NULL);
+   //verify if valid tone !?
+   ctcss_set_tone(radio_channel->ctcss_tx, tone); 
 }
 
 double radio_channel_shift_get(radio_channel_t *radio_channel) {

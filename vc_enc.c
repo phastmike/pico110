@@ -17,7 +17,6 @@
 
 struct _vc_enc_t {
    view_controller_t *vc;
-   ctcss_t *enc;
 };
 
 void vc_enc_present(view_controller_t *vc);
@@ -25,15 +24,15 @@ void vc_enc_present(view_controller_t *vc);
 vc_enc_t *vc_enc_new(hmi_t *hmi, radio_t *radio) {
    vc_enc_t *vc_enc = (vc_enc_t *) calloc (1, sizeof(vc_enc_t));
    vc_enc = (vc_enc_t *) view_controller_new(hmi, radio);
-   vc_enc->enc = radio_channel_ctcss_tx_get(radio_get_active_channel(radio));
    VIEW_CONTROLLER(vc_enc)->present = vc_enc_present;
 
    return vc_enc;
 }
 
 void vc_enc_show(view_controller_t *vc) {
+   ctcss_t * enc = radio_channel_ctcss_tx_get(radio_get_active_channel(vc->radio));
    char *string = (char *) calloc (1,9);
-   sprintf(string, "Enc %s", ctcss_get_as_string(((vc_enc_t *) vc)->enc));
+   sprintf(string, "Enc %s", ctcss_get_as_string(enc));
    hmi_display_text(vc->hmi, 0, string);
    free(string);
 }
@@ -41,12 +40,12 @@ void vc_enc_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_enc_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   ctcss_prev(((vc_enc_t *) user_data)->enc);
+   ctcss_prev(radio_channel_ctcss_tx_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)));
    vc_enc_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_enc_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   ctcss_next(((vc_enc_t *) user_data)->enc);
+   ctcss_next(radio_channel_ctcss_tx_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)));
    vc_enc_show(VIEW_CONTROLLER(user_data));
 }
 

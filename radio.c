@@ -60,22 +60,54 @@ radio_t *radio_new_with_defaults(void) {
    radio_channel_freq_set(memory_channel_get_radio_channel(radio->memory[6]), 446.08125);
    radio->memory[7]  = memory_channel_new_with(8,"PMR 8",radio_channel_new());
    radio_channel_freq_set(memory_channel_get_radio_channel(radio->memory[7]), 446.09375);
+
    radio->memory[8]  = memory_channel_new_with(9,"CQ0UGMR",radio_channel_new());
-   radio_channel_freq_set(memory_channel_get_radio_channel(radio->memory[8]), 439.100);
+   radio_channel_t *rc = memory_channel_get_radio_channel(radio->memory[8]);
+   radio_channel_freq_set(rc, 439.100);
+   radio_channel_ctcss_rx_set(rc, CTCSS_67_0);
+   radio_channel_ctcss_tx_set(rc, CTCSS_67_0);
+   radio_channel_dup_set(rc, DUP_DOWN);
+   radio_channel_shift_set(rc, 7.6);
+
    radio->memory[9]  = memory_channel_new_with(10,"CQ0UBRG",radio_channel_new());
-   radio_channel_freq_set(memory_channel_get_radio_channel(radio->memory[9]), 438.800);
+   rc = memory_channel_get_radio_channel(radio->memory[9]);
+   radio_channel_freq_set(rc, 438.800);
+   radio_channel_ctcss_rx_set(rc, CTCSS_67_0);
+   radio_channel_ctcss_tx_set(rc, CTCSS_67_0);
+   radio_channel_dup_set(rc, DUP_DOWN);
+   radio_channel_shift_set(rc, 7.6);
+
    radio->memory[10]  = memory_channel_new_with(11,"AMARANTE",radio_channel_new());
-   radio_channel_freq_set(memory_channel_get_radio_channel(radio->memory[10]), 438.700);
+   rc = memory_channel_get_radio_channel(radio->memory[10]);
+   radio_channel_freq_set(rc, 438.700);
+   radio_channel_ctcss_rx_set(rc, CTCSS_123_0);
+   radio_channel_ctcss_tx_set(rc, CTCSS_123_0);
+   radio_channel_dup_set(rc, DUP_DOWN);
+   radio_channel_shift_set(rc, 7.6);
+
    radio->memory[11]  = memory_channel_new_with(12,"VIANA",radio_channel_new());
-   radio_channel_freq_set(memory_channel_get_radio_channel(radio->memory[11]), 438.650);
+   rc = memory_channel_get_radio_channel(radio->memory[11]);
+   radio_channel_freq_set(rc, 438.650);
+   radio_channel_ctcss_rx_set(rc, CTCSS_67_0);
+   radio_channel_ctcss_tx_set(rc, CTCSS_67_0);
+   radio_channel_dup_set(rc, DUP_DOWN);
+   radio_channel_shift_set(rc, 7.6);
+
+   radio->memory[12]  = memory_channel_new_with(13,"AUCHAN",radio_channel_new());
+   rc = memory_channel_get_radio_channel(radio->memory[12]);
+   radio_channel_freq_set(rc, 444.3625);
+   radio_channel_ctcss_rx_set(rc, CTCSS_107_2);
+   radio_channel_ctcss_tx_set(rc, CTCSS_107_2);
+   radio_channel_dup_set(rc, DUP_UP);
+   radio_channel_shift_set(rc, 5.0);
 
    radio->memory_selected = 0;
 
    // Defaults to VFO;
-   radio->ch_ptr = radio->vfo;
+   radio_set_active_channel(radio, radio->vfo); 
    
    // commit frequency to eeprom - needs improvement
-   radio_set_frequency(radio, radio_get_frequency(radio));
+   radio_commit_radio_channel(radio, radio_get_active_channel(radio));
 
    return radio;
 }
@@ -103,6 +135,12 @@ radio_channel_t * radio_get_active_channel(radio_t *radio) {
    return radio->ch_ptr;
 }
 
+void radio_set_active_channel(radio_t *radio, radio_channel_t *radio_channel) {
+   assert(radio != NULL);
+   assert(radio_channel != NULL);
+   radio->ch_ptr = radio_channel;
+}
+
 radio_mode_t radio_get_mode(radio_t *radio) {
    assert(radio != NULL);
    return radio->mode;
@@ -125,35 +163,26 @@ void radio_set_mode(radio_t *radio, radio_mode_t mode) {
    }
 }
 
-double radio_get_frequency(radio_t *radio) {
+void radio_commit_radio_channel(radio_t *radio, radio_channel_t *radio_channel) {
    assert(radio != NULL);
-   // could check if dup and in tx show tx frequency
-   switch (radio->mode) {
-      case RADIO_MODE_VFO:
-         return radio_channel_freq_rx_get(radio->vfo);
-      case RADIO_MODE_MEMORY:
-         return radio_channel_freq_rx_get(memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
-      default:
-         break;
-   }
-
-   return 0.0;
-}
-
-void radio_set_frequency(radio_t *radio, double freq) {
-   assert(radio != NULL);
+   assert(radio_channel != NULL);
 
    double freq_rx, freq_tx;
-
-   radio_channel_freq_set(radio->ch_ptr, freq);
-   //freq_rx = radio_channel_freq_rx_get(radio->vfo); 
-   //freq_tx = radio_channel_freq_tx_get(radio->vfo); 
+   
+   freq_rx = radio_channel_freq_rx_get(radio_get_active_channel(radio));
+   freq_tx = radio_channel_freq_tx_get(radio_get_active_channel(radio));
 
    m110_t *m110 = radio_get_m110(radio);
-   m110_channel_frequencies_set(m110, 1, freq, freq);
-   m110_channel_frequencies_set(m110, 1, freq, freq);
-   //m110_channel_frequencies_set(m110, 1, freq_rx, freq_tx);
-   //m110_channel_frequencies_set(m110, 2, freq_rx, freq_tx);
+
+   m110_channel_frequencies_set(m110, 1, freq_rx, freq_tx);
+   m110_channel_frequencies_set(m110, 2, freq_rx, freq_tx);
+   m110_ctcss_rx_set(m110, 1, ctcss_get_as_hz(radio_channel_ctcss_rx_get(radio_channel)));
+   m110_ctcss_tx_set(m110, 1, ctcss_get_as_hz(radio_channel_ctcss_rx_get(radio_channel)));
+   m110_ctcss_rx_set(m110, 2, ctcss_get_as_hz(radio_channel_ctcss_rx_get(radio_channel)));
+   m110_ctcss_tx_set(m110, 2, ctcss_get_as_hz(radio_channel_ctcss_rx_get(radio_channel)));
+   // MISSING:
+   // power
+   // tx_admit
 }
 
 ctcss_t *radio_get_ctcss(radio_t *radio) {
@@ -315,10 +344,10 @@ void radio_radio_channel_down(radio_t *radio) {
       
       if (found != -1) {
          radio->memory_selected = found;
+         radio_set_active_channel(radio, memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
       } 
    } else if (radio->mode == RADIO_MODE_VFO) {
-      radio_set_frequency(radio, radio_get_frequency(radio) -
-         tune_step_get_as_MHz(radio_channel_tune_step_get(radio->ch_ptr)));
+      radio_channel_freq_rx_set(radio_get_active_channel(radio), radio_channel_freq_rx_get(radio_get_active_channel(radio)) - tune_step_get_as_MHz(radio_channel_tune_step_get(radio_get_active_channel(radio))));
    }
 }
 
@@ -347,10 +376,10 @@ void radio_radio_channel_up(radio_t *radio) {
       
       if (found != -1) {
          radio->memory_selected = found;
+         radio_set_active_channel(radio, memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
       }
    } else if (radio->mode == RADIO_MODE_VFO) {
-      radio_set_frequency(radio, radio_get_frequency(radio) +
-         tune_step_get_as_MHz(radio_channel_tune_step_get(radio->ch_ptr)));
+      radio_channel_freq_rx_set(radio_get_active_channel(radio), radio_channel_freq_rx_get(radio_get_active_channel(radio)) + tune_step_get_as_MHz(radio_channel_tune_step_get(radio_get_active_channel(radio))));
    }
 }
 
