@@ -104,10 +104,8 @@ radio_t *radio_new_with_defaults(void) {
    radio->memory_selected = 0;
 
    // Defaults to VFO;
+   // also commits to m110
    radio_set_active_channel(radio, radio->vfo); 
-   
-   // commit frequency to eeprom - needs improvement
-   radio_commit_radio_channel(radio, radio_get_active_channel(radio));
 
    return radio;
 }
@@ -138,7 +136,13 @@ radio_channel_t * radio_get_active_channel(radio_t *radio) {
 void radio_set_active_channel(radio_t *radio, radio_channel_t *radio_channel) {
    assert(radio != NULL);
    assert(radio_channel != NULL);
+
+   //ctcss_on_changed_clear(radio_channel_ctcss_rx_get(radio_get_active_channel(radio)));
+   //ctcss_on_changed_clear(radio_channel_ctcss_tx_get(radio_get_active_channel(radio)));
+
    radio->ch_ptr = radio_channel;
+
+   radio_commit_radio_channel(radio, radio_channel);
 }
 
 radio_mode_t radio_get_mode(radio_t *radio) {
@@ -152,13 +156,13 @@ void radio_set_mode(radio_t *radio, radio_mode_t mode) {
 
    switch(mode) {
       case RADIO_MODE_VFO:
-         radio->ch_ptr = radio->vfo;
-         // commit to radio
+         radio_set_active_channel(radio, radio->vfo);
          break;
       case RADIO_MODE_MEMORY:
+         radio_set_active_channel(radio, memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
+         break;
       default:
-         radio->ch_ptr = memory_channel_get_radio_channel(radio->memory[radio->memory_selected]);
-         //commit to radio
+         // Should not happen abut if so, do nothing
          break;
    }
 }

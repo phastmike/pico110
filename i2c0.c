@@ -4,8 +4,9 @@
  * i2c0.c
  * 
  * I2C Peripheral Controller0 routines
- * Original routines by user in raspberry pi forum (check it)
+ * Original routines by Graham Smith on raspberry pi forum (check it)
  *
+ * https://forums.raspberrypi.com/viewtopic.php?f=144&t=304074
  *
  * José Miguel Fonte
  */
@@ -21,8 +22,6 @@
 // GPIO pins to use for I2C
 #define GPIO_SDA0 12
 #define GPIO_SCK0 13
-
-//extern m110_t *m110;
 
 void     (*i2c_on_addr_set)(uint16_t addr, void *user_data);
 void     *i2c_on_addr_set_user_data;
@@ -49,14 +48,12 @@ void i2c0_irq_handler(void) {
          if (i2c_on_addr_set) {
             i2c_on_addr_set((uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS), i2c_on_addr_set_user_data);
          }
-         //eeprom_addr_set(m110_eeprom_get(m110), (uint16_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
       } else {
          // If not 1st byte then store the data in the RAM
          // and increment the address to point to next byte
          if (i2c_on_write_byte) {
             i2c_on_write_byte((uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS), i2c_on_write_byte_user_data);
          }
-         //eeprom_write_byte(m110_eeprom_get(m110), (uint8_t)(value & I2C_IC_DATA_CMD_DAT_BITS));
       }
    }
 
@@ -67,8 +64,7 @@ void i2c0_irq_handler(void) {
       if (i2c_on_read_byte) {
          i2c0->hw->data_cmd = i2c_on_read_byte(i2c_on_read_byte_user_data);
       }
-      //i2c0->hw->data_cmd = (uint32_t) eeprom_read_byte(m110_eeprom_get(m110));
-
+      
       // Clear the interrupt
       i2c0->hw->clr_rd_req;
    }
@@ -96,7 +92,6 @@ void i2c0_init(unsigned char clock_streching_enabled) {
    i2c0->hw->intr_mask = (I2C_IC_INTR_MASK_M_RD_REQ_BITS | I2C_IC_INTR_MASK_M_RX_FULL_BITS);
 
    // Set up the interrupt handler to service I2C interrupts
-   //irq_set_exclusive_handler(I2C0_IRQ, i2c0_irq_handler0);
    irq_set_exclusive_handler(I2C0_IRQ, i2c0_irq_handler);
 
    // Enable I2C interrupt

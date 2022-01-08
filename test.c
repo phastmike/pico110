@@ -3,31 +3,10 @@
 /*
  * test.c
  * 
- * simple eeprom emulation. behaviour done in i2c ISR 
- * 
+ * Pico 110 Eeprom emulation.
  *
  * José Miguel Fonte
  */
-
-/**
- * Example program for basic use of pico as an I2C peripheral (previously known as I2C slave)
- * 
- * This example allows the pico to act as a 256byte RAM
- * 
- * Author: Graham Smith (graham@smithg.co.uk)
- * https://forums.raspberrypi.com/viewtopic.php?f=144&t=304074
- */
-
-
-// Usage:
-//
-// When writing data to the pico the first data byte updates the current address to be used when writing or reading from the RAM
-// Subsequent data bytes contain data that is written to the ram at the current address and following locations (current address auto increments)
-//
-// When reading data from the pico the first data byte returned will be from the ram storage located at current address
-// Subsequent bytes will be returned from the following ram locations (again current address auto increments)
-//
-// N.B. if the current address reaches 255, it will autoincrement to 0 after next read / write
 
 #include "m110.h"
 #include "radio.h"
