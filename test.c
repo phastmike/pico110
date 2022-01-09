@@ -68,6 +68,7 @@ uint8_t on_i2c_read_byte(void *user_data) {
    return eeprom_read_byte(m110_eeprom_get(m110));
 }
 
+
 // MAINLOOP //
 
 typedef enum {
@@ -91,7 +92,6 @@ int main() {
    hmi_t *hmi = hmi_new();
 
    i2c0_init(false); // init without clock streching
-
    i2c_on_addr_set_connect(on_i2c_addr_request,radio_get_m110(radio));
    i2c_on_write_byte_connect(on_i2c_write_byte,radio_get_m110(radio));
    i2c_on_read_byte_connect(on_i2c_read_byte,radio_get_m110(radio));
@@ -120,7 +120,6 @@ int main() {
    };
    
    int vc_id = 0;
-
    view_mode = VMODE_FREQ;
    view_controller_present(vcs[vc_id]);
 
