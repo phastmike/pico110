@@ -352,6 +352,7 @@ void radio_radio_channel_down(radio_t *radio) {
       } 
    } else if (radio->mode == RADIO_MODE_VFO) {
       radio_channel_freq_rx_set(radio_get_active_channel(radio), radio_channel_freq_rx_get(radio_get_active_channel(radio)) - tune_step_get_as_MHz(radio_channel_tune_step_get(radio_get_active_channel(radio))));
+      radio_set_active_channel(radio, radio->vfo);
    }
 }
 
@@ -384,6 +385,7 @@ void radio_radio_channel_up(radio_t *radio) {
       }
    } else if (radio->mode == RADIO_MODE_VFO) {
       radio_channel_freq_rx_set(radio_get_active_channel(radio), radio_channel_freq_rx_get(radio_get_active_channel(radio)) + tune_step_get_as_MHz(radio_channel_tune_step_get(radio_get_active_channel(radio))));
+      radio_set_active_channel(radio, radio->vfo);
    }
 }
 
