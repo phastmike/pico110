@@ -40,12 +40,16 @@ void vc_enc_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_enc_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   ctcss_prev(radio_channel_ctcss_tx_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)));
+   radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
+   ctcss_prev(radio_channel_ctcss_tx_get(rc));
+   radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
    vc_enc_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_enc_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   ctcss_next(radio_channel_ctcss_tx_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)));
+   radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
+   ctcss_next(radio_channel_ctcss_tx_get(rc));
+   radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
    vc_enc_show(VIEW_CONTROLLER(user_data));
 }
 
