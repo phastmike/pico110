@@ -55,7 +55,7 @@ char * tx_admit_to_string(tx_admit_t txa) {
 
 void vc_txadmit_show(view_controller_t *vc) {
    char *string = (char *) calloc (1,9);
-   tx_admit_t txa = m110_tx_admit_get(radio_get_m110(vc->radio), 1);
+   tx_admit_t txa = radio_channel_tx_admit_get(radio_get_active_channel(vc->radio));
    char *str_txa = tx_admit_to_string(txa);
    sprintf(string, "TAD %s", str_txa);
    hmi_display_text(vc->hmi, 0, string);
