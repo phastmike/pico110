@@ -149,9 +149,17 @@ void radio_channel_tx_admit_set(radio_channel_t *radio_channel, tx_admit_t txadm
    // could validate txadmit
    radio_channel->tx_admit = txadmit;
 }
+
 unsigned char radio_channel_low_power_get(radio_channel_t *radio_channel) {
    assert(radio_channel != NULL);
    return radio_channel->low_power;
+}
+
+void radio_channel_low_power_set(radio_channel_t *radio_channel, unsigned char low_power) {
+   assert(radio_channel != NULL);
+   assert(low_power == 0 || low_power == 1);
+
+   radio_channel->low_power = low_power;
 }
 
 tune_step_t *radio_channel_tune_step_get(radio_channel_t *radio_channel) {
