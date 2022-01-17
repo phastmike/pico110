@@ -32,7 +32,9 @@ vc_dup_t *vc_dup_new(hmi_t *hmi, radio_t *radio) {
 
 void vc_dup_show(view_controller_t *vc) {
    char *string = (char *) calloc (1,9);
-   dup_t dup = radio_channel_dup_get(radio_get_active_channel(vc->radio));
+   radio_channel_t *rc = radio_get_active_channel(vc->radio);
+   dup_t dup = radio_channel_dup_get(rc);
+
    switch (dup) {
       case DUP_DOWN:
          sprintf(string, "DUP    -");
@@ -49,6 +51,12 @@ void vc_dup_show(view_controller_t *vc) {
    }
    hmi_display_text(vc->hmi, 0, string);
    free(string);
+
+   if (dup == DUP_OFF) {
+      hmi_led_set(vc->hmi, HMI_LED_DUP, 0);
+   } else {
+      hmi_led_set(vc->hmi, HMI_LED_DUP, 1);
+   }
 }
 
 /* EVENTS */

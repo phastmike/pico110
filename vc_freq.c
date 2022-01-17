@@ -47,11 +47,18 @@ unsigned char *freq2string(double freq) {
 }
 
 void vc_freq_show(view_controller_t *vc) {
-   // Should check for TX and show frequency accordingly
-   double freq = radio_channel_freq_rx_get(radio_get_active_channel(vc->radio));
+   assert(vc != NULL);
+   radio_channel_t *rc = radio_get_active_channel(vc->radio);
+   double freq = radio_channel_freq_rx_get(rc);
    unsigned char *s = freq2string(freq);
    hmi_display_text(vc->hmi, 0, s);
    free(s);
+
+   if (radio_channel_dup_get(rc) == DUP_OFF) {
+      hmi_led_set(vc->hmi, HMI_LED_DUP, 0);
+   } else {
+      hmi_led_set(vc->hmi, HMI_LED_DUP, 1);
+   }
 
    unsigned char mode = radio_get_mode(vc->radio);
    switch(mode) {
@@ -98,6 +105,7 @@ void vc_freq_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_d
 /* VIEW CONTROLLER present method */
 
 void vc_freq_present(view_controller_t *vc) {
+   assert(vc != NULL);
    hmi_led_set(vc->hmi, HMI_LED_FMENU, 0);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);
