@@ -28,6 +28,11 @@ typedef enum {
    DUP_UP    =  1
 } dup_t;
 
+typedef enum {
+   REV_OFF = 0,
+   REV_ON  = 1
+} rev_t;
+
 typedef struct _radio_channel_t radio_channel_t;
 
 radio_channel_t * radio_channel_new(void);
@@ -52,6 +57,8 @@ unsigned char     radio_channel_low_power_get(radio_channel_t *radio_channel);
 void              radio_channel_low_power_set(radio_channel_t *radio_channel, unsigned char low_power);
 tune_step_t     * radio_channel_tune_step_get(radio_channel_t *radio_channel);
 unsigned int      radio_channel_get_size(void);
+rev_t             radio_channel_get_rev(radio_channel_t *radio_channel);
+void              radio_channel_set_rev(radio_channel_t *radio_channel, rev_t rev);
 
 #ifdef __cplusplus
 }

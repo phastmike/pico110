@@ -21,6 +21,7 @@ struct _radio_channel_t {
    ctcss_t        *  ctcss_tx;
    double            shift;     // rx-tx
    dup_t             dup;
+   rev_t             rev;
    tx_admit_t        tx_admit;
    unsigned char     low_power;
    tune_step_t    *  tune_step;
@@ -35,6 +36,7 @@ radio_channel_t * radio_channel_new(void) {
    radio_channel->ctcss_tx = ctcss_new();
    radio_channel->shift = 7.6;                  // radio_channel->freq_rx - radio_channel->freq_tx; 
    radio_channel->dup = DUP_OFF; 
+   radio_channel->rev = REV_OFF;
    radio_channel->tx_admit = TXADMIT_ALWAYS; 
    radio_channel->low_power = 0;
    radio_channel->tune_step = tune_step_new();
@@ -169,4 +171,38 @@ tune_step_t *radio_channel_tune_step_get(radio_channel_t *radio_channel) {
 
 unsigned int radio_channel_get_size(void) {
    return sizeof(radio_channel_t);
+}
+
+rev_t radio_channel_get_rev(radio_channel_t *radio_channel) {
+   assert(radio_channel != NULL);
+   return radio_channel->rev;
+}
+
+void radio_channel_set_rev(radio_channel_t *radio_channel, rev_t rev) {
+   assert(radio_channel != NULL);
+   assert (rev == REV_OFF || rev == REV_ON);
+
+   rev_t rc_rev = radio_channel_get_rev(radio_channel);
+
+   if (rc_rev != rev && radio_channel_shift_get(radio_channel) != 0 && radio_channel_dup_get(radio_channel) != DUP_OFF) {
+      radio_channel->rev = rev;
+      radio_channel_freq_rx_set(radio_channel, radio_channel_freq_tx_get(radio_channel));
+      if (rc_rev == REV_OFF) {
+         if (radio_channel_dup_get(radio_channel) == DUP_UP) {
+            radio_channel_freq_tx_set(radio_channel, radio_channel_freq_rx_get(radio_channel) - radio_channel_shift_get(radio_channel));
+            radio_channel_dup_set(radio_channel, DUP_DOWN);
+         } else {
+            radio_channel_freq_tx_set(radio_channel, radio_channel_freq_rx_get(radio_channel) + radio_channel_shift_get(radio_channel));
+            radio_channel_dup_set(radio_channel, DUP_UP);
+         }
+      } else if (rc_rev == REV_ON) {
+         if (radio_channel_dup_get(radio_channel) == DUP_DOWN) {
+            radio_channel_freq_tx_set(radio_channel, radio_channel_freq_rx_get(radio_channel) + radio_channel_shift_get(radio_channel));
+            radio_channel_dup_set(radio_channel, DUP_UP);
+         } else {
+            radio_channel_freq_tx_set(radio_channel, radio_channel_freq_rx_get(radio_channel) - radio_channel_shift_get(radio_channel));
+            radio_channel_dup_set(radio_channel, DUP_DOWN);
+         }
+      }
+   }
 }
