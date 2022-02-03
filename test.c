@@ -123,11 +123,23 @@ int main() {
    view_mode = VMODE_FREQ;
    view_controller_present(vcs[vc_id]);
 
+   char scan_enabled = false;
+
    while(true) {
       tight_loop_contents();
       gpio_put(LED_PIN, 1);
       sleep_ms(80);
       
+      //
+      // Needs some time control
+      // and control for scan press and key to stop
+      //
+      if (scan_enabled && view_mode == VMODE_FREQ) {
+         if (radio_get_mode(radio) == RADIO_MODE_MEMORY) {
+            radio_radio_channel_up(radio);
+         }
+      } 
+
       keys = hmi_keys_scan(hmi);
 
       if (keys & HMI_KEY_1 && hmi_display_get_enabled(hmi)) {
