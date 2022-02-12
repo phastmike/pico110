@@ -11,7 +11,6 @@
 
 #include "key.h"
 #include <stdlib.h>
-//#include <assert.h> // may need to change to pico/stdlib.h
 #include <pico/stdlib.h>
 
 struct _hmi_key_t {
@@ -23,7 +22,7 @@ struct _hmi_key_t {
    void *on_release_user_data;
 };
 
-hmi_key_t	* hmi_key_new(hmi_key_id_t id) {
+hmi_key_t * hmi_key_new(hmi_key_id_t id) {
    hmi_key_t *key = (hmi_key_t *) calloc(1, sizeof(hmi_key_t));
    assert(key != NULL);
    key->id = id;
@@ -33,14 +32,13 @@ hmi_key_t	* hmi_key_new(hmi_key_id_t id) {
 }
 
 void hmi_key_destroy(hmi_key_t *key) {
-   if (key) {
-      hmi_key_on_press_event_disconnect(key);
-      hmi_key_on_release_event_disconnect(key);
-      free(key);
-   }
+   assert(key != NULL);
+   hmi_key_on_press_event_disconnect(key);
+   hmi_key_on_release_event_disconnect(key);
+   if (key) free(key);
 }
 
-hmi_key_id_t  hmi_key_get_id(hmi_key_t *key) {
+hmi_key_id_t hmi_key_get_id(hmi_key_t *key) {
    assert(key != NULL);
    return key->id;
 }
