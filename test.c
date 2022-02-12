@@ -155,15 +155,15 @@ int main() {
             }
             view_controller_present(vcs[vc_id]);
          }
-      } else if (keys & HMI_KEY_4) {
-         radio_channel_t *rc = radio_get_active_channel(radio);
-         radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
-         radio_set_active_channel(radio, rc);
-         hmi_led_set(hmi, HMI_LED_LOW, radio_channel_low_power_get(rc));
       } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC) {
          vc_id = 0;
          view_controller_present(vcs[vc_id]);
          view_mode = VMODE_FREQ;
+      } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FREQ && vc_id == 0) {
+         radio_channel_t *rc = radio_get_active_channel(radio);
+         radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
+         radio_set_active_channel(radio, rc);
+         hmi_led_set(hmi, HMI_LED_LOW, radio_channel_low_power_get(rc));
       } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0) {
         vc_id = 3;
         view_controller_present(vcs[vc_id]);
