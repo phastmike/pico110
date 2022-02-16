@@ -363,6 +363,7 @@ void radio_radio_channel_down(radio_t *radio) {
       
       if (found != -1) {
          radio->memory_selected = found;
+         radio_channel_set_rev(radio_get_active_channel(radio), REV_OFF);
          radio_set_active_channel(radio, memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
       } 
    } else if (radio->mode == RADIO_MODE_VFO) {
