@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_apo_t vc_apo_t;
 
-vc_apo_t *vc_apo_new(hmi_t *hmi, radio_t *radio);
+vc_apo_t * vc_apo_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

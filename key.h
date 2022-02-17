@@ -32,7 +32,7 @@ typedef enum {
 typedef struct _hmi_key_t hmi_key_t;
 typedef void (*hmi_key_on_event_cb_t)(hmi_key_t *key, hmi_key_id_t key_id, void *user_data);
 
-hmi_key_t      *	hmi_key_new(unsigned char id);
+hmi_key_t *     	hmi_key_new(unsigned char id);
 void			      hmi_key_destroy(hmi_key_t *key);
 hmi_key_id_t      hmi_key_get_id(hmi_key_t *key);
 unsigned char     hmi_key_get_active(hmi_key_t *key);

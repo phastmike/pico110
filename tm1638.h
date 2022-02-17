@@ -20,7 +20,7 @@ extern "C" {
 
 typedef struct _tm1638_t tm1638_t;
 
-tm1638_t      *tm1638_new(unsigned char stb, unsigned char clk, unsigned char dio, unsigned char brightness);
+tm1638_t *     tm1638_new(unsigned char stb, unsigned char clk, unsigned char dio, unsigned char brightness);
 void           tm1638_destroy(tm1638_t *tm1638);
 void           tm1638_clear(tm1638_t *tm1638);
 unsigned char  tm1638_display_enabled_get(tm1638_t *tm1638);

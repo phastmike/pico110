@@ -13,8 +13,6 @@
 #define _M110_H_
 
 #include "eeprom.h"
-//#include <pico/stdlib.h>
-//#include <stdint.h>
 
 #define M110(x) ((m110_t *) x)
 
@@ -31,12 +29,12 @@ typedef enum _tx_admit_t {
 
 typedef struct _m110_t m110_t;
 
-m110_t      *  m110_new(void);
-m110_t      *  m110_new_with_data(unsigned char *data);
-m110_t      *  m110_new_with_eeprom(eeprom_t *eeprom);
+m110_t *       m110_new(void);
+m110_t *       m110_new_with_data(unsigned char *data);
+m110_t *       m110_new_with_eeprom(eeprom_t *eeprom);
 void           m110_destroy(m110_t *m110);
 
-eeprom_t    *  m110_eeprom_get(m110_t *m110);
+eeprom_t *     m110_eeprom_get(m110_t *m110);
 void           m110_eeprom_set(m110_t *m110, eeprom_t *eeprom);
 void           m110_channel_frequencies_set(m110_t *m110, unsigned char channel, double freq_mhz_rx, double freq_mhz_tx);
 void           m110_ctcss_rx_set(m110_t *m110, unsigned char channel, double ctcss);

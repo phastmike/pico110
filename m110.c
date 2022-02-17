@@ -13,10 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#include <stdint.h>
-//#include <assert.h>
-//#include <stdio.h>
-
 #define M110_FREQ_MIN         403.0
 #define M110_FREQ_MAX         470.0
 

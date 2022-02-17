@@ -27,8 +27,8 @@ typedef struct _view_controller_t view_controller_t;
 typedef void (*view_controller_present_cb_t)(view_controller_t *vc);
 
 struct _view_controller_t {
-   hmi_t    * hmi;
-   radio_t  * radio;
+   hmi_t *    hmi;
+   radio_t *  radio;
    
    void (*present)(view_controller_t *vc);
 };

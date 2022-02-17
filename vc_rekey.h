@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_rekey_t vc_rekey_t;
 
-vc_rekey_t *vc_rekey_new(hmi_t *hmi, radio_t *radio);
+vc_rekey_t * vc_rekey_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

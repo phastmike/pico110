@@ -49,15 +49,15 @@ typedef struct _ctcss_t ctcss_t;
 
 typedef void (*ctcss_changed_cb_t)(ctcss_t *ctcss, void *user_data);
 
-ctcss_t        *  ctcss_new();
-ctcss_t        *  ctcss_new_with_tone(ctcss_tone_t tone);
+ctcss_t *         ctcss_new();
+ctcss_t *         ctcss_new_with_tone(ctcss_tone_t tone);
 void              ctcss_destroy(ctcss_t *ctcss);
 char              ctcss_get_index(ctcss_t *ctcss);
 void              ctcss_set_tone(ctcss_t *ctcss, ctcss_tone_t tone);
 void              ctcss_next(ctcss_t *ctcss);
 void              ctcss_prev(ctcss_t *ctcss);
 double            ctcss_get_as_hz(ctcss_t *ctcss);
-char           *  ctcss_get_as_string(ctcss_t *ctcss);
+char *            ctcss_get_as_string(ctcss_t *ctcss);
 void              ctcss_on_changed_connect(ctcss_t * ctcss, ctcss_changed_cb_t callback, void *user_data);
 void              ctcss_on_changed_clear(ctcss_t *ctcss);
 

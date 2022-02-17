@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_timeout_t vc_timeout_t;
 
-vc_timeout_t *vc_timeout_new(hmi_t *hmi, radio_t *radio);
+vc_timeout_t * vc_timeout_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

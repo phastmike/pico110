@@ -22,7 +22,7 @@ typedef struct _tune_step_t tune_step_t;
 
 typedef void (*tune_step_changed_cb_t)(tune_step_t *tune_step, void *user_data);
 
-tune_step_t    *  tune_step_new();
+tune_step_t *     tune_step_new();
 void              tune_step_destroy(tune_step_t *tune_step);
 char              tune_step_get_index(tune_step_t *tune_step);
 void              tune_step_next(tune_step_t *tune_step);

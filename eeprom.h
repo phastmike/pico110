@@ -13,8 +13,7 @@
 #ifndef _EEPROM_H_
 #define _EEPROM_H_
 
-#include <pico/stdlib.h> // pico
-//#include <assert.h> // pc
+#include <pico/stdlib.h> 
 
 #define EEPROM(x) ((eeprom_t *) x)
 

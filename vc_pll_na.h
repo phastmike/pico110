@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_pll_na_t vc_pll_na_t;
 
-vc_pll_na_t *vc_pll_na_new(hmi_t *hmi, radio_t *radio);
+vc_pll_na_t * vc_pll_na_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

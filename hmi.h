@@ -32,7 +32,7 @@ extern "C" {
 
 typedef struct    _hmi_t hmi_t;
 
-hmi_t          *  hmi_new(void);
+hmi_t *           hmi_new(void);
 void              hmi_destroy(hmi_t *hmi);
 unsigned char     hmi_display_get_enabled(hmi_t *hmi);
 void              hmi_display_set_enabled(hmi_t *hmi, unsigned char enabled);
@@ -44,7 +44,7 @@ void              hmi_display_text_clear(hmi_t *hmi);
 unsigned char     hmi_keys_scan(hmi_t *hmi);
 void              hmi_led_set(hmi_t *hmi, unsigned char pos, unsigned char status);
 void              hmi_leds_set(hmi_t *hmi, unsigned char status);
-hmi_key_t      *  hmi_get_key(hmi_t *hmi, hmi_key_id_t id);
+hmi_key_t *       hmi_get_key(hmi_t *hmi, hmi_key_id_t id);
 
 #ifdef __cplusplus
 }

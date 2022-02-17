@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_tune_step_t vc_tune_step_t;
 
-vc_tune_step_t *vc_tune_step_new(hmi_t *hmi, radio_t *radio);
+vc_tune_step_t * vc_tune_step_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

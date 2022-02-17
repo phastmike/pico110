@@ -17,14 +17,14 @@
 struct _radio_channel_t {
    double            freq_rx;
    double            freq_tx;
-   ctcss_t        *  ctcss_rx;
-   ctcss_t        *  ctcss_tx;
+   ctcss_t *         ctcss_rx;
+   ctcss_t *         ctcss_tx;
    double            shift;     // rx-tx
    dup_t             dup;
    rev_t             rev;
    tx_admit_t        tx_admit;
    unsigned char     low_power;
-   tune_step_t    *  tune_step;
+   tune_step_t *     tune_step;
 };
 
 radio_channel_t * radio_channel_new(void) {

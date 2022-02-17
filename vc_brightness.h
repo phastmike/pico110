@@ -12,7 +12,7 @@ extern "C" {
 
 typedef struct _vc_brightness_t vc_brightness_t;
 
-vc_brightness_t *vc_brightness_new(hmi_t *hmi, radio_t *radio);
+vc_brightness_t * vc_brightness_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

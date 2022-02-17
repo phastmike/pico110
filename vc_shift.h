@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_shift_t vc_shift_t;
 
-vc_shift_t *vc_shift_new(hmi_t *hmi, radio_t *radio);
+vc_shift_t * vc_shift_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

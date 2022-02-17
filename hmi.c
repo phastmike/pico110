@@ -13,7 +13,7 @@
 #include "hmi.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <pico/stdlib.h> // for assert, avoid assert.h !?
+#include <pico/stdlib.h>
 
 struct _hmi_t {
    tm1638_t       *  tm1638;

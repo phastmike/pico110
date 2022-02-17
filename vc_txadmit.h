@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_txadmit_t vc_txadmit_t;
 
-vc_txadmit_t *vc_txadmit_new(hmi_t *hmi, radio_t *radio);
+vc_txadmit_t * vc_txadmit_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }

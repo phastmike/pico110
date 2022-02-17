@@ -22,7 +22,7 @@ extern "C" {
 
 typedef struct _vc_dup_t vc_dup_t;
 
-vc_dup_t *vc_dup_new(hmi_t *hmi, radio_t *radio);
+vc_dup_t * vc_dup_new(hmi_t *hmi, radio_t *radio);
 
 #ifdef __cplusplus
 }
