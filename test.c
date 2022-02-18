@@ -1,4 +1,4 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
+/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 3; tab-width: 3 -*- */
 /* vim: set tabstop=3 softtabstop=3 shiftwidth=3 expandtab :                  */
 /*
  * test.c
