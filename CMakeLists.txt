@@ -2,14 +2,15 @@ cmake_minimum_required(VERSION 3.13)
 
 include(pico_sdk_import.cmake)
 
-project(test_project C CXX ASM)
+project(pico110_project C CXX ASM)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 pico_sdk_init()
 
-add_executable(test
-	test.c
+add_executable(pico110
+	main.c
 	eeprom.c
 	m110.c
 	tm1638.c
@@ -39,12 +40,12 @@ add_executable(test
 )
 
 #This will enable output via USB and UART
-pico_enable_stdio_usb(test 1)
-pico_enable_stdio_uart(test 1)
+pico_enable_stdio_usb(pico110 1)
+pico_enable_stdio_uart(pico110 1)
 
-pico_add_extra_outputs(test)
+pico_add_extra_outputs(pico110)
 
-target_link_libraries(test
+target_link_libraries(pico110
 	pico_stdlib
 	hardware_i2c
 )
