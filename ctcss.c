@@ -16,8 +16,6 @@
 #include <stdlib.h>
 #include "ctcss.h"
 
-#define CTCSS_NTONES          51
-
 struct _ctcss_t {
    char index;
 
@@ -26,8 +24,10 @@ struct _ctcss_t {
 };
 
 
-// set as static
-double ctcss_tones[] = {
+#define CTCSS_NTONES ((sizeof(ctcss_tones))/sizeof(double))
+
+
+static double ctcss_tones[] = {
    0,
    67.0, 69.3,
    71.9, 74.4, 77.0, 79.7,
@@ -50,7 +50,6 @@ double ctcss_tones[] = {
    241.8,
    250.3, 254.1 
 };
-
 
 
 ctcss_t * ctcss_new() {
@@ -112,7 +111,7 @@ void ctcss_prev(ctcss_t *ctcss) {
 }
 
 
-double ctcss_get_as_hz(ctcss_t *ctcss) {
+double ctcss_get_as_double(ctcss_t *ctcss) {
    return ctcss_tones[ctcss_get_index(ctcss)];
 }
 
@@ -122,7 +121,7 @@ char *ctcss_get_as_string(ctcss_t *ctcss) {
    if (ctcss_get_index(ctcss) == 0) {
       sprintf(string, " Off");
    } else {
-      sprintf(string, "%5.1f", ctcss_get_as_hz(ctcss));
+      sprintf(string, "%5.1f", ctcss_get_as_double(ctcss));
    }
 
    return string;

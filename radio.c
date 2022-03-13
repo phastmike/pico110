@@ -182,10 +182,10 @@ void radio_commit_radio_channel(radio_t *radio, radio_channel_t *radio_channel) 
    m110_channel_frequencies_set(m110, 1, freq_rx, freq_tx);
    m110_channel_frequencies_set(m110, 2, freq_rx, freq_tx);
    
-   m110_ctcss_rx_set(m110, 1, ctcss_get_as_hz(radio_channel_ctcss_rx_get(radio_channel)));
-   m110_ctcss_tx_set(m110, 1, ctcss_get_as_hz(radio_channel_ctcss_tx_get(radio_channel)));
-   m110_ctcss_rx_set(m110, 2, ctcss_get_as_hz(radio_channel_ctcss_rx_get(radio_channel)));
-   m110_ctcss_tx_set(m110, 2, ctcss_get_as_hz(radio_channel_ctcss_tx_get(radio_channel)));
+   m110_ctcss_rx_set(m110, 1, ctcss_get_as_double(radio_channel_ctcss_rx_get(radio_channel)));
+   m110_ctcss_tx_set(m110, 1, ctcss_get_as_double(radio_channel_ctcss_tx_get(radio_channel)));
+   m110_ctcss_rx_set(m110, 2, ctcss_get_as_double(radio_channel_ctcss_rx_get(radio_channel)));
+   m110_ctcss_tx_set(m110, 2, ctcss_get_as_double(radio_channel_ctcss_tx_get(radio_channel)));
 
    txa = m110_tx_admit_get(m110, 1);
    m110_tx_admit_set(m110, 1, txa);
