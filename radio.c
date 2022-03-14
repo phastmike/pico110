@@ -156,10 +156,13 @@ void radio_set_mode(radio_t *radio, radio_mode_t mode) {
 
    switch(mode) {
       case RADIO_MODE_VFO:
+         radio_channel_set_rev(radio->vfo, REV_OFF);
          radio_set_active_channel(radio, radio->vfo);
          break;
       case RADIO_MODE_MEMORY:
-         radio_set_active_channel(radio, memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
+         radio_channel_t *rc = memory_channel_get_radio_channel(radio->memory[radio->memory_selected]);
+         radio_channel_set_rev(rc, REV_OFF);
+         radio_set_active_channel(radio, rc); 
          break;
       default:
          // Should not happen abut if so, do nothing
@@ -198,6 +201,10 @@ void radio_commit_radio_channel(radio_t *radio, radio_channel_t *radio_channel) 
 ctcss_t *radio_get_ctcss(radio_t *radio) {
    assert(radio != NULL);
 
+   return radio_channel_ctcss_rx_get(radio_get_active_channel(radio));
+
+   /* Why only RX? */
+   /*
    switch (radio->mode) {
       case RADIO_MODE_VFO:
          return radio_channel_ctcss_rx_get(radio->vfo);
@@ -206,6 +213,7 @@ ctcss_t *radio_get_ctcss(radio_t *radio) {
       default:
          break;
    }
+   */
 
    return NULL;
 }
@@ -225,6 +233,9 @@ void radio_set_ctcss(radio_t *radio, double ctcss) {
 
    return NULL;
    */
+
+   // Why all are set to the same value
+
 
    m110_t *m110 = radio_get_m110(radio);
    m110_ctcss_rx_set(m110, 1, ctcss);
@@ -363,12 +374,17 @@ void radio_radio_channel_down(radio_t *radio) {
       
       if (found != -1) {
          radio->memory_selected = found;
-         radio_channel_set_rev(radio_get_active_channel(radio), REV_OFF);
-         radio_set_active_channel(radio, memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
+         radio_channel_t *rc = memory_channel_get_radio_channel(radio->memory[radio->memory_selected]);
+         radio_channel_set_rev(rc, REV_OFF);
+         radio_set_active_channel(radio, rc); 
       } 
    } else if (radio->mode == RADIO_MODE_VFO) {
-      radio_channel_freq_rx_set(radio_get_active_channel(radio), radio_channel_freq_rx_get(radio_get_active_channel(radio)) - tune_step_get_as_MHz(radio_channel_tune_step_get(radio_get_active_channel(radio))));
-      radio_set_active_channel(radio, radio->vfo);
+      radio_channel_t *rc = radio_get_active_channel(radio);
+      if (radio_channel_get_rev(rc) == REV_ON) {
+         radio_channel_set_rev(rc, REV_OFF);
+      }
+      radio_channel_freq_rx_set(rc, radio_channel_freq_rx_get(rc) - tune_step_get_as_MHz(radio_channel_tune_step_get(rc)));
+      radio_set_active_channel(radio, rc);
    }
 }
 
@@ -397,11 +413,17 @@ void radio_radio_channel_up(radio_t *radio) {
       
       if (found != -1) {
          radio->memory_selected = found;
-         radio_set_active_channel(radio, memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
+         radio_channel_t *rc = memory_channel_get_radio_channel(radio->memory[radio->memory_selected]);
+         radio_channel_set_rev(rc, REV_OFF);
+         radio_set_active_channel(radio, rc);
       }
    } else if (radio->mode == RADIO_MODE_VFO) {
-      radio_channel_freq_rx_set(radio_get_active_channel(radio), radio_channel_freq_rx_get(radio_get_active_channel(radio)) + tune_step_get_as_MHz(radio_channel_tune_step_get(radio_get_active_channel(radio))));
-      radio_set_active_channel(radio, radio->vfo);
+      radio_channel_t *rc = radio_get_active_channel(radio);
+      if (radio_channel_get_rev(rc) == REV_ON) {
+         radio_channel_set_rev(rc, REV_OFF);
+      }
+      radio_channel_freq_rx_set(rc, radio_channel_freq_rx_get(rc) + tune_step_get_as_MHz(radio_channel_tune_step_get(rc)));
+      radio_set_active_channel(radio, rc);
    }
 }
 

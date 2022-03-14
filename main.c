@@ -15,8 +15,6 @@
 #include "i2c0.h"
 #include "ctcss.h"
 #include <pico/stdlib.h>
-//#include "hardware/i2c.h"
-//#include "hardware/irq.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

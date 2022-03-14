@@ -60,7 +60,7 @@ void vc_freq_show(view_controller_t *vc) {
       hmi_led_set(vc->hmi, HMI_LED_DUP, 1);
    }
 
-   hmi_led_set(vc->hmi, HMI_LED_DEC, (unsigned char) radio_channel_get_rev(rc));
+   hmi_led_set(vc->hmi, HMI_LED_REV, (unsigned char) radio_channel_get_rev(rc));
 
    unsigned char mode = radio_get_mode(vc->radio);
    switch(mode) {
@@ -111,7 +111,7 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    radio_channel_set_rev(rc, !radio_channel_get_rev(rc));
    radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
-   hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_DEC, (unsigned char) radio_channel_get_rev(rc));
+   hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_REV, (unsigned char) radio_channel_get_rev(rc));
    vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
@@ -126,7 +126,7 @@ void vc_freq_present(view_controller_t *vc) {
    hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_3);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_func_event, vc);
-   key = hmi_get_key(vc->hmi, HMI_KEY_5);
+   key = hmi_get_key(vc->hmi, HMI_KEY_6);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_rev_event, vc);
    vc_freq_show(vc);
 }

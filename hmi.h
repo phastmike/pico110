@@ -21,10 +21,10 @@
 #define HMI_LED_SCAN          1
 #define HMI_LED_MR            2
 #define HMI_LED_LOW           3
-#define HMI_LED_DEC           4
-#define HMI_LED_DUP           5
-#define HMI_LED_SQ            6
-#define HMI_LED_RTX           7
+#define HMI_LED_PLSQ          4
+#define HMI_LED_REV           5
+#define HMI_LED_DUP           6
+#define HMI_LED_TX            7
 
 #ifdef __cplusplus
 extern "C" {
