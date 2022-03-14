@@ -47,4 +47,4 @@
 
 ## NOTES
 
-- Why cannot invoke tm1638 methods on hmi's tn1638 subclass ???
+- Why cannot invoke tm1638 methods on hmi's tm1638 subclass ???
