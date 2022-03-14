@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "key.h"
+#include "hmi_key.h"
 #include "vc_freq.h"
 #include "view_controller.h"
 

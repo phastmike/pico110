@@ -21,7 +21,7 @@ add_executable(pico110
 	memory_channel.c
 	radio.c
 	hmi.c
-	key.c
+	hmi_key.c
 	view_controller.c
 	vc_brightness.c
 	vc_tune_step.c

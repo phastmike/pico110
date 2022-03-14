@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "key.h"
+#include "hmi_key.h"
 #include "eeprom.h"
 #include "vc_pll_na.h"
 #include "view_controller.h"

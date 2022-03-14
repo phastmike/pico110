@@ -9,7 +9,7 @@
  * José Miguel Fonte
  */
 
-#include "key.h"
+#include "hmi_key.h"
 #include <stdlib.h>
 #include <pico/stdlib.h>
 

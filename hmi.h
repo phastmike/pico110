@@ -12,7 +12,7 @@
 #ifndef _HMI_H_
 #define _HMI_H_
 
-#include "key.h"
+#include "hmi_key.h"
 
 #define HMI_NUMBER_OF_KEYS    8 
 #define HMI(x)                ((hmi_t *) x)
