@@ -55,21 +55,21 @@ void vc_freq_show(view_controller_t *vc) {
    free(s);
 
    if (radio_channel_dup_get(rc) == DUP_OFF) {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, 0);
+      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_OFF);
    } else {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, 1);
+      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_ON);
    }
 
-   hmi_led_set(vc->hmi, HMI_LED_REV, (unsigned char) radio_channel_get_rev(rc));
+   hmi_led_set(vc->hmi, HMI_LED_REV, radio_channel_get_rev(rc) ? HMI_LED_ON : HMI_LED_OFF);
 
    unsigned char mode = radio_get_mode(vc->radio);
    switch(mode) {
       case RADIO_MODE_VFO:
-         hmi_led_set(vc->hmi, HMI_LED_MR, 0);
+         hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_OFF);
          break;
       case RADIO_MODE_MEMORY:
       default:
-         hmi_led_set(vc->hmi, HMI_LED_MR, 1);
+         hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_ON);
          break;
    }
 }
@@ -111,7 +111,7 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    radio_channel_set_rev(rc, !radio_channel_get_rev(rc));
    radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
-   hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_REV, (unsigned char) radio_channel_get_rev(rc));
+   hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_REV, radio_channel_get_rev(rc) ? HMI_LED_ON : HMI_LED_OFF);
    vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
@@ -119,7 +119,7 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 
 void vc_freq_present(view_controller_t *vc) {
    assert(vc != NULL);
-   hmi_led_set(vc->hmi, HMI_LED_FMENU, 0);
+   hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

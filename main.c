@@ -142,7 +142,7 @@ int main() {
 
       if (keys & HMI_KEY_1 && hmi_display_get_enabled(hmi)) {
          if (view_mode == VMODE_FREQ) {
-            hmi_led_set(hmi, HMI_LED_FMENU, 1); // Already set in view_controller  
+            hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_ON); // Already set in view_controller  
             view_mode = VMODE_FUNC;
          } else if (view_mode == VMODE_FUNC) {
             if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) {
@@ -161,7 +161,7 @@ int main() {
          radio_channel_t *rc = radio_get_active_channel(radio);
          radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
          radio_set_active_channel(radio, rc);
-         hmi_led_set(hmi, HMI_LED_LOW, radio_channel_low_power_get(rc));
+         hmi_led_set(hmi, HMI_LED_LOW, radio_channel_low_power_get(rc) ? HMI_LED_ON : HMI_LED_OFF);
       } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0) {
         vc_id = 3;
         view_controller_present(vcs[vc_id]);

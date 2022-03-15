@@ -102,7 +102,7 @@ unsigned char hmi_keys_scan(hmi_t *hmi) {
    return keys_read;
 }
 
-void hmi_led_set(hmi_t *hmi, unsigned char pos, unsigned char status) {
+void hmi_led_set(hmi_t *hmi, unsigned char pos, hmi_led_status_t status) {
    assert(hmi != NULL);
 
    unsigned char led_status;

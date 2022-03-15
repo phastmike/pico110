@@ -54,7 +54,7 @@ void vc_brightness_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *
 /* VIEW CONTROLLER present method */
 
 void vc_brightness_present(view_controller_t *vc) {
-   hmi_led_set(vc->hmi, HMI_LED_FMENU, 1);
+   hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_brightness_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

@@ -134,7 +134,7 @@ void ctcss_on_changed_connect(ctcss_t * ctcss, ctcss_changed_cb_t callback, void
    }
 }
 
-void ctcss_on_changed_clear(ctcss_t *ctcss) {
+void ctcss_on_changed_disconnect(ctcss_t *ctcss) {
    ctcss->changed = NULL;
    ctcss->changed_user_data = NULL;
 }

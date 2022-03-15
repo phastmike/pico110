@@ -137,8 +137,8 @@ void radio_set_active_channel(radio_t *radio, radio_channel_t *radio_channel) {
    assert(radio != NULL);
    assert(radio_channel != NULL);
 
-   //ctcss_on_changed_clear(radio_channel_ctcss_rx_get(radio_get_active_channel(radio)));
-   //ctcss_on_changed_clear(radio_channel_ctcss_tx_get(radio_get_active_channel(radio)));
+   //ctcss_on_changed_disconnect(radio_channel_ctcss_rx_get(radio_get_active_channel(radio)));
+   //ctcss_on_changed_disconnect(radio_channel_ctcss_tx_get(radio_get_active_channel(radio)));
 
    radio->ch_ptr = radio_channel;
 

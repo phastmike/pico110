@@ -59,7 +59,7 @@ void              ctcss_prev(ctcss_t *ctcss);
 double            ctcss_get_as_double(ctcss_t *ctcss);
 char *            ctcss_get_as_string(ctcss_t *ctcss);
 void              ctcss_on_changed_connect(ctcss_t * ctcss, ctcss_changed_cb_t callback, void *user_data);
-void              ctcss_on_changed_clear(ctcss_t *ctcss);
+void              ctcss_on_changed_disconnect(ctcss_t *ctcss);
 
 #ifdef __cplusplus
 }

@@ -53,9 +53,9 @@ void vc_dup_show(view_controller_t *vc) {
    free(string);
 
    if (dup == DUP_OFF) {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, 0);
+      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_OFF);
    } else {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, 1);
+      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_ON);
    }
 }
 
