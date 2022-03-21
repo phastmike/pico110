@@ -14,6 +14,8 @@
 
 #define HMI_KEY(x) ((key_t *) (x))
 
+#define HMI_NUMBER_OF_KEYS    8
+
 #ifdef __cplusplus
 extern "C" {
 #endif

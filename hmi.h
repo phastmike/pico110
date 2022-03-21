@@ -14,8 +14,8 @@
 
 #include "hmi_key.h"
 
-#define HMI_NUMBER_OF_KEYS    8 
 #define HMI(x)                ((hmi_t *) x)
+
 
 #define HMI_LED_FMENU         0
 #define HMI_LED_SCAN          1

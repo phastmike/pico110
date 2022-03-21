@@ -31,7 +31,7 @@ struct _m110_t {
 
 
 m110_t * m110_new(void) {
-  m110_t *m110 = (m110_t *) calloc(1, sizeof(m110_t));
+  m110_t *m110 = M110(calloc(1, sizeof(m110_t)));
   m110->eeprom = eeprom_new();
   assert(m110 != NULL);
   return m110;

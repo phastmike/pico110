@@ -15,8 +15,9 @@
 #include "ctcss.h"
 #include "radio_channel.h"
 
-#define RADIO_NUMBER_OF_CHANNELS    40
 #define RADIO(x)                    ((radio_t *) x)
+
+#define RADIO_NUMBER_OF_CHANNELS    40
 
 #ifdef __cplusplus
 extern "C" {
