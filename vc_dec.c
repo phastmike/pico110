@@ -22,10 +22,8 @@ struct _vc_dec_t {
 void vc_dec_present(view_controller_t *vc);
 
 vc_dec_t *vc_dec_new(hmi_t *hmi, radio_t *radio) {
-   vc_dec_t *vc_dec = (vc_dec_t *) calloc (1, sizeof(vc_dec_t));
-   vc_dec = (vc_dec_t *) view_controller_new(hmi, radio);
+   vc_dec_t *vc_dec = (vc_dec_t *) view_controller_new(hmi, radio);
    VIEW_CONTROLLER(vc_dec)->present = vc_dec_present;
-
    return vc_dec;
 }
 

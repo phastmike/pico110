@@ -23,8 +23,7 @@ struct _vc_dup_t {
 void vc_dup_present(view_controller_t *vc);
 
 vc_dup_t *vc_dup_new(hmi_t *hmi, radio_t *radio) {
-   vc_dup_t *vc_dup = (vc_dup_t *) calloc (1, sizeof(vc_dup_t));
-   vc_dup = (vc_dup_t *) view_controller_new(hmi, radio);
+   vc_dup_t *vc_dup = (vc_dup_t *) view_controller_new(hmi, radio);
    VIEW_CONTROLLER(vc_dup)->present = vc_dup_present;
 
    return vc_dup;

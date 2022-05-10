@@ -22,8 +22,7 @@ struct _vc_intro_t {
 void vc_intro_present(view_controller_t *vc);
 
 vc_intro_t *vc_intro_new(hmi_t *hmi, radio_t *radio) {
-   vc_intro_t *vc_intro = (vc_intro_t *) calloc (1, sizeof(vc_intro_t));
-   vc_intro = (vc_intro_t *) view_controller_new(hmi, radio);
+   vc_intro_t *vc_intro = (vc_intro_t *) view_controller_new(hmi, radio);
    VIEW_CONTROLLER(vc_intro)->present = vc_intro_present;
 
    return vc_intro;

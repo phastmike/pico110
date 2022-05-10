@@ -22,8 +22,7 @@ struct _vc_rekey_t {
 void vc_rekey_present(view_controller_t *vc);
 
 vc_rekey_t *vc_rekey_new(hmi_t *hmi, radio_t *radio) {
-   vc_rekey_t *vc_rekey = (vc_rekey_t *) calloc (1, sizeof(vc_rekey_t));
-   vc_rekey = (vc_rekey_t *) view_controller_new(hmi, radio);
+   vc_rekey_t *vc_rekey = (vc_rekey_t *) view_controller_new(hmi, radio);
    VIEW_CONTROLLER(vc_rekey)->present = vc_rekey_present;
 
    return vc_rekey;

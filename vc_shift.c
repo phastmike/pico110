@@ -22,10 +22,8 @@ struct _vc_shift_t {
 void vc_shift_present(view_controller_t *vc);
 
 vc_shift_t *vc_shift_new(hmi_t *hmi, radio_t *radio) {
-   vc_shift_t *vc_shift = (vc_shift_t *) calloc (1, sizeof(vc_shift_t));
-   vc_shift = (vc_shift_t *) view_controller_new(hmi, radio);
+   vc_shift_t *vc_shift = (vc_shift_t *) view_controller_new(hmi, radio);
    VIEW_CONTROLLER(vc_shift)->present = vc_shift_present;
-
    return vc_shift;
 }
 
