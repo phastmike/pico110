@@ -54,6 +54,7 @@ static double ctcss_tones[] = {
 
 ctcss_t * ctcss_new() {
    ctcss_t *ctcss = calloc(1, sizeof(ctcss_t));
+
    if (ctcss == NULL) return NULL;
    
    ctcss->index = CTCSS_OFF;
