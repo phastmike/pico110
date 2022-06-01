@@ -3,7 +3,7 @@
 - VFO Mode
 - Memory Mode (how)
 
-## Menus
+## Menus / Features
 
 - Tune Step (TS) (kHz)
 - Encoder (Enc) (Hz + OFF)
@@ -21,8 +21,9 @@
 ### Missing
 - Scanning
 - Memories (Name and Frequency)
-- How to memorize, Edit, Remove Memories (CRUD)
+- How to memorize, Edit, Remove (CRUD)
 - Dual VFO with same/distinct steps etc.
+- Mem to vfo
 
 ### New control head
 - Need a way to open Squelch
@@ -47,4 +48,4 @@
 
 ## NOTES
 
-- Why cannot invoke tm1638 methods on hmi's tm1638 subclass ???
+- Why problems invoking tm1638 methods on hmi's tm1638 subclass ? Revisit
