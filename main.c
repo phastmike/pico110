@@ -80,10 +80,12 @@ int main() {
 
    stdio_init_all();
 
-   // startup for debug
+   //startup for debug
+   //Waits 10 seconds to give time to dump output to console with:
+   //cat /dev/ttyACM0
+
    //sleep_ms(10000);
    //printf("Start...\n");
-   //pause_iteration
 
 
    radio_t *radio = radio_new_with_defaults();

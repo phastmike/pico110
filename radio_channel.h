@@ -35,8 +35,22 @@ typedef enum {
 
 typedef struct _radio_channel_t radio_channel_t;
 
+struct _radio_channel_t {
+   double            freq_rx;
+   double            freq_tx;
+   ctcss_t *         ctcss_rx;
+   ctcss_t *         ctcss_tx;
+   double            shift;     // rx-tx
+   dup_t             dup;
+   rev_t             rev;
+   tx_admit_t        tx_admit;
+   unsigned char     low_power;
+   tune_step_t *     tune_step;
+};
+
 radio_channel_t * radio_channel_new(void);
 void              radio_channel_destroy(radio_channel_t *radio_channel);
+void              radio_channel_set_defaults(radio_channel_t *radio_channel);
 void              radio_channel_copy(radio_channel_t *dest, radio_channel_t *src);
 double            radio_channel_freq_rx_get(radio_channel_t *radio_channel);
 void              radio_channel_freq_rx_set(radio_channel_t *radio_channel, double freq);

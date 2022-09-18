@@ -22,9 +22,8 @@ extern "C" {
 typedef struct       _memory_channel_t memory_channel_t;
 
 memory_channel_t *   memory_channel_new(void);
-memory_channel_t *   memory_channel_new_with(unsigned char id, unsigned char *name, radio_channel_t *radio_channel);
+memory_channel_t *   memory_channel_new_with(unsigned char id, unsigned char *name);
 void                 memory_channel_destroy(memory_channel_t *memory_channel);
-radio_channel_t  *   memory_channel_get_radio_channel(memory_channel_t *memory_channel);
 unsigned int         memory_channel_get_size();
 
 #ifdef __cplusplus
