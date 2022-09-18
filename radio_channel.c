@@ -31,24 +31,8 @@ struct _radio_channel_t {
 */
 
 radio_channel_t * radio_channel_new(void) {
-   radio_channel_t *radio_channel = (radio_channel_t *) calloc(1,sizeof(radio_channel_t)); 
-
+   radio_channel_t *radio_channel = calloc(1,sizeof(radio_channel_t)); 
    radio_channel_set_defaults(radio_channel);
-
-   /*
-   radio_channel->freq_rx = RADIO_CHANNEL_DEFAULT_RX_FREQUENCY;
-   radio_channel->freq_tx = RADIO_CHANNEL_DEFAULT_TX_FREQUENCY;
-   radio_channel->ctcss_rx = ctcss_new();
-   radio_channel->ctcss_tx = ctcss_new();
-   radio_channel->shift = 7.6;                  // radio_channel->freq_rx - radio_channel->freq_tx; 
-   radio_channel->dup = DUP_OFF; 
-   radio_channel->rev = REV_OFF;
-   radio_channel->tx_admit = TXADMIT_ALWAYS; 
-   radio_channel->low_power = 0;
-   radio_channel->tune_step = tune_step_new();
-   //tune_step_next(radio_channel->tune_step);    // Set ts as 25kHz
-   */
-
    return radio_channel;
 }
 
@@ -66,7 +50,7 @@ void radio_channel_set_defaults(radio_channel_t *radio_channel) {
    radio_channel->freq_tx = RADIO_CHANNEL_DEFAULT_TX_FREQUENCY;
    radio_channel->ctcss_rx = ctcss_new();
    radio_channel->ctcss_tx = ctcss_new();
-   radio_channel->shift = 7.6;                  // radio_channel->freq_rx - radio_channel->freq_tx; 
+   radio_channel->shift = 7.6; 
    radio_channel->dup = DUP_OFF; 
    radio_channel->rev = REV_OFF;
    radio_channel->tx_admit = TXADMIT_ALWAYS; 
@@ -119,24 +103,8 @@ static void radio_channel_freq_tx_recalc(radio_channel_t * radio_channel) {
 
 void radio_channel_freq_set(radio_channel_t *radio_channel, double freq) {
    assert(radio_channel != NULL);
-
    radio_channel_freq_rx_set(radio_channel, freq);
-
    radio_channel_freq_tx_recalc(radio_channel);
-   /*
-   switch(radio_channel->dup) {
-      case DUP_DOWN:
-         radio_channel_freq_tx_set(radio_channel, freq - radio_channel->shift);
-         break;
-      case DUP_UP:
-         radio_channel_freq_tx_set(radio_channel, freq + radio_channel->shift);
-         break;
-      case DUP_OFF:
-      default:
-         radio_channel_freq_tx_set(radio_channel, freq);
-         break;
-   }
-   */
 }
 
 ctcss_t *radio_channel_ctcss_rx_get(radio_channel_t *radio_channel) {
