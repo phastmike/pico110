@@ -20,14 +20,15 @@ struct _memory_channel_t {
 };
 
 memory_channel_t * memory_channel_new(void) {
-   return (memory_channel_t *) calloc(1,sizeof(memory_channel_t));
+   memory_channel_t *memory_channel = calloc(1,sizeof(memory_channel_t));
+   radio_channel_set_defaults(RADIO_CHANNEL(memory_channel));
+   return memory_channel;
 }
 
 memory_channel_t * memory_channel_new_with(unsigned char id, unsigned char *name) {
    memory_channel_t *memory_channel = memory_channel_new();
    memory_channel->id = id;
    memory_channel->name = name;
-   radio_channel_set_defaults(RADIO_CHANNEL(memory_channel));
    return memory_channel;
 }
 
