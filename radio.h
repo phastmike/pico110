@@ -26,6 +26,7 @@ extern "C" {
 typedef enum {
    RADIO_MODE_VFO,
    RADIO_MODE_MEMORY,
+   RADIO_MODE_FUNC,
    RADIO_MODE_NMODES
 } radio_mode_t;
 

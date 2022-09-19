@@ -29,7 +29,7 @@ vc_version_t *vc_version_new(hmi_t *hmi, radio_t *radio) {
 
 void vc_version_show(view_controller_t *vc) {
    char *string = (char *) calloc (1,9);
-   sprintf(string, "Rel  0.1.5");
+   sprintf(string, "Rel  0.1.6");
    hmi_display_text(vc->hmi, 0, string);
    free(string);
 }

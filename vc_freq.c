@@ -106,6 +106,8 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    //if PTT OFF do
    //hmi_display_get_enabled ... should not happen
    //view_mode... a problem because it's outside of scope
+   if (radio_get_mode(VIEW_CONTROLLER(user_data)->radio) == RADIO_MODE_FUNC) return;
+
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    radio_channel_set_rev(rc, !radio_channel_get_rev(rc));
    radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
@@ -117,7 +119,7 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 
 void vc_freq_present(view_controller_t *vc) {
    assert(vc != NULL);
-   hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
+   //hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

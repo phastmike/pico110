@@ -19,6 +19,7 @@
 - Screen On/Off (Or a clear so we can keep Leds) ** 
 
 ### Missing
+
 - Scanning
 - Memories (Name and Frequency)
 - How to memorize, Edit, Remove (CRUD)
@@ -48,4 +49,4 @@
 
 ## NOTES
 
-- Why problems invoking tm1638 methods on hmi's tm1638 subclass ? Revisit
+...
