@@ -66,8 +66,10 @@ void vc_freq_show(view_controller_t *vc) {
          hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_OFF);
          break;
       case RADIO_MODE_MEMORY:
-      default:
          hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_ON);
+         break;
+      default:
+         //hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_ON);
          break;
    }
 }

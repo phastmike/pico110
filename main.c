@@ -137,10 +137,20 @@ int main() {
       // and control for scan press and key to stop
       //
       if (scan_enabled && view_mode == VMODE_FREQ) {
+         // VFO + MR
+         // FIXME: Needs border limit control
+         //radio_radio_channel_up(radio);
+         
+         // MR ONLY
          if (radio_get_mode(radio) == RADIO_MODE_MEMORY) {
             radio_radio_channel_up(radio);
          }
       } 
+
+      if (radio_get_mode(radio) != RADIO_MODE_MEMORY) {
+         scan_enabled = false;
+         hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
+      }
 
       keys = hmi_keys_scan(hmi);
 
@@ -150,6 +160,8 @@ int main() {
             view_mode = VMODE_FUNC;
             previous_mode = radio_get_mode(radio);
             radio_set_mode(radio, RADIO_MODE_FUNC); 
+            scan_enabled = false;
+            hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
          } else if (view_mode == VMODE_FUNC) {
             if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) {
                vc_id = 0;
@@ -167,6 +179,11 @@ int main() {
          view_mode = VMODE_FREQ;
          radio_set_mode(radio, previous_mode); 
          hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
+         scan_enabled = false;
+         hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
+      } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && radio_get_mode(radio) == RADIO_MODE_MEMORY) {
+         scan_enabled = !scan_enabled;
+         hmi_led_set(hmi, HMI_LED_SCAN, scan_enabled);
       } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FREQ && vc_id == 0) {
          radio_channel_t *rc = radio_get_active_channel(radio);
          radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
@@ -180,6 +197,8 @@ int main() {
         view_controller_present(vcs[vc_id]);
       } else if (keys & HMI_KEY_6 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0) {
         vc_id = 9;
+        view_controller_present(vcs[vc_id]);
+      } else {
         view_controller_present(vcs[vc_id]);
       }
 
