@@ -76,7 +76,7 @@ void vc_freq_show(view_controller_t *vc) {
 
 /* EVENTS */
 
-void vc_freq_on_press_func_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+void vc_freq_on_press_vm_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    radio_mode_t mode;
 
    mode = radio_get_mode(VIEW_CONTROLLER(user_data)->radio);
@@ -86,8 +86,8 @@ void vc_freq_on_press_func_event(hmi_key_t *key, hmi_key_id_t key_id, void *user
          radio_set_mode(VIEW_CONTROLLER(user_data)->radio, RADIO_MODE_MEMORY);
          break;
       case RADIO_MODE_MEMORY:
-      default:
          radio_set_mode(VIEW_CONTROLLER(user_data)->radio, RADIO_MODE_VFO);
+      default:
          break;
    }
 
@@ -127,7 +127,7 @@ void vc_freq_present(view_controller_t *vc) {
    key = hmi_get_key(vc->hmi, HMI_KEY_8);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_3);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_func_event, vc);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_vm_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_6);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_rev_event, vc);
    vc_freq_show(vc);

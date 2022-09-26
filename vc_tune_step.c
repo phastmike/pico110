@@ -56,5 +56,7 @@ void vc_tune_step_present(view_controller_t *vc) {
    hmi_key_on_press_event_connect(key, vc_tune_step_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);
    hmi_key_on_press_event_connect(key, vc_tune_step_on_press_up_event, vc);
+   key = hmi_get_key(vc->hmi, HMI_KEY_3);
+   hmi_key_on_press_event_disconnect(key);
    vc_tune_step_show(vc);
 }
