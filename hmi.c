@@ -89,6 +89,8 @@ void hmi_display_text_clear(hmi_t *hmi) {
    tm1638_clear(hmi->tm1638);
 }
 
+/* Explain how read_keys, id, indices and values relate */
+
 unsigned char hmi_keys_scan(hmi_t *hmi) {
    assert(hmi != NULL);
 
@@ -124,6 +126,14 @@ void hmi_leds_set(hmi_t *hmi, unsigned char status) {
 }
 
 hmi_key_t *hmi_get_key(hmi_t *hmi, hmi_key_id_t id) {
+   assert(hmi != NULL);
+
+   /*
+   if (id < 0 || id >= HMI_NUMBER_OF_KEYS) return NULL;
+
+   return hmi->key[id];
+   */
+   
    for (int i = 0; i < HMI_NUMBER_OF_KEYS; i++) {
       if (hmi_key_get_id(hmi->key[i]) == id) {
          return hmi->key[i];
@@ -131,4 +141,13 @@ hmi_key_t *hmi_get_key(hmi_t *hmi, hmi_key_id_t id) {
    }
 
    return NULL;
+}
+
+void hmi_keys_disconnect(hmi_t *hmi) {
+   assert(hmi != NULL);
+
+   for (int i = 0; i < HMI_NUMBER_OF_KEYS; i++) {
+      hmi_key_on_press_event_disconnect(hmi->key[i]);
+      hmi_key_on_release_event_disconnect(hmi->key[i]);
+   }
 }

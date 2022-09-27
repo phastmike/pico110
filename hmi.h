@@ -50,6 +50,7 @@ unsigned char     hmi_keys_scan(hmi_t *hmi);
 void              hmi_led_set(hmi_t *hmi, unsigned char pos, hmi_led_status_t status);
 void              hmi_leds_set(hmi_t *hmi, unsigned char status);
 hmi_key_t *       hmi_get_key(hmi_t *hmi, hmi_key_id_t id);
+void              hmi_keys_disconnect(hmi_t *hmi);
 
 #ifdef __cplusplus
 }
