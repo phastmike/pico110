@@ -30,6 +30,7 @@ vc_dup_t *vc_dup_new(hmi_t *hmi, radio_t *radio) {
 }
 
 void vc_dup_show(view_controller_t *vc) {
+   assert(vc != NULL);
    char *string = (char *) calloc (1,9);
    radio_channel_t *rc = radio_get_active_channel(vc->radio);
    dup_t dup = radio_channel_dup_get(rc);
@@ -61,11 +62,13 @@ void vc_dup_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_dup_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_dup_down(VIEW_CONTROLLER(user_data)->radio);
    vc_dup_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_dup_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_dup_up(VIEW_CONTROLLER(user_data)->radio);
    vc_dup_show(VIEW_CONTROLLER(user_data));
 }
@@ -73,6 +76,8 @@ void vc_dup_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_da
 /* VIEW CONTROLLER present method */
 
 void vc_dup_present(view_controller_t *vc) {
+   assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_dup_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

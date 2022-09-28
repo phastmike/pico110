@@ -77,9 +77,9 @@ void vc_freq_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_freq_on_press_vm_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   radio_mode_t mode;
+   assert(key != NULL && user_data != NULL);
 
-   mode = radio_get_mode(VIEW_CONTROLLER(user_data)->radio);
+   radio_mode_t mode = radio_get_mode(VIEW_CONTROLLER(user_data)->radio);
 
    switch(mode) {
       case RADIO_MODE_VFO:
@@ -95,11 +95,13 @@ void vc_freq_on_press_vm_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_d
 }
 
 void vc_freq_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_radio_channel_down(VIEW_CONTROLLER(user_data)->radio);
    vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_radio_channel_up(VIEW_CONTROLLER(user_data)->radio);
    vc_freq_show(VIEW_CONTROLLER(user_data));
 }
@@ -108,6 +110,7 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    //if PTT OFF do
    //hmi_display_get_enabled ... should not happen
    //view_mode... a problem because it's outside of scope
+   assert(key != NULL && user_data != NULL);
    if (radio_get_mode(VIEW_CONTROLLER(user_data)->radio) == RADIO_MODE_FUNC) return;
 
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
@@ -121,6 +124,7 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 
 void vc_freq_present(view_controller_t *vc) {
    assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi);
    //hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);

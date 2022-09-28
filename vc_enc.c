@@ -28,6 +28,7 @@ vc_enc_t *vc_enc_new(hmi_t *hmi, radio_t *radio) {
 }
 
 void vc_enc_show(view_controller_t *vc) {
+   assert(vc != NULL);
    ctcss_t * enc = radio_channel_ctcss_tx_get(radio_get_active_channel(vc->radio));
    char *string = (char *) calloc (1,9);
    sprintf(string, "Enc %s", ctcss_get_as_string(enc));
@@ -38,6 +39,7 @@ void vc_enc_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_enc_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    ctcss_prev(radio_channel_ctcss_tx_get(rc));
    radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
@@ -45,6 +47,7 @@ void vc_enc_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 }
 
 void vc_enc_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    ctcss_next(radio_channel_ctcss_tx_get(rc));
    radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
@@ -54,6 +57,8 @@ void vc_enc_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_da
 /* VIEW CONTROLLER present method */
 
 void vc_enc_present(view_controller_t *vc) {
+   assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_enc_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

@@ -29,6 +29,7 @@ vc_pll_na_t *vc_pll_na_new(hmi_t *hmi, radio_t *radio) {
 }
 
 void vc_pll_na_show(view_controller_t *vc) {
+   assert (vc != NULL);
    unsigned char b1 = eeprom_raw_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x22);
    unsigned char b2 = eeprom_raw_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x23);
    unsigned char b3 = eeprom_raw_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x24);
@@ -40,24 +41,19 @@ void vc_pll_na_show(view_controller_t *vc) {
    free(str);
 }
 
-/* EVENTS */
+/* EVENTS - key commands can be removed */
 
 void vc_pll_na_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   //radio_timeout_down(VIEW_CONTROLLER(user_data)->radio);
    vc_pll_na_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_pll_na_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   //radio_timeout_up(VIEW_CONTROLLER(user_data)->radio);
    vc_pll_na_show(VIEW_CONTROLLER(user_data));
 }
 
 /* VIEW CONTROLLER present method */
 
 void vc_pll_na_present(view_controller_t *vc) {
-   //hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
-   //hmi_key_on_press_event_connect(key, vc_pll_na_on_press_down_event, vc);
-   //key = hmi_get_key(vc->hmi, HMI_KEY_8);
-   //hmi_key_on_press_event_connect(key, vc_pll_na_on_press_up_event, vc);
+   assert (vc != NULL);
    vc_pll_na_show(vc);
 }

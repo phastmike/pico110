@@ -50,24 +50,19 @@ void vc_intro_show(view_controller_t *vc) {
    sleep_ms(1000);
 }
 
-/* EVENTS */
+/* EVENTS - key events can be removed */
 
 void vc_intro_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   //radio_timeout_down(VIEW_CONTROLLER(user_data)->radio);
    vc_intro_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_intro_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   //radio_timeout_up(VIEW_CONTROLLER(user_data)->radio);
    vc_intro_show(VIEW_CONTROLLER(user_data));
 }
 
 /* VIEW CONTROLLER present method */
 
 void vc_intro_present(view_controller_t *vc) {
-   //hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
-   //hmi_key_on_press_event_connect(key, vc_intro_on_press_down_event, vc);
-   //key = hmi_get_key(vc->hmi, HMI_KEY_8);
-   //hmi_key_on_press_event_connect(key, vc_intro_on_press_up_event, vc);
+   assert (vc != NULL);
    vc_intro_show(vc);
 }

@@ -28,6 +28,7 @@ vc_shift_t *vc_shift_new(hmi_t *hmi, radio_t *radio) {
 }
 
 void vc_shift_show(view_controller_t *vc) {
+   assert(vc != NULL);
    char *string = (char *) calloc (1,9);
    double shift = radio_channel_shift_get(radio_get_active_channel(vc->radio)); 
    sprintf(string, "SFT %5.01f", shift);
@@ -38,6 +39,7 @@ void vc_shift_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_shift_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    double shift = radio_channel_shift_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)); 
    shift -= 0.1;
    radio_channel_shift_set(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio), shift);
@@ -45,6 +47,7 @@ void vc_shift_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *use
 }
 
 void vc_shift_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    double shift = radio_channel_shift_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)); 
    shift += 0.1;
    radio_channel_shift_set(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio), shift);
@@ -54,6 +57,8 @@ void vc_shift_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 /* VIEW CONTROLLER present method */
 
 void vc_shift_present(view_controller_t *vc) {
+   assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_shift_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

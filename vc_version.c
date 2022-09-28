@@ -28,6 +28,7 @@ vc_version_t *vc_version_new(hmi_t *hmi, radio_t *radio) {
 }
 
 void vc_version_show(view_controller_t *vc) {
+   assert(vc != NULL);
    char *string = (char *) calloc (1,9);
    sprintf(string, "Rel  0.1.8");
    hmi_display_text(vc->hmi, 0, string);
@@ -37,16 +38,20 @@ void vc_version_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_version_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    //vc_version_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_version_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    //vc_version_show(VIEW_CONTROLLER(user_data));
 }
 
 /* VIEW CONTROLLER present method */
 
 void vc_version_present(view_controller_t *vc) {
+   assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_version_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

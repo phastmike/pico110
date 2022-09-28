@@ -28,6 +28,7 @@ vc_timeout_t *vc_timeout_new(hmi_t *hmi, radio_t *radio) {
 }
 
 void vc_timeout_show(view_controller_t *vc) {
+   assert(vc != NULL);
    char *string = (char *) calloc (1,9);
    unsigned char tot = m110_timeout_get(radio_get_m110(vc->radio));
    sprintf(string, "ToT %4d",tot * 5);
@@ -38,11 +39,13 @@ void vc_timeout_show(view_controller_t *vc) {
 /* EVENTS */
 
 void vc_timeout_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_timeout_down(VIEW_CONTROLLER(user_data)->radio);
    vc_timeout_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_timeout_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
    radio_timeout_up(VIEW_CONTROLLER(user_data)->radio);
    vc_timeout_show(VIEW_CONTROLLER(user_data));
 }
@@ -50,6 +53,8 @@ void vc_timeout_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *use
 /* VIEW CONTROLLER present method */
 
 void vc_timeout_present(view_controller_t *vc) {
+   assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi);
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_timeout_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);
