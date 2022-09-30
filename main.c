@@ -114,9 +114,7 @@ int main() {
    int vc_id = 0;
    view_mode = VMODE_FREQ;
    view_controller_present(vcs[vc_id]);
-
    char scan_enabled = false;
-  
    radio_mode_t previous_mode = RADIO_MODE_VFO;
 
    while(true) {

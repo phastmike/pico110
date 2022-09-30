@@ -389,6 +389,7 @@ void radio_radio_channel_down(radio_t *radio) {
       if (radio_channel_get_rev(rc) == REV_ON) {
          radio_channel_set_rev(rc, REV_OFF);
       }
+      // Add lower band limits here
       radio_channel_freq_rx_set(rc, radio_channel_freq_rx_get(rc) - tune_step_get_as_MHz(radio_channel_tune_step_get(rc)));
       radio_set_active_channel(radio, rc);
    }
@@ -428,6 +429,7 @@ void radio_radio_channel_up(radio_t *radio) {
       if (radio_channel_get_rev(rc) == REV_ON) {
          radio_channel_set_rev(rc, REV_OFF);
       }
+      // Add upper band limits here
       radio_channel_freq_rx_set(rc, radio_channel_freq_rx_get(rc) + tune_step_get_as_MHz(radio_channel_tune_step_get(rc)));
       radio_set_active_channel(radio, rc);
    }
