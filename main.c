@@ -35,6 +35,8 @@
 #include "vc_pll_na.h"
 #include "vc_intro.h"
 
+//#define DEBUG // uncomment for initial delay
+
 const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
 void on_i2c_addr_request(uint16_t addr, void *user_data) {
@@ -68,12 +70,14 @@ int main() {
 
    stdio_init_all();
 
-   //startup for debug
-   //Waits 10 seconds to give time to dump output to console with:
-   //cat /dev/ttyACM0
-
-   //sleep_ms(10000);
-   //printf("Start...\n");
+#ifdef DEBUG
+   /* Startup for Debug
+    * Waits 10 seconds to give time to dump output to console with:
+    * cat /dev/ttyACM0
+    */
+   sleep_ms(10000);
+   printf("Start...\n");
+#endif
 
 
    radio_t *radio = radio_new_with_defaults();
