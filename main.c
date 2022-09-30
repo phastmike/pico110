@@ -37,17 +37,6 @@
 
 const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 
-void pause_iteration(void) {
-   while (true) {
-      tight_loop_contents();
-      gpio_put(LED_PIN, 1);
-      sleep_ms(50);
-      gpio_put(LED_PIN, 0);
-      sleep_ms(50);
-      printf("\titeration...\n");
-   }
-}
-
 void on_i2c_addr_request(uint16_t addr, void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = M110(user_data);
@@ -65,7 +54,6 @@ uint8_t on_i2c_read_byte(void *user_data) {
    m110_t *m110 = M110(user_data);
    return eeprom_read_byte(m110_eeprom_get(m110));
 }
-
 
 // MAINLOOP //
 
