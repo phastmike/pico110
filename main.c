@@ -196,10 +196,5 @@ int main() {
       sleep_ms(80);
    }
 
-   /*
-   vc_txadmit_t *vcta = vc_txadmit_new(hmi, radio);
-   view_controller_present(VIEW_CONTROLLER(vcta));
-   */
-
    return 0;
 }
