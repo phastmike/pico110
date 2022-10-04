@@ -22,7 +22,9 @@ struct _vc_version_t {
 void vc_version_present(view_controller_t *vc);
 
 vc_version_t *vc_version_new(hmi_t *hmi, radio_t *radio) {
-   vc_version_t *vc_version = (vc_version_t *) view_controller_new(hmi, radio);
+   vc_version_t *vc_version = (vc_version_t *) calloc(1, sizeof(vc_version_t)); 
+   VIEW_CONTROLLER(vc_version)->hmi = hmi;
+   VIEW_CONTROLLER(vc_version)->radio = radio;
    VIEW_CONTROLLER(vc_version)->present = vc_version_present;
    return vc_version;
 }

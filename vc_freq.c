@@ -22,7 +22,9 @@ struct _vc_freq_t {
 void vc_freq_present(view_controller_t *vc);
 
 vc_freq_t *vc_freq_new(hmi_t *hmi, radio_t *radio) {
-   vc_freq_t *vc_freq = (vc_freq_t *) view_controller_new(hmi, radio);
+   vc_freq_t *vc_freq = (vc_freq_t *) calloc(1, sizeof(vc_freq_t)); 
+   VIEW_CONTROLLER(vc_freq)->hmi = hmi;
+   VIEW_CONTROLLER(vc_freq)->radio = radio;
    VIEW_CONTROLLER(vc_freq)->present = vc_freq_present;
    return vc_freq;
 }

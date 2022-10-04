@@ -22,7 +22,9 @@ struct _vc_enc_t {
 void vc_enc_present(view_controller_t *vc);
 
 vc_enc_t *vc_enc_new(hmi_t *hmi, radio_t *radio) {
-   vc_enc_t *vc_enc = (vc_enc_t *) view_controller_new(hmi, radio);
+   vc_enc_t *vc_enc = (vc_enc_t *) calloc(1, sizeof(vc_enc_t));
+   VIEW_CONTROLLER(vc_enc)->hmi = hmi;
+   VIEW_CONTROLLER(vc_enc)->radio = radio;
    VIEW_CONTROLLER(vc_enc)->present = vc_enc_present;
    return vc_enc;
 }

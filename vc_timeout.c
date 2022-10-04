@@ -22,7 +22,9 @@ struct _vc_timeout_t {
 void vc_timeout_present(view_controller_t *vc);
 
 vc_timeout_t *vc_timeout_new(hmi_t *hmi, radio_t *radio) {
-   vc_timeout_t *vc_timeout = (vc_timeout_t *) view_controller_new(hmi, radio);
+   vc_timeout_t *vc_timeout = (vc_timeout_t *) calloc(1, sizeof(vc_timeout_t)); 
+   VIEW_CONTROLLER(vc_timeout)->hmi = hmi;
+   VIEW_CONTROLLER(vc_timeout)->radio = radio;
    VIEW_CONTROLLER(vc_timeout)->present = vc_timeout_present;
    return vc_timeout;
 }

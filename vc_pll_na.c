@@ -23,7 +23,9 @@ struct _vc_pll_na_t {
 void vc_pll_na_present(view_controller_t *vc);
 
 vc_pll_na_t *vc_pll_na_new(hmi_t *hmi, radio_t *radio) {
-   vc_pll_na_t *vc_pll_na = (vc_pll_na_t *) view_controller_new(hmi, radio);
+   vc_pll_na_t *vc_pll_na = (vc_pll_na_t *) calloc(1, sizeof(vc_pll_na_t)); 
+   VIEW_CONTROLLER(vc_pll_na)->hmi = hmi;
+   VIEW_CONTROLLER(vc_pll_na)->radio = radio;
    VIEW_CONTROLLER(vc_pll_na)->present = vc_pll_na_present;
    return vc_pll_na;
 }
