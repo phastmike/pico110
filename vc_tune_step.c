@@ -16,7 +16,7 @@
 #include "view_controller.h"
 
 struct _vc_tune_step_t {
-   view_controller_t *vc;
+   view_controller_t vc;
 };
 
 void vc_tune_step_present(view_controller_t *vc);

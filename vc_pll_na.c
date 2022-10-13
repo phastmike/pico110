@@ -17,7 +17,7 @@
 #include "view_controller.h"
 
 struct _vc_pll_na_t {
-   view_controller_t *vc;
+   view_controller_t vc;
 };
 
 void vc_pll_na_present(view_controller_t *vc);

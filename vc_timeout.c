@@ -16,7 +16,7 @@
 #include "view_controller.h"
 
 struct _vc_timeout_t {
-   view_controller_t *vc;
+   view_controller_t vc;
 };
 
 void vc_timeout_present(view_controller_t *vc);

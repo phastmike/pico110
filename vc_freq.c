@@ -16,7 +16,7 @@
 #include "view_controller.h"
 
 struct _vc_freq_t {
-   view_controller_t *vc;
+   view_controller_t vc;
 };
 
 void vc_freq_present(view_controller_t *vc);

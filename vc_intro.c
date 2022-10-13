@@ -16,7 +16,7 @@
 #include "view_controller.h"
 
 struct _vc_intro_t {
-   view_controller_t *vc;
+   view_controller_t vc;
 };
 
 void vc_intro_present(view_controller_t *vc);

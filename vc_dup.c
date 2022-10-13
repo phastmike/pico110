@@ -17,7 +17,7 @@
 #include "radio_channel.h"
 
 struct _vc_dup_t {
-   view_controller_t *vc;
+   view_controller_t vc;
 };
 
 void vc_dup_present(view_controller_t *vc);
