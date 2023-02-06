@@ -145,6 +145,11 @@ int main() {
       keys = hmi_keys_scan(hmi);
 
       if (keys & HMI_KEY_1 && hmi_display_get_enabled(hmi)) {
+         if (scan_enabled) {
+            scan_enabled = false;
+            hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
+            continue;
+         }
          if (view_mode == VMODE_FREQ) {
             hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_ON); // Already set in view_controller  
             view_mode = VMODE_FUNC;
