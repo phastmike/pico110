@@ -38,7 +38,7 @@ hmi_t * hmi_new(void) {
 }
 
 void hmi_destroy(hmi_t *hmi) {
-   if (hmi == NULL) return;
+   assert(hmi != NULL);
 
    for (int i = 0; i < HMI_NUMBER_OF_KEYS; i++) {
       hmi_key_destroy(hmi->key[i]);
