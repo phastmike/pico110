@@ -1,5 +1,7 @@
 # M110 MOD
 
+![pico110](images/pico110.png "Pico110 prototype 1")
+
 - VFO Mode
 - Memory Mode (how)
 
