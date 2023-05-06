@@ -40,8 +40,6 @@ void              radio_set_active_channel(radio_t *radio, radio_channel_t *radi
 radio_mode_t      radio_get_mode(radio_t *radio);
 void              radio_set_mode(radio_t *radio, radio_mode_t mode);
 void              radio_commit_radio_channel(radio_t *radio, radio_channel_t *radio_channel);
-ctcss_t *         radio_get_ctcss(radio_t *radio);
-void              radio_set_ctcss(radio_t *radio, double ctcss);
 char *            radio_tune_step_get(radio_t *radio);
 void              radio_tune_step_down(radio_t *radio);
 void              radio_tune_step_up(radio_t *radio);

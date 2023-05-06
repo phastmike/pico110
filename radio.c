@@ -143,11 +143,7 @@ void radio_set_active_channel(radio_t *radio, radio_channel_t *radio_channel) {
    assert(radio != NULL);
    assert(radio_channel != NULL);
 
-   //ctcss_on_changed_disconnect(radio_channel_ctcss_rx_get(radio_get_active_channel(radio)));
-   //ctcss_on_changed_disconnect(radio_channel_ctcss_tx_get(radio_get_active_channel(radio)));
-
    radio->ch_ptr = radio_channel;
-
    radio_commit_radio_channel(radio, radio_channel);
 }
 
@@ -204,53 +200,6 @@ void radio_commit_radio_channel(radio_t *radio, radio_channel_t *radio_channel) 
    // power
 }
 
-ctcss_t *radio_get_ctcss(radio_t *radio) {
-   assert(radio != NULL);
-
-   return radio_channel_ctcss_rx_get(radio_get_active_channel(radio));
-
-   /* Why only RX? */
-   /*
-   switch (radio->mode) {
-      case RADIO_MODE_VFO:
-         return radio_channel_ctcss_rx_get(radio->vfo);
-      case RADIO_MODE_MEMORY:
-         return radio_channel_ctcss_rx_get(memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
-      default:
-         break;
-   }
-   */
-
-   return NULL;
-}
-
-void radio_set_ctcss(radio_t *radio, double ctcss) {
-   assert(radio != NULL);
-
-   /*
-   switch (radio->mode) {
-      case RADIO_MODE_VFO:
-         return radio_channel_ctcss_rx_set( rx_get(radio->vfo);
-      case RADIO_MODE_MEMORY:
-         return radio_channel_ctcss_rx_get(memory_channel_get_radio_channel(radio->memory[radio->memory_selected]));
-      default:
-         break;
-   }
-
-   return NULL;
-   */
-
-   // Why all are set to the same value
-
-
-   m110_t *m110 = radio_get_m110(radio);
-   m110_ctcss_rx_set(m110, 1, ctcss);
-   m110_ctcss_rx_set(m110, 2, ctcss);
-   m110_ctcss_tx_set(m110, 1, ctcss);
-   m110_ctcss_tx_set(m110, 2, ctcss);
-//   radio_channel_ctcss_rx_set
-}
-
 char *radio_tune_step_get(radio_t *radio) {
    assert(radio != NULL);
    return tune_step_get_as_string(radio_channel_tune_step_get(radio->vfo));
@@ -295,7 +244,6 @@ void radio_rekey_up(radio_t *radio) {
 
 void radio_tx_admit_down(radio_t *radio) {
    assert(radio != NULL);
-   //tx_admit_t txa = m110_tx_admit_get(radio_get_m110(radio), 1);
    radio_channel_t *rc = radio_get_active_channel(radio);
    tx_admit_t txa = radio_channel_tx_admit_get(rc);
 
@@ -315,9 +263,6 @@ void radio_tx_admit_down(radio_t *radio) {
       default:
          return;
    }
-
-   //m110_tx_admit_set(radio_get_m110(radio), 1, txa);
-   //m110_tx_admit_set(radio_get_m110(radio), 2, txa);
 
    radio_channel_tx_admit_set(rc, txa);
    radio_set_active_channel(radio, rc);
@@ -325,7 +270,6 @@ void radio_tx_admit_down(radio_t *radio) {
 
 void radio_tx_admit_up(radio_t *radio) {
    assert(radio != NULL);
-   //tx_admit_t txa = m110_tx_admit_get(radio_get_m110(radio), 1);
    radio_channel_t *rc = radio_get_active_channel(radio);
    tx_admit_t txa = radio_channel_tx_admit_get(rc);
    
@@ -346,9 +290,6 @@ void radio_tx_admit_up(radio_t *radio) {
          return;
    }
 
-   //m110_tx_admit_set(radio_get_m110(radio), 1, txa);
-   //m110_tx_admit_set(radio_get_m110(radio), 2, txa);
-   
    radio_channel_tx_admit_set(rc, txa);
    radio_set_active_channel(radio, rc);
 }
