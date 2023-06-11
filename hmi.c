@@ -19,7 +19,6 @@ struct _hmi_t {
    tm1638_t       *  tm1638;
    unsigned char     led_status;
    unsigned char     key_status;
-   char           *  display_status;
    hmi_key_t      *  key[HMI_NUMBER_OF_KEYS];
 };
 
@@ -29,7 +28,6 @@ hmi_t * hmi_new(void) {
    hmi->tm1638 = tm1638_new(1, 2, 3, 1);
    hmi->led_status = 0x0;
    hmi->key_status = 0x0;
-   hmi->display_status = NULL;   // redundant
    for (int i = 0; i < HMI_NUMBER_OF_KEYS; i++) {
       hmi->key[i] = hmi_key_new((hmi_key_id_t) (1 << i));
    }

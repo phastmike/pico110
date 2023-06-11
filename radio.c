@@ -21,6 +21,7 @@ struct _radio_t {
    radio_mode_t mode;
    unsigned char memory_selected;
    memory_channel_t *memory[RADIO_NUMBER_OF_CHANNELS];
+   bool scan_enabled;
 };
 
 radio_t *radio_new(void) {
@@ -112,6 +113,8 @@ radio_t *radio_new_with_defaults(void) {
    // Defaults to VFO;
    // also commits to m110
    radio_set_active_channel(radio, radio->vfo); 
+
+   radio->scan_enabled = false;
 
    return radio;
 }
@@ -402,6 +405,17 @@ void radio_dup_up(radio_t *radio) {
    }
 
    radio_channel_dup_set(radio->ch_ptr, dup);
+}
+
+
+void radio_scan_set(radio_t *radio, bool scan) {
+   assert (radio != NULL);
+   radio->scan_enabled = scan;
+}
+
+bool radio_scan_get(radio_t *radio) {
+   assert (radio != NULL);
+   return radio->scan_enabled; 
 }
 
 void radio_get_size(void) {

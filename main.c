@@ -114,19 +114,19 @@ int main() {
    int vc_id = 0;
    view_mode = VMODE_FREQ;
    view_controller_present(vcs[vc_id]);
-   char scan_enabled = false;
+   //char scan_enabled = false;
    radio_mode_t previous_mode = RADIO_MODE_VFO;
 
    while(true) {
       tight_loop_contents();
-      gpio_put(LED_PIN, 1);
-      sleep_ms(80);
+      //gpio_put(LED_PIN, 1);
+      //sleep_ms(80);
       
       //
       // Needs some time control
       // and control for scan press and key to stop
       //
-      if (scan_enabled && view_mode == VMODE_FREQ) {
+      if (radio_scan_get(radio) && view_mode == VMODE_FREQ) {
          // VFO + MR
          // FIXME: Needs border limit control
          //radio_radio_channel_up(radio);
@@ -138,24 +138,26 @@ int main() {
       } 
 
       if (radio_get_mode(radio) != RADIO_MODE_MEMORY) {
-         scan_enabled = false;
+         radio_scan_set(radio, false);
          hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
       }
 
       keys = hmi_keys_scan(hmi);
 
       if (keys & HMI_KEY_1 && hmi_display_get_enabled(hmi)) {
+         /*
          if (scan_enabled) {
             scan_enabled = false;
             hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
             continue;
          }
+         */
          if (view_mode == VMODE_FREQ) {
             hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_ON); // Already set in view_controller  
             view_mode = VMODE_FUNC;
             previous_mode = radio_get_mode(radio);
             radio_set_mode(radio, RADIO_MODE_FUNC); 
-            scan_enabled = false;
+            radio_scan_set(radio, false);
             hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
          } else if (view_mode == VMODE_FUNC) {
             if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) {
@@ -174,11 +176,11 @@ int main() {
          view_mode = VMODE_FREQ;
          radio_set_mode(radio, previous_mode); 
          hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
-         scan_enabled = false;
+         radio_scan_set(radio, false);
          hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
       } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && radio_get_mode(radio) == RADIO_MODE_MEMORY) {
-         scan_enabled = !scan_enabled;
-         hmi_led_set(hmi, HMI_LED_SCAN, scan_enabled);
+         radio_scan_set(radio, !radio_scan_get(radio));
+         hmi_led_set(hmi, HMI_LED_SCAN, radio_scan_get(radio));
       } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FREQ && vc_id == 0) {
          radio_channel_t *rc = radio_get_active_channel(radio);
          radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
@@ -197,7 +199,7 @@ int main() {
         view_controller_present(vcs[vc_id]);
       }
 
-      gpio_put(LED_PIN, 0);
+      //gpio_put(LED_PIN, 0);
       sleep_ms(80);
    }
 

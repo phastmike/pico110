@@ -122,12 +122,26 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
+
+void vc_freq_on_press_scan_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
+
+   radio_t *radio = RADIO(VIEW_CONTROLLER(user_data)->radio);
+
+   radio_scan_set(radio, !radio_scan_get(radio));
+   hmi_led_set(HMI(VIEW_CONTROLLER(user_data)->hmi), HMI_LED_SCAN, !radio_scan_get(radio));  // HMI_LED_OFF
+}
+
 /* VIEW CONTROLLER present method */
 
 void vc_freq_present(view_controller_t *vc) {
    assert(vc != NULL);
    hmi_keys_disconnect(vc->hmi);
    //hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
+
+   hmi_key_t *okey = hmi_get_key(vc->hmi, HMI_KEY_1);
+   hmi_key_on_press_event_connect(okey, vc_freq_on_press_scan_scan_event, vc);
+
    hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);
    key = hmi_get_key(vc->hmi, HMI_KEY_8);

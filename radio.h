@@ -53,6 +53,8 @@ void              radio_radio_channel_down(radio_t *radio);
 void              radio_radio_channel_up(radio_t *radio);
 void              radio_dup_down(radio_t *radio);
 void              radio_dup_up(radio_t *radio);
+void              radio_scan_set(radio_t *radio, bool scan);
+bool              radio_scan_get(radio_t *radio);
 void              radio_get_size(void);
 
 #ifdef __cplusplus
