@@ -114,7 +114,6 @@ int main() {
    int vc_id = 0;
    view_mode = VMODE_FREQ;
    view_controller_present(vcs[vc_id]);
-   //char scan_enabled = false;
    radio_mode_t previous_mode = RADIO_MODE_VFO;
 
    while(true) {
@@ -178,10 +177,10 @@ int main() {
          hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
          radio_scan_set(radio, false);
          hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
-      } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && radio_get_mode(radio) == RADIO_MODE_MEMORY) {
+      } /*else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && radio_get_mode(radio) == RADIO_MODE_MEMORY) {
          radio_scan_set(radio, !radio_scan_get(radio));
          hmi_led_set(hmi, HMI_LED_SCAN, radio_scan_get(radio));
-      } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FREQ && vc_id == 0) {
+      }i*/ else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FREQ && vc_id == 0) {
          radio_channel_t *rc = radio_get_active_channel(radio);
          radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
          radio_set_active_channel(radio, rc);
