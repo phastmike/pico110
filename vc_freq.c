@@ -133,6 +133,17 @@ void vc_freq_on_press_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user
    if (radio_get_mode(radio) != RADIO_MODE_MEMORY) return;
    radio_scan_set(radio, !radio_scan_get(radio));
    hmi_led_set(HMI(VIEW_CONTROLLER(user_data)->hmi), HMI_LED_SCAN, radio_scan_get(radio));  // HMI_LED_OFF
+
+      /*
+       * else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC) {
+         vc_id = 0;
+         view_controller_present(vcs[vc_id]);
+         view_mode = VMODE_FREQ;
+         radio_set_mode(radio, previous_mode); 
+         hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
+         radio_scan_set(radio, false);
+         hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
+      */
 }
 
 /* VIEW CONTROLLER present method */

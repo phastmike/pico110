@@ -169,7 +169,7 @@ int main() {
             }
             view_controller_present(vcs[vc_id]);
          }
-      } else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC) {
+      } /*else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC) {
          vc_id = 0;
          view_controller_present(vcs[vc_id]);
          view_mode = VMODE_FREQ;
@@ -177,7 +177,7 @@ int main() {
          hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
          radio_scan_set(radio, false);
          hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
-      } /*else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && radio_get_mode(radio) == RADIO_MODE_MEMORY) {
+      } *//*else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && radio_get_mode(radio) == RADIO_MODE_MEMORY) {
          radio_scan_set(radio, !radio_scan_get(radio));
          hmi_led_set(hmi, HMI_LED_SCAN, radio_scan_get(radio));
       }i*/ else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FREQ && vc_id == 0) {
