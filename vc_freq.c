@@ -17,6 +17,7 @@
 
 struct _vc_freq_t {
    view_controller_t vc;
+   bool func_enabled;
 };
 
 void vc_freq_present(view_controller_t *vc);
@@ -26,6 +27,7 @@ vc_freq_t *vc_freq_new(hmi_t *hmi, radio_t *radio) {
    VIEW_CONTROLLER(vc_freq)->hmi = hmi;
    VIEW_CONTROLLER(vc_freq)->radio = radio;
    VIEW_CONTROLLER(vc_freq)->present = vc_freq_present;
+   vc_freq->func_enabled = false;
    return vc_freq;
 }
 
@@ -61,6 +63,7 @@ void vc_freq_show(view_controller_t *vc) {
    }
 
    hmi_led_set(vc->hmi, HMI_LED_REV, radio_channel_get_rev(rc) ? HMI_LED_ON : HMI_LED_OFF);
+   hmi_led_set(vc->hmi, HMI_LED_FMENU, ((vc_freq_t *)vc)->func_enabled ? HMI_LED_ON : HMI_LED_OFF);
 
    unsigned char mode = radio_get_mode(vc->radio);
    switch(mode) {
@@ -74,9 +77,41 @@ void vc_freq_show(view_controller_t *vc) {
          //hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_ON);
          break;
    }
+
+   
+   vc_freq_t * view = (vc_freq_t *) vc;
+   
+   if (view->func_enabled) {
+      radio_scan_set(vc->radio, false);
+      hmi_led_set(vc->hmi, HMI_LED_SCAN, HMI_LED_OFF);
+   }
+
+   /*
+   if (view->func_enabled == VMODE_FREQ) {
+      hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_ON); // Already set in view_controller  
+      view_mode = VMODE_FUNC;
+      previous_mode = radio_get_mode(radio);
+      radio_set_mode(radio, RADIO_MODE_FUNC); 
+      radio_scan_set(radio, false);
+      hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
+   } else if (view_mode == VMODE_FUNC) {
+      if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) {
+         vc_id = 0;
+         view_mode = VMODE_FREQ;
+         radio_set_mode(radio, previous_mode); 
+         hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
+      } else {
+         vc_id += 1;
+      }
+      view_controller_present(vcs[vc_id]);
+   }
+   */
 }
 
 /* EVENTS */
+/* FIXME: The following actions should check if PTT is active
+ * and return if so as these are not allowed while transmitting
+ */
 
 void vc_freq_on_press_vm_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
@@ -146,6 +181,22 @@ void vc_freq_on_press_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user
       */
 }
 
+void vc_freq_on_press_fmenu_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+   assert(key != NULL && user_data != NULL);
+
+   vc_freq_t *view = (vc_freq_t *) user_data;
+   view->func_enabled = ! view->func_enabled;
+
+   vc_freq_show(VIEW_CONTROLLER(user_data));
+}
+
+void vc_freq_on_press_power_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+         radio_t *radio = VIEW_CONTROLLER(user_data)->radio;
+         radio_channel_t *rc = radio_get_active_channel(radio);
+         radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
+         radio_set_active_channel(radio, rc);
+         hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_LOW, radio_channel_low_power_get(rc) ? HMI_LED_ON : HMI_LED_OFF);
+}
 /* VIEW CONTROLLER present method */
 
 void vc_freq_present(view_controller_t *vc) {
@@ -153,16 +204,29 @@ void vc_freq_present(view_controller_t *vc) {
    hmi_keys_disconnect(vc->hmi);
    //hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
 
-   hmi_key_t *okey = hmi_get_key(vc->hmi, HMI_KEY_2);
-   hmi_key_on_release_event_connect(okey, vc_freq_on_press_scan_event, vc);
+   hmi_key_t *key;
 
-   hmi_key_t *key = hmi_get_key(vc->hmi, HMI_KEY_7);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);
-   key = hmi_get_key(vc->hmi, HMI_KEY_8);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, vc);
+   key = hmi_get_key(vc->hmi, HMI_KEY_1);
+   hmi_key_on_release_event_connect(key, vc_freq_on_press_fmenu_event, vc);
+
+   key = hmi_get_key(vc->hmi, HMI_KEY_2);
+   hmi_key_on_release_event_connect(key, vc_freq_on_press_scan_event, vc);
+
    key = hmi_get_key(vc->hmi, HMI_KEY_3);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_vm_event, vc);
+
+
+   key = hmi_get_key(vc->hmi, HMI_KEY_4);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_power_event, vc);
+
    key = hmi_get_key(vc->hmi, HMI_KEY_6);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_rev_event, vc);
+
+   key = hmi_get_key(vc->hmi, HMI_KEY_7);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);
+
+   key = hmi_get_key(vc->hmi, HMI_KEY_8);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, vc);
+
    vc_freq_show(vc);
 }
