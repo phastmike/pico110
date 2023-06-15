@@ -25,18 +25,20 @@ extern "C" {
 
 typedef struct _view_controller_t view_controller_t;
 typedef void (*view_controller_present_cb_t)(view_controller_t *vc);
+typedef void (*view_controller_exit_with_key_cb_t)(view_controller_t *vc, hmi_key_t *key);
 
 struct _view_controller_t {
    hmi_t *    hmi;
    radio_t *  radio;
    
    void (*present)(view_controller_t *vc);
+   void (*exit_with_key)(view_controller_t *vc, hmi_key_t *key);
 };
 
 view_controller_t *  view_controller_new(hmi_t *hmi, radio_t *radio);
 void                 view_controller_destroy(view_controller_t *vc);
 void                 view_controller_present(view_controller_t *vc);
-
+void                 view_controller_exit_with_key_connect(view_controller_t *vc, view_controller_exit_with_key_cb_t callback); 
 
 #ifdef __cplusplus
 }

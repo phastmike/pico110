@@ -19,6 +19,7 @@ view_controller_t *view_controller_new(hmi_t *hmi, radio_t *radio) {
    vc->hmi = hmi;
    vc->radio = radio;
    vc->present = NULL;
+   vc->exit_with_key = NULL;
 
    return vc;
 }
@@ -29,7 +30,11 @@ void view_controller_destroy(view_controller_t *vc) {
 }
 
 void view_controller_present(view_controller_t *vc) {
-   if (vc != NULL) {
-      if (vc->present) vc->present(vc);
-   }
+   assert(vc != NULL);
+   if (vc->present) vc->present(vc);
+}
+
+void view_controller_exit_with_key_connect(view_controller_t *vc, view_controller_exit_with_key_cb_t callback) {
+   assert(vc != NULL);
+   vc->exit_with_key = callback;
 }

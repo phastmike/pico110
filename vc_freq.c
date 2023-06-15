@@ -164,6 +164,14 @@ void vc_freq_on_press_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user
    hmi_t *hmi = VIEW_CONTROLLER(user_data)->hmi;
    if (!hmi_display_get_enabled(hmi)) return;
 
+   vc_freq_t *view = (vc_freq_t *) user_data;
+
+   if (view->func_enabled) {
+      view->func_enabled = false;
+      vc_freq_show(VIEW_CONTROLLER(user_data));
+      return;
+   }
+
    radio_t *radio = RADIO(VIEW_CONTROLLER(user_data)->radio);
    if (radio_get_mode(radio) != RADIO_MODE_MEMORY) return;
    radio_scan_set(radio, !radio_scan_get(radio));
@@ -185,9 +193,15 @@ void vc_freq_on_press_fmenu_event(hmi_key_t *key, hmi_key_id_t key_id, void *use
    assert(key != NULL && user_data != NULL);
 
    vc_freq_t *view = (vc_freq_t *) user_data;
-   view->func_enabled = ! view->func_enabled;
+   view_controller_t *vc = VIEW_CONTROLLER(user_data);
 
-   vc_freq_show(VIEW_CONTROLLER(user_data));
+   if (view->func_enabled) {
+      printf("vc_freq_on_press_fmenu_event :: exit with key 1\n");
+      if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   } else {
+      view->func_enabled = ! view->func_enabled;
+      vc_freq_show(VIEW_CONTROLLER(user_data));
+   }
 }
 
 void vc_freq_on_press_power_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
