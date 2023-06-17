@@ -157,7 +157,6 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
-
 void vc_freq_on_press_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
 
@@ -211,6 +210,7 @@ void vc_freq_on_press_power_event(hmi_key_t *key, hmi_key_id_t key_id, void *use
          radio_set_active_channel(radio, rc);
          hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_LOW, radio_channel_low_power_get(rc) ? HMI_LED_ON : HMI_LED_OFF);
 }
+
 /* VIEW CONTROLLER present method */
 
 void vc_freq_present(view_controller_t *vc) {
@@ -228,7 +228,6 @@ void vc_freq_present(view_controller_t *vc) {
 
    key = hmi_get_key(vc->hmi, HMI_KEY_3);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_vm_event, vc);
-
 
    key = hmi_get_key(vc->hmi, HMI_KEY_4);
    hmi_key_on_press_event_connect(key, vc_freq_on_press_power_event, vc);

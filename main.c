@@ -73,7 +73,7 @@ void on_freq_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1: 
-         view_controller_t *view = vcs[++vc_id];
+         view_controller_t *view = vcs[1];
          view_controller_present(view);
          break;
       default:
@@ -88,11 +88,204 @@ void on_brightness_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
-         view = vcs[++vc_id];
+         view = vcs[2];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
-         view = vcs[--vc_id];
+         view = vcs[0];
+         //NEED SETTER & GETTER
+         //((vc_freq_t *) vc)->func_enabled = false;
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_apo_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[3];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_tune_step_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[4];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_enc_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[5];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+
+void on_dec_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[6];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_timeout_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[7];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_rekey_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[8];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_txadmit_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[9];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_dup_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[10];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_shift_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[11];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
+         view_controller_present(view);
+         break;
+      default:
+         break;
+   }
+}
+
+void on_version_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL && key != NULL);
+
+   view_controller_t *view;
+
+   switch(hmi_key_get_id(key)) {
+      case HMI_KEY_1:
+         view = vcs[1];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_2:
+         view = vcs[0];
          view_controller_present(view);
          break;
       default:
@@ -157,84 +350,33 @@ int main() {
 
    view_controller_exit_with_key_connect(vcs[0], on_freq_exit_with_key);   
    view_controller_exit_with_key_connect(vcs[1], on_brightness_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[2], on_apo_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[3], on_tune_step_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[4], on_enc_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[5], on_dec_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[6], on_timeout_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[7], on_rekey_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[8], on_txadmit_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[9], on_dup_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[10], on_shift_exit_with_key); 
+   view_controller_exit_with_key_connect(vcs[11], on_version_exit_with_key); 
 
    while(true) {
       tight_loop_contents();
-      //gpio_put(LED_PIN, 1);
+      gpio_put(LED_PIN, 1);
       //sleep_ms(80);
       
       if (radio_scan_get(radio)) {
-         // FIXME: Needs border limit control
-         //radio_radio_channel_up(radio);
+         // FIXME: Needs border limit control if VFO mode
          // MR ONLY
-         if (radio_get_mode(radio) == RADIO_MODE_MEMORY) {
-            radio_radio_channel_up(radio);
-            sleep_ms(80);
-         }
+         radio_radio_channel_up(radio);
+         view_controller_present(VIEW_CONTROLLER(vcs[0]));
+         sleep_ms(200);
       } 
-
-      if (radio_get_mode(radio) != RADIO_MODE_MEMORY) {
-         radio_scan_set(radio, false);
-         hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
-      }
 
       keys = hmi_keys_scan(hmi);
 
-      /*
-      if (keys & HMI_KEY_1 && hmi_display_get_enabled(hmi)) {
-         if (view_mode == VMODE_FREQ) {
-            hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_ON); // Already set in view_controller  
-            view_mode = VMODE_FUNC;
-            previous_mode = radio_get_mode(radio);
-            radio_set_mode(radio, RADIO_MODE_FUNC); 
-            radio_scan_set(radio, false);
-            hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
-         } else if (view_mode == VMODE_FUNC) {
-            if (vc_id == (sizeof(vcs)/sizeof(view_controller_t *)) - 1) {
-               vc_id = 0;
-               view_mode = VMODE_FREQ;
-               radio_set_mode(radio, previous_mode); 
-               hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
-            } else {
-               vc_id += 1;
-            }
-            view_controller_present(vcs[vc_id]);
-         }
-         
-      } */ /*else*/ /*if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC) {
-         vc_id = 0;
-         view_controller_present(vcs[vc_id]);
-         view_mode = VMODE_FREQ;
-         radio_set_mode(radio, previous_mode); 
-         hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
-         radio_scan_set(radio, false);
-         hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
-      }*/ /*else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && radio_get_mode(radio) == RADIO_MODE_MEMORY) {
-         radio_scan_set(radio, !radio_scan_get(radio));
-         hmi_led_set(hmi, HMI_LED_SCAN, radio_scan_get(radio));
-      } else if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FREQ && vc_id == 0) {
-         radio_channel_t *rc = radio_get_active_channel(radio);
-         radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
-         radio_set_active_channel(radio, rc);
-         hmi_led_set(hmi, HMI_LED_LOW, radio_channel_low_power_get(rc) ? HMI_LED_ON : HMI_LED_OFF);
-      } *//*else*/ 
-      
-      /*
-      if (keys & HMI_KEY_4 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0) {
-        vc_id = 3;
-        view_controller_present(vcs_array[vc_id]);
-      } else if (keys & HMI_KEY_5 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0) {
-        vc_id = 4;
-        view_controller_present(vcs_array[vc_id]);
-      } else if (keys & HMI_KEY_6 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC && vc_id == 0) {
-        vc_id = 9;
-        view_controller_present(vcs_array[vc_id]);
-      } else {
-        view_controller_present(vcs_array[vc_id]);
-      }
-      */
-
-      //gpio_put(LED_PIN, 0);
+      gpio_put(LED_PIN, 0);
       //sleep_ms(80);
    }
 
