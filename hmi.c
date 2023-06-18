@@ -96,7 +96,7 @@ unsigned char hmi_keys_scan(hmi_t *hmi) {
 
    // Do some debounce
    keys_read = tm1638_keys(hmi->tm1638);
-   sleep_ms(50);
+   sleep_ms(35);
    if (keys_read == tm1638_keys(hmi->tm1638)) {
       for (int i = 0; i < HMI_NUMBER_OF_KEYS; i++) {
          hmi_key_set_active(hmi->key[i], (keys_read >> i) & 1);

@@ -70,10 +70,24 @@ unsigned int         vcs_size;
 
 void on_freq_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
    assert(vc != NULL);
+   
+   view_controller_t *view;
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1: 
-         view_controller_t *view = vcs[1];
+         view = vcs[1];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_4:
+         view = vcs[3];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_5:
+         view = vcs[4];
+         view_controller_present(view);
+         break;
+      case HMI_KEY_6:
+         view = vcs[9];
          view_controller_present(view);
          break;
       default:
@@ -363,7 +377,7 @@ int main() {
 
    while(true) {
       tight_loop_contents();
-      gpio_put(LED_PIN, 1);
+      //gpio_put(LED_PIN, 1);
       //sleep_ms(80);
       
       if (radio_scan_get(radio)) {
@@ -376,7 +390,7 @@ int main() {
 
       keys = hmi_keys_scan(hmi);
 
-      gpio_put(LED_PIN, 0);
+      //gpio_put(LED_PIN, 0);
       //sleep_ms(80);
    }
 

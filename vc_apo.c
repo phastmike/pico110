@@ -50,8 +50,13 @@ void vc_apo_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_da
    hmi_display_set_enabled(VIEW_CONTROLLER(user_data)->hmi, !hmi_display_get_enabled(VIEW_CONTROLLER(user_data)->hmi));
 }
 
-void vc_apo_on_press_scan_back(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
+void vc_apo_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
+
+   hmi_t *hmi = HMI(VIEW_CONTROLLER(user_data)->hmi);
+
+   if (!hmi_display_get_enabled(hmi)) return;
+
    view_controller_t *vc = VIEW_CONTROLLER(user_data);
    if (vc->exit_with_key) vc->exit_with_key(vc, key);
 }
@@ -65,10 +70,10 @@ void vc_apo_present(view_controller_t *vc) {
    hmi_key_t *key;
 
    key = hmi_get_key(vc->hmi, HMI_KEY_1);
-   hmi_key_on_release_event_connect(key, vc_apo_on_press_scan_back, vc);
+   hmi_key_on_release_event_connect(key, vc_apo_on_press_generic_exit, vc);
 
    key = hmi_get_key(vc->hmi, HMI_KEY_2);
-   hmi_key_on_release_event_connect(key, vc_apo_on_press_scan_back, vc);
+   hmi_key_on_release_event_connect(key, vc_apo_on_press_generic_exit, vc);
 
    key = hmi_get_key(vc->hmi, HMI_KEY_7);
    hmi_key_on_press_event_connect(key, vc_apo_on_press_down_event, vc);
