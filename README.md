@@ -56,6 +56,30 @@ modules, able to indicate the frequency but with limited text representation.
 
 - Need a way to open Squelch, hw
 
+## Build
+
+To build the firmware you **must install pico-sdk**. After installing the raspberry
+pi pico C/C++ SDK, you need to, from this project path:
+
+- Create a build folder, eg: build
+- Remove it first if it exists
+- cd into the build folder
+- export the sdk path 
+- invoke cmake pointing to the project CMakeLists.txt
+- invoke make
+
+for example:
+
+```
+$ cd ~/pico/pico110/
+$ rm -rf build
+$ mkdir build
+$ cd build
+$ export PICO_SDK_PATH=../../pico-sdk
+$ cmake ..
+$ make -j4
+```
+
 ## Links
 
 ### I2C
