@@ -96,14 +96,21 @@ unsigned char hmi_keys_scan(hmi_t *hmi) {
 
    // Do some debounce
    keys_read = tm1638_keys(hmi->tm1638);
-   sleep_ms(35);
-   if (keys_read == tm1638_keys(hmi->tm1638)) {
+   
+   if (keys_read == hmi->key_status) return keys_read;
+
+   sleep_ms(25);
+
+   keys_read = tm1638_keys(hmi->tm1638);
+
+   if (keys_read != hmi->key_status) {
       for (int i = 0; i < HMI_NUMBER_OF_KEYS; i++) {
          hmi_key_set_active(hmi->key[i], (keys_read >> i) & 1);
       }
+      hmi->key_status = keys_read;
+   }
 
-      return keys_read;
-   } else return 0;
+   return keys_read;
 }
 
 void hmi_led_set(hmi_t *hmi, unsigned char pos, hmi_led_status_t status) {

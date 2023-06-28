@@ -391,7 +391,7 @@ int main() {
       keys = hmi_keys_scan(hmi);
 
       //gpio_put(LED_PIN, 0);
-      //sleep_ms(80);
+      //sleep_ms(10);
    }
 
    return 0;
