@@ -6,17 +6,18 @@ A Motorola Radius M110 mod / modification
 
 ## Description
 
-This mood applies to the 2 channel Motorola Radius M110 radios and consists in 
+This mod applies to the 2 channel Motorola Radius M110 radios and consists in 
 the replacement of the eeprom by a microcontroller capable of behaving like a i2c
 slave simulating a serial i2c 24c01 eeprom. 
 
-Everytime the user switches channel the radio pulls the channel from the eeprom.
+Everytime the user switches channel the radio "pulls" the channel from the eeprom.
 
 As a consequence, if we operate on top of the eeprom data and electronically switch
-channels, triggering a new read and committment in the internal organics of the frequency
-synthesis, we, e.g., can make a new frontal and with very few changes on the equipment
-, preservaing it's origin by swapping the frontal and the eeprom.
+channels, triggering a new read in the internal organics of the frequency
+synthesis.
 
+Then, we can make a new frontal with very few changes on the equipment,
+preserving it's original status.
 
 ## Prototyping
 
