@@ -62,7 +62,7 @@ and pressing key 2 will exit F/MENU mode.
 
 ### Missing
 
-- Memories (Name and Frequency)
+- Memories (Name ~~and Frequency~~)
 - How to memorize, Edit, Remove (CRUD)
 - Dual VFO with same/distinct steps etc.
 - Mem to vfo
