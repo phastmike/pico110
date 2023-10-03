@@ -1,6 +1,6 @@
 # Pico 110 
 
-![pico110](images/pico110.png "Pico110 prototype 1")
+![pico110](doc/images/pico110.png "Pico110 prototype 1")
 
 A Motorola Radius M110 mod / modification
 
@@ -45,6 +45,20 @@ modules, able to indicate the frequency but with limited text representation.
 - Display Brightness **
 - Screen On/Off (Or a clear so we can keep Leds) ** 
 - Scanning (just memories, wip)
+
+### Visual representation
+
+![Menu](doc/images/menu.png "Pico110 prototype 1")
+
+This is a visual representation of the menu system. The unit boots and shows the 
+frequency, either VFO or Memory - TBD. Then, by pressing the keys we can operate the 
+as shown. The keys have double function, a normal one and another when FUNC key was activated.
+
+For example, by pressing key 1 (MENU/NEXT) the radio enters in MENU mode (F Mode) which will
+be identified by the first led. Any other presses on the same key, will iterate over the menu.
+
+When in this mode, pressing keys as indicated, will allow a jump to the corresponding menu
+and pressing key 2 will exit F/MENU mode.
 
 ### Missing
 
