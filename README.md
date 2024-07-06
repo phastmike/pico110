@@ -25,7 +25,7 @@ Based on this idea and taking in account some compromises, I proceeded to use a 
 pi pico board and a TM1638 board with 8 buttons and 8 leds. The drawback is the use of polling
 for the buttons. A TFT display and some interrupts for keys would suit better.
 
-With these modulesi we're able to indicate the frequency but with limited text representation.
+With these modules we're able to indicate the frequency but with limited text representation.
 
 ## Menus / Features
 
