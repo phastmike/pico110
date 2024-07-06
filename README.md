@@ -25,8 +25,7 @@ Based on this idea and taking in account some compromises, I proceeded to use a 
 pi pico board and a TM1638 board with 8 buttons and 8 leds. The drawback is the use of polling
 for the buttons. A TFT display and some interrupts for keys would suit better.
 
-We will be using a TM1638 board with 8 push buttons, 8 leds and 8x BCD 7 segment
-modules, able to indicate the frequency but with limited text representation.
+With these modulesi we're able to indicate the frequency but with limited text representation.
 
 ## Menus / Features
 
@@ -51,8 +50,8 @@ modules, able to indicate the frequency but with limited text representation.
 ![Menu](doc/images/menu.png "Pico110 prototype 1")
 
 This is a visual representation of the menu system. The unit boots and shows the 
-frequency, either VFO or Memory - TBD. Then, by pressing the keys we can operate the 
-as shown. The keys have double function, a normal one and another when FUNC key was activated.
+frequency, either VFO or Memory. Then, by pressing the keys we can operate the radio 
+as shown. The keys have a double function, a normal one and another when FUNC key was activated.
 
 For example, by pressing key 1 (MENU/NEXT) the radio enters in MENU mode (F Mode) which will
 be identified by the first led. Any other presses on the same key, will iterate over the menu.
@@ -62,14 +61,15 @@ and pressing key 2 will exit F/MENU mode.
 
 ### Missing
 
-- Memories (Name ~~and Frequency~~)
+- Memories Name (Or Memory nr - no text - wip)
 - How to memorize, Edit, Remove (CRUD)
-- Dual VFO with same/distinct steps etc.
-- Mem to vfo
+- Dual VFO with same/distinct steps etc. (Needed?)
+- Mem to vfo (Operate a memory channel as a VFO. How to)
 
 ### New control head
 
 - Need a way to open Squelch, hw
+- 3D printed case
 
 ## Build
 
