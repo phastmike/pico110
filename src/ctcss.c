@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "ctcss.h"
 
 struct _ctcss_t {
@@ -54,12 +55,8 @@ static double ctcss_tones[] = {
 
 ctcss_t * ctcss_new() {
    ctcss_t *ctcss = calloc(1, sizeof(ctcss_t));
-
-   if (ctcss == NULL) return NULL;
-   
-   ctcss->index = CTCSS_OFF;
-   ctcss->changed = NULL;
-   ctcss->changed_user_data = NULL;
+   assert(ctcss != NULL);
+   ctcss_init(ctcss);
 
    return ctcss;
 }
@@ -71,8 +68,16 @@ ctcss_t * ctcss_new_with_tone(ctcss_tone_t tone) {
    return ctcss;
 }
 
+void ctcss_init(ctcss_t *ctcss) {
+   assert(ctcss != NULL);
+   ctcss->index = CTCSS_OFF;
+   ctcss->changed = NULL;
+   ctcss->changed_user_data = NULL;
+}
+
 void ctcss_destroy(ctcss_t *ctcss) {
-   if (ctcss != NULL) free(ctcss);
+   assert(ctcss != NULL);
+   free(ctcss);
 }
 
 char ctcss_get_index(ctcss_t *ctcss) {

@@ -52,6 +52,7 @@ typedef void (*ctcss_changed_cb_t)(ctcss_t *ctcss, void *user_data);
 ctcss_t *         ctcss_new();
 ctcss_t *         ctcss_new_with_tone(ctcss_tone_t tone);
 void              ctcss_destroy(ctcss_t *ctcss);
+void              ctcss_init(ctcss_t *ctcss);
 char              ctcss_get_index(ctcss_t *ctcss);
 void              ctcss_set_tone(ctcss_t *ctcss, ctcss_tone_t tone);
 void              ctcss_next(ctcss_t *ctcss);

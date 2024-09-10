@@ -32,7 +32,7 @@ struct _radio_channel_t {
 
 radio_channel_t * radio_channel_new(void) {
    radio_channel_t *radio_channel = calloc(1,sizeof(radio_channel_t)); 
-   radio_channel_set_defaults(radio_channel);
+   radio_channel_init(radio_channel);
    return radio_channel;
 }
 
@@ -44,7 +44,7 @@ void radio_channel_destroy(radio_channel_t *radio_channel) {
    free(radio_channel);
 }
 
-void radio_channel_set_defaults(radio_channel_t *radio_channel) {
+void radio_channel_init(radio_channel_t *radio_channel) {
    assert(radio_channel != NULL);
    radio_channel->freq_rx = RADIO_CHANNEL_DEFAULT_RX_FREQUENCY;
    radio_channel->freq_tx = RADIO_CHANNEL_DEFAULT_TX_FREQUENCY;

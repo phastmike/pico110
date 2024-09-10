@@ -50,7 +50,7 @@ struct _radio_channel_t {
 
 radio_channel_t * radio_channel_new(void);
 void              radio_channel_destroy(radio_channel_t *radio_channel);
-void              radio_channel_set_defaults(radio_channel_t *radio_channel);
+void              radio_channel_init(radio_channel_t *radio_channel);
 void              radio_channel_copy(radio_channel_t *dest, radio_channel_t *src);
 double            radio_channel_freq_rx_get(radio_channel_t *radio_channel);
 void              radio_channel_freq_rx_set(radio_channel_t *radio_channel, double freq);

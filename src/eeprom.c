@@ -23,7 +23,7 @@ struct _eeprom_t {
 eeprom_t * eeprom_new(void) {
    eeprom_t *eeprom = (eeprom_t *) calloc(1, sizeof(eeprom_t));
    assert(eeprom != NULL);
-   eeprom_addr_set(eeprom, 0); // redundant
+   eeprom_addr_set(eeprom, 0); // redundant if calloc used
    return eeprom;
 }
 

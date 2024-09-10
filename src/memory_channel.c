@@ -21,7 +21,7 @@ struct _memory_channel_t {
 
 memory_channel_t * memory_channel_new(void) {
    memory_channel_t *memory_channel = calloc(1,sizeof(memory_channel_t));
-   radio_channel_set_defaults(RADIO_CHANNEL(memory_channel));
+   radio_channel_init(RADIO_CHANNEL(memory_channel));
    return memory_channel;
 }
 
