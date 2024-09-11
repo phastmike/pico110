@@ -67,12 +67,12 @@ void eeprom_addr_inc(eeprom_t *eeprom) {
    }
 }
 
-unsigned char eeprom_raw_read_byte(eeprom_t *eeprom, unsigned int addr) {
+unsigned char eeprom_read_byte(eeprom_t *eeprom, unsigned int addr) {
    assert(addr >= 0 && addr < EEPROM_SIZE);
    return eeprom->mem[addr];
 } 
 
-void eeprom_raw_write_byte(eeprom_t *eeprom, unsigned int addr, unsigned char value) {
+void eeprom_write_byte(eeprom_t *eeprom, unsigned int addr, unsigned char value) {
    assert(addr >= 0 && addr < EEPROM_SIZE);
    assert(value >= 0 && value <= 0xFF);
    eeprom->mem[addr] = value;

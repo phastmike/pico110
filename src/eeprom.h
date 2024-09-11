@@ -29,10 +29,10 @@ eeprom_t *     eeprom_new_with_data(unsigned char *data);
 
 void           eeprom_addr_set(eeprom_t *eeprom, unsigned int addr);
 unsigned int   eeprom_addr_get(eeprom_t *eeprom);
+unsigned char  eeprom_read_byte(eeprom_t *eeprom, unsigned int addr);
+void           eeprom_write_byte(eeprom_t *eeprom, unsigned int addr, unsigned char value);
 unsigned char  eeprom_serial_read_byte(eeprom_t *eeprom);
 void           eeprom_serial_write_byte(eeprom_t *eeprom, unsigned char value);
-unsigned char  eeprom_raw_read_byte(eeprom_t *eeprom, unsigned int addr);
-void           eeprom_raw_write_byte(eeprom_t *eeprom, unsigned int addr, unsigned char value);
 
 #ifdef __cplusplus
 }

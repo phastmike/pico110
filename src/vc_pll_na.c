@@ -32,9 +32,9 @@ vc_pll_na_t *vc_pll_na_new(hmi_t *hmi, radio_t *radio) {
 
 void vc_pll_na_show(view_controller_t *vc) {
    assert (vc != NULL);
-   unsigned char b1 = eeprom_raw_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x22);
-   unsigned char b2 = eeprom_raw_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x23);
-   unsigned char b3 = eeprom_raw_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x24);
+   unsigned char b1 = eeprom_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x22);
+   unsigned char b2 = eeprom_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x23);
+   unsigned char b3 = eeprom_read_byte(m110_eeprom_get(radio_get_m110(vc->radio)), 0x24);
    unsigned int N = ((b1 & 2) << 8) + b2;
    unsigned int A = b3 >> 1;
    unsigned char *str = calloc(1, 8);
