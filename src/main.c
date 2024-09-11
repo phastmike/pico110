@@ -48,13 +48,13 @@ void on_i2c_addr_request(uint16_t addr, void *user_data) {
 void on_i2c_write_byte(uint8_t byte, void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = M110(user_data);
-   eeprom_write_byte(m110_eeprom_get(m110), byte);
+   eeprom_serial_write_byte(m110_eeprom_get(m110), byte);
 }
 
 uint8_t on_i2c_read_byte(void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = M110(user_data);
-   return eeprom_read_byte(m110_eeprom_get(m110));
+   return eeprom_serial_read_byte(m110_eeprom_get(m110));
 }
 
 // MAINLOOP //

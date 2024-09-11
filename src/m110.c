@@ -37,6 +37,7 @@ m110_t * m110_new(void) {
   return m110;
 }
 
+// FIXME: Needs more safety
 m110_t * m110_new_with_data(unsigned char *data) {
    assert(data != NULL);
 

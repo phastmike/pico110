@@ -28,6 +28,7 @@ eeprom_t * eeprom_new(void) {
 }
 
 // DANGEROUS : data must be of size EEPROM_SIZE
+// FIXME: Needs a fix
 eeprom_t * eeprom_new_with_data(unsigned char *data) {
    assert(data != NULL); // eventually return NULL
 
@@ -77,7 +78,7 @@ void eeprom_raw_write_byte(eeprom_t *eeprom, unsigned int addr, unsigned char va
    eeprom->mem[addr] = value;
 } 
 
-unsigned char eeprom_read_byte(eeprom_t *eeprom) {
+unsigned char eeprom_serial_read_byte(eeprom_t *eeprom) {
    assert(eeprom != NULL);
 
    unsigned char value;
@@ -88,7 +89,7 @@ unsigned char eeprom_read_byte(eeprom_t *eeprom) {
    return value;
 }
 
-void eeprom_write_byte(eeprom_t *eeprom, unsigned char value) {
+void eeprom_serial_write_byte(eeprom_t *eeprom, unsigned char value) {
    assert(eeprom != NULL);
    assert(value >= 0 && value <= 0xFF);
 
