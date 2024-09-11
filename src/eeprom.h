@@ -16,16 +16,20 @@
 #include <pico/stdlib.h> 
 
 #define EEPROM(x) ((eeprom_t *) x)
+#define EEPROM_SIZE 128
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-typedef struct _eeprom_t eeprom_t;
+typedef struct _eeprom_t {
+   unsigned int addr;
+   unsigned char mem[EEPROM_SIZE];
+} eeprom_t;
 
 eeprom_t *     eeprom_new();
 eeprom_t *     eeprom_new_with_data(unsigned char *data);
+void           eeprom_init(eeprom_t *eeprom, unsigned char *data);
 
 void           eeprom_addr_set(eeprom_t *eeprom, unsigned int addr);
 unsigned int   eeprom_addr_get(eeprom_t *eeprom);

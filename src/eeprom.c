@@ -9,38 +9,39 @@
  * José Miguel Fonte
  */
 
-#include "eeprom.h"
 #include <stdlib.h>
 #include <string.h>
+#include "eeprom.h"
 
-#define EEPROM_SIZE 128
-
-struct _eeprom_t {
-   unsigned int addr;
-   unsigned char mem[EEPROM_SIZE];
-};
 
 eeprom_t * eeprom_new(void) {
    eeprom_t *eeprom = (eeprom_t *) calloc(1, sizeof(eeprom_t));
    assert(eeprom != NULL);
-   eeprom_addr_set(eeprom, 0); // redundant if calloc used
    return eeprom;
 }
 
-// DANGEROUS : data must be of size EEPROM_SIZE
-// FIXME: Needs a fix
 eeprom_t * eeprom_new_with_data(unsigned char *data) {
-   assert(data != NULL); // eventually return NULL
-
+   assert(data != NULL);
    eeprom_t *eeprom = eeprom_new();;
-   memcpy(eeprom->mem, data, EEPROM_SIZE);
-
+   assert(eeprom != NULL);
+   eeprom_init(eeprom, data);
    return eeprom;
 }
 
 void eeprom_destroy(eeprom_t *eeprom) {
    assert(eeprom != NULL);
    free(eeprom);
+}
+
+// FIXME: Needs a fix if more generic
+void eeprom_init(eeprom_t *eeprom, unsigned char *data) {
+   assert(eeprom != NULL);
+   eeprom_addr_set(eeprom, 0);
+   
+   // DANGEROUS : data must be of size EEPROM_SIZE
+   if (data != NULL) {
+      memcpy(eeprom->mem, data, EEPROM_SIZE);
+   }
 }
 
 unsigned int eeprom_addr_get(eeprom_t *eeprom) {

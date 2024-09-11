@@ -32,7 +32,7 @@ vc_timeout_t *vc_timeout_new(hmi_t *hmi, radio_t *radio) {
 void vc_timeout_show(view_controller_t *vc) {
    assert(vc != NULL);
    char *string = (char *) calloc (1,9);
-   unsigned char tot = m110_timeout_get(radio_get_m110(vc->radio));
+   unsigned char tot = m110_timeout_get(M110(vc->radio));
    sprintf(string, "ToT %4d",tot * 5);
    hmi_display_text(vc->hmi, 0, string);
    free(string);

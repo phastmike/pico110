@@ -33,8 +33,7 @@ typedef enum {
 typedef struct _radio_t radio_t;
 
 radio_t *         radio_new(void);
-radio_t *         radio_new_with_defaults(void);
-m110_t *          radio_get_m110(radio_t *radio);
+void              radio_init(radio_t *radio);
 radio_channel_t * radio_get_active_channel(radio_t *radio);
 void              radio_set_active_channel(radio_t *radio, radio_channel_t *radio_channel);
 radio_mode_t      radio_get_mode(radio_t *radio);

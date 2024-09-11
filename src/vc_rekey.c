@@ -32,7 +32,7 @@ vc_rekey_t *vc_rekey_new(hmi_t *hmi, radio_t *radio) {
 void vc_rekey_show(view_controller_t *vc) {
    assert(vc != NULL);
    char *string = (char *) calloc (1,9);
-   unsigned char rekey = m110_rekey_get(radio_get_m110(vc->radio));
+   unsigned char rekey = m110_rekey_get(M110(vc->radio));
    sprintf(string, "Pen %4d", rekey);
    hmi_display_text(vc->hmi, 0, string);
    free(string);

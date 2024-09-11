@@ -28,9 +28,8 @@ radio_t *radio_new(void) {
    return (radio_t *) calloc (1, sizeof(radio_t));
 }
 
-radio_t *radio_new_with_defaults(void) {
-   radio_t *radio    = radio_new();
-   radio->m110       = m110_new_with_data(rom_init);
+void radio_init(radio_t *radio) {
+   m110_init(M110(radio), rom_init);
 
    // Many of the following values can be backed up
    // so that the working state is preserved after power off
@@ -115,8 +114,6 @@ radio_t *radio_new_with_defaults(void) {
    radio_set_active_channel(radio, radio->vfo); 
 
    radio->scan_enabled = false;
-
-   return radio;
 }
 
 void radio_destroy(radio_t *radio) {
@@ -131,10 +128,6 @@ void radio_destroy(radio_t *radio) {
    }
 
    free(radio);
-}
-
-m110_t * radio_get_m110(radio_t *radio) {
-   return radio->m110;
 }
 
 radio_channel_t * radio_get_active_channel(radio_t *radio) {
@@ -185,7 +178,7 @@ void radio_commit_radio_channel(radio_t *radio, radio_channel_t *radio_channel) 
    freq_rx = radio_channel_freq_rx_get(radio_get_active_channel(radio));
    freq_tx = radio_channel_freq_tx_get(radio_get_active_channel(radio));
 
-   m110_t *m110 = radio_get_m110(radio);
+   m110_t *m110 = M110(radio);
 
    m110_channel_frequencies_set(m110, 1, freq_rx, freq_tx);
    m110_channel_frequencies_set(m110, 2, freq_rx, freq_tx);
@@ -219,30 +212,30 @@ void radio_tune_step_up(radio_t *radio) {
 
 void radio_timeout_down(radio_t *radio) {
    assert(radio != NULL);
-   unsigned char timeout = m110_timeout_get(radio_get_m110(radio));
+   unsigned char timeout = m110_timeout_get(M110(radio));
    if (timeout > 0) timeout -= 1;
-   m110_timeout_set(radio_get_m110(radio), timeout);
+   m110_timeout_set(M110(radio), timeout);
 }
 
 void radio_timeout_up(radio_t *radio) {
    assert(radio != NULL);
-   unsigned char timeout = m110_timeout_get(radio_get_m110(radio));
+   unsigned char timeout = m110_timeout_get(M110(radio));
    if (timeout < 255) timeout += 1;
-   m110_timeout_set(radio_get_m110(radio), timeout);
+   m110_timeout_set(M110(radio), timeout);
 }
 
 void radio_rekey_down(radio_t *radio) {
    assert(radio != NULL);
-   unsigned char rekey = m110_rekey_get(radio_get_m110(radio));
+   unsigned char rekey = m110_rekey_get(M110(radio));
    if (rekey > 0) rekey -= 1;
-   m110_rekey_set(radio_get_m110(radio), rekey);
+   m110_rekey_set(M110(radio), rekey);
 }
 
 void radio_rekey_up(radio_t *radio) {
    assert(radio != NULL);
-   unsigned char rekey = m110_rekey_get(radio_get_m110(radio));
+   unsigned char rekey = m110_rekey_get(M110(radio));
    if (rekey < 255) rekey += 1;
-   m110_rekey_set(radio_get_m110(radio), rekey);
+   m110_rekey_set(M110(radio), rekey);
 }
 
 void radio_tx_admit_down(radio_t *radio) {

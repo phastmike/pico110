@@ -42,19 +42,19 @@ const uint LED_PIN = PICO_DEFAULT_LED_PIN;
 void on_i2c_addr_request(uint16_t addr, void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = M110(user_data);
-   eeprom_addr_set(m110_eeprom_get(m110), addr);
+   eeprom_addr_set(EEPROM(m110), addr);
 }
 
 void on_i2c_write_byte(uint8_t byte, void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = M110(user_data);
-   eeprom_serial_write_byte(m110_eeprom_get(m110), byte);
+   eeprom_serial_write_byte(EEPROM(m110), byte);
 }
 
 uint8_t on_i2c_read_byte(void *user_data) {
    assert(user_data != NULL);
    m110_t *m110 = M110(user_data);
-   return eeprom_serial_read_byte(m110_eeprom_get(m110));
+   return eeprom_serial_read_byte(EEPROM(m110));
 }
 
 // MAINLOOP //
@@ -324,13 +324,14 @@ int main() {
    printf("Start...\n");
 #endif
 
-   radio_t *radio = radio_new_with_defaults();
+   radio_t *radio = radio_new();
+   radio_init(radio);
    hmi_t *hmi = hmi_new();
 
    i2c0_init(false); // init without clock streching
-   i2c_on_addr_set_connect(on_i2c_addr_request,radio_get_m110(radio));
-   i2c_on_write_byte_connect(on_i2c_write_byte,radio_get_m110(radio));
-   i2c_on_read_byte_connect(on_i2c_read_byte,radio_get_m110(radio));
+   i2c_on_addr_set_connect(on_i2c_addr_request,M110(radio));
+   i2c_on_write_byte_connect(on_i2c_write_byte,M110(radio));
+   i2c_on_read_byte_connect(on_i2c_read_byte,M110(radio));
 
    gpio_init(LED_PIN);
    gpio_set_dir(LED_PIN, GPIO_OUT);
