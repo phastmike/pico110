@@ -21,15 +21,14 @@ struct _vc_freq_t {
 };
 
 void vc_freq_present(view_controller_t *vc);
+void vc_freq_init(vc_freq_t *this, hmi_t *hmi, radio_t *radio);
 
 vc_freq_t *vc_freq_new(hmi_t *hmi, radio_t *radio) {
-   vc_freq_t *vc_freq = (vc_freq_t *) calloc(1, sizeof(vc_freq_t)); 
-   VIEW_CONTROLLER(vc_freq)->hmi = hmi;
-   VIEW_CONTROLLER(vc_freq)->radio = radio;
-   VIEW_CONTROLLER(vc_freq)->present = vc_freq_present;
-   vc_freq->func_enabled = false;
-   return vc_freq;
+   vc_freq_t *this = (vc_freq_t *) calloc(1, sizeof(vc_freq_t)); 
+   vc_freq_init(this, hmi, radio);
+   return this;
 }
+
 
 unsigned char *freq2string(double freq) {
    unsigned char i, j;
@@ -233,34 +232,40 @@ void vc_freq_on_press_sql_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 
 void vc_freq_present(view_controller_t *vc) {
    assert(vc != NULL);
-   hmi_keys_disconnect(vc->hmi);
-   //hmi_led_set(vc->hmi, HMI_LED_FMENU, HMI_LED_ON);
+   vc_freq_show(vc);
+}
+
+void vc_freq_init(vc_freq_t *this, hmi_t *hmi, radio_t *radio) {
+   assert(this != NULL);
+   view_controller_init(VIEW_CONTROLLER(this), hmi, radio);
+   VIEW_CONTROLLER(this)->present = vc_freq_present;
+   this->func_enabled = false;
+
+   hmi_keys_disconnect(VIEW_CONTROLLER(this)->hmi);
 
    hmi_key_t *key;
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_1);
-   hmi_key_on_release_event_connect(key, vc_freq_on_press_fmenu_event, vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_1);
+   hmi_key_on_release_event_connect(key, vc_freq_on_press_fmenu_event, VIEW_CONTROLLER(this));
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_2);
-   hmi_key_on_release_event_connect(key, vc_freq_on_press_scan_event, vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_2);
+   hmi_key_on_release_event_connect(key, vc_freq_on_press_scan_event, VIEW_CONTROLLER(this));
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_3);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_vm_event, vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_3);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_vm_event, VIEW_CONTROLLER(this));
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_4);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_power_event, vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_4);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_power_event, VIEW_CONTROLLER(this));
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_5);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_sql_event, vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_5);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_sql_event, VIEW_CONTROLLER(this));
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_6);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_rev_event, vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_6);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_rev_event, VIEW_CONTROLLER(this));
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_7);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_7);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, VIEW_CONTROLLER(this));
 
-   key = hmi_get_key(vc->hmi, HMI_KEY_8);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, vc);
-
-   vc_freq_show(vc);
+   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_8);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, VIEW_CONTROLLER(this));
 }

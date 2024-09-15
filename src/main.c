@@ -8,16 +8,17 @@
  * José Miguel Fonte
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pico/stdlib.h>
+
 #include "m110.h"
 #include "radio.h"
 #include "hmi.h"
 #include "tune_step.h"
 #include "i2c0.h"
 #include "ctcss.h"
-#include <pico/stdlib.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "tm1638.h"
 #include "view_controller.h"
 #include "vc_brightness.h"
@@ -57,7 +58,6 @@ uint8_t on_i2c_read_byte(void *user_data) {
    return eeprom_serial_read_byte(EEPROM(m110));
 }
 
-// MAINLOOP //
 
 typedef enum {
    VMODE_FREQ,
@@ -363,6 +363,9 @@ int main() {
    view_controller_present(vcs[0]);
    radio_mode_t previous_mode = RADIO_MODE_VFO;
 
+   // Navigation logic is defined in these callbacks
+   // Dont remember why I followed this route but remember thinking 
+   // it was a quick workaround to a state machine that failed  :)
    view_controller_exit_with_key_connect(vcs[0], on_freq_exit_with_key);   
    view_controller_exit_with_key_connect(vcs[1], on_brightness_exit_with_key); 
    view_controller_exit_with_key_connect(vcs[2], on_apo_exit_with_key); 
@@ -376,10 +379,10 @@ int main() {
    view_controller_exit_with_key_connect(vcs[10], on_shift_exit_with_key); 
    view_controller_exit_with_key_connect(vcs[11], on_version_exit_with_key); 
 
+   // MAINLOOP //
+
    while(true) {
       tight_loop_contents();
-      //gpio_put(LED_PIN, 1);
-      //sleep_ms(80);
       
       if (radio_scan_get(radio)) {
          // FIXME: Needs border limit control if VFO mode
@@ -390,9 +393,6 @@ int main() {
       } 
 
       keys = hmi_keys_scan(hmi);
-
-      //gpio_put(LED_PIN, 0);
-      //sleep_ms(10);
    }
 
    return 0;

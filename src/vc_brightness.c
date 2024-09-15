@@ -22,11 +22,10 @@ struct _vc_brightness_t {
 void vc_brightness_present(view_controller_t *vc);
 
 vc_brightness_t *vc_brightness_new(hmi_t *hmi, radio_t *radio) {
-   vc_brightness_t *vc_brightness = (vc_brightness_t *) calloc(1, sizeof(vc_brightness_t));
-   VIEW_CONTROLLER(vc_brightness)->hmi = hmi;
-   VIEW_CONTROLLER(vc_brightness)->radio = radio;
-   VIEW_CONTROLLER(vc_brightness)->present = vc_brightness_present;
-   return vc_brightness;
+   vc_brightness_t *this = (vc_brightness_t *) calloc(1, sizeof(vc_brightness_t));
+   view_controller_init(VIEW_CONTROLLER(this), hmi, radio);
+   VIEW_CONTROLLER(this)->present = vc_brightness_present;
+   return this;
 }
 
 void vc_brightness_show(view_controller_t *vc) {

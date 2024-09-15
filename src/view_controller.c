@@ -16,17 +16,22 @@
 
 view_controller_t *view_controller_new(hmi_t *hmi, radio_t *radio) {
    view_controller_t *vc = (view_controller_t *) calloc (1, sizeof(view_controller_t));
-   vc->hmi = hmi;
-   vc->radio = radio;
-   vc->present = NULL;
-   vc->exit_with_key = NULL;
-
+   view_controller_init(vc, hmi, radio);
    return vc;
 }
 
 void view_controller_destroy(view_controller_t *vc) {
    assert(vc != NULL);
    free(vc);
+}
+
+void view_controller_init(view_controller_t *vc, hmi_t *hmi, radio_t *radio) {
+   assert(hmi != NULL && radio != NULL);
+
+   vc->hmi = hmi;
+   vc->radio = radio;
+   vc->present = NULL;
+   vc->exit_with_key = NULL;
 }
 
 void view_controller_present(view_controller_t *vc) {
