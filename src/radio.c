@@ -25,7 +25,9 @@ struct _radio_t {
 };
 
 radio_t *radio_new(void) {
-   return (radio_t *) calloc (1, sizeof(radio_t));
+   radio_t *r = (radio_t *) calloc (1, sizeof(radio_t));
+   radio_init(r);
+   return r;
 }
 
 void radio_init(radio_t *radio) {

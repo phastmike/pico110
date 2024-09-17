@@ -53,21 +53,6 @@ void vc_brightness_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *
    vc_brightness_show(VIEW_CONTROLLER(user_data));
 }
 
-/*
-void vc_brightness_on_press_scan_back(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   assert(key != NULL && user_data != NULL);
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
-}
-
-void vc_brightness_on_press_fmenu(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   assert(key != NULL && user_data != NULL);
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
-}
-*/
 void vc_brightness_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
 
@@ -86,11 +71,9 @@ void vc_brightness_present(view_controller_t *vc) {
    hmi_key_t *key;
 
    key = hmi_get_key(vc->hmi, HMI_KEY_1);
-   //hmi_key_on_release_event_connect(key, vc_brightness_on_press_fmenu, vc);
    hmi_key_on_release_event_connect(key, vc_brightness_on_press_generic_exit, vc);
 
    key = hmi_get_key(vc->hmi, HMI_KEY_2);
-   //hmi_key_on_release_event_connect(key, vc_brightness_on_press_scan_back, vc);
    hmi_key_on_release_event_connect(key, vc_brightness_on_press_generic_exit, vc);
 
    key = hmi_get_key(vc->hmi, HMI_KEY_7);

@@ -114,19 +114,19 @@ void vc_freq_on_press_vm_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_d
          break;
    }
 
-   vc_freq_show(VIEW_CONTROLLER(user_data));
+   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    radio_radio_channel_down(VIEW_CONTROLLER(user_data)->radio);
-   vc_freq_show(VIEW_CONTROLLER(user_data));
+   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    radio_radio_channel_up(VIEW_CONTROLLER(user_data)->radio);
-   vc_freq_show(VIEW_CONTROLLER(user_data));
+   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
@@ -149,7 +149,7 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    radio_channel_set_rev(rc, !radio_channel_get_rev(rc));
    radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
    hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_REV, radio_channel_get_rev(rc) ? HMI_LED_ON : HMI_LED_OFF);
-   vc_freq_show(VIEW_CONTROLLER(user_data));
+   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
@@ -162,7 +162,7 @@ void vc_freq_on_press_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user
 
    if (view->func_enabled) {
       view->func_enabled = false;
-      vc_freq_show(VIEW_CONTROLLER(user_data));
+      //vc_freq_show(VIEW_CONTROLLER(user_data));
       return;
    }
 
@@ -193,7 +193,7 @@ void vc_freq_on_press_fmenu_event(hmi_key_t *key, hmi_key_id_t key_id, void *use
       if (vc->exit_with_key) vc->exit_with_key(vc, key);
    } else {
       view->func_enabled = ! view->func_enabled;
-      vc_freq_show(VIEW_CONTROLLER(user_data));
+      //vc_freq_show(VIEW_CONTROLLER(user_data));
    }
 }
 
@@ -228,11 +228,37 @@ void vc_freq_on_press_sql_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 
 }
 
-/* VIEW CONTROLLER present method */
+void vc_freq_keyb_set_cb(vc_freq_t *vc) {
+   assert (vc != NULL && VIEW_CONTROLLER(vc)->hmi != NULL);
 
-void vc_freq_present(view_controller_t *vc) {
-   assert(vc != NULL);
-   vc_freq_show(vc);
+   hmi_keys_disconnect(VIEW_CONTROLLER(vc)->hmi);
+
+   hmi_key_t *key;
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_1);
+   hmi_key_on_release_event_connect(key, vc_freq_on_press_fmenu_event, VIEW_CONTROLLER(vc));
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_2);
+   hmi_key_on_release_event_connect(key, vc_freq_on_press_scan_event, VIEW_CONTROLLER(vc));
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_3);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_vm_event, VIEW_CONTROLLER(vc));
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_4);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_power_event, VIEW_CONTROLLER(vc));
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_5);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_sql_event, VIEW_CONTROLLER(vc));
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_6);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_rev_event, VIEW_CONTROLLER(vc));
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_7);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, VIEW_CONTROLLER(vc));
+
+   key = hmi_get_key(VIEW_CONTROLLER(vc)->hmi, HMI_KEY_8);
+   hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, VIEW_CONTROLLER(vc));
+   
 }
 
 void vc_freq_init(vc_freq_t *this, hmi_t *hmi, radio_t *radio) {
@@ -240,32 +266,12 @@ void vc_freq_init(vc_freq_t *this, hmi_t *hmi, radio_t *radio) {
    view_controller_init(VIEW_CONTROLLER(this), hmi, radio);
    VIEW_CONTROLLER(this)->present = vc_freq_present;
    this->func_enabled = false;
+}
 
-   hmi_keys_disconnect(VIEW_CONTROLLER(this)->hmi);
+/* VIEW CONTROLLER present method */
 
-   hmi_key_t *key;
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_1);
-   hmi_key_on_release_event_connect(key, vc_freq_on_press_fmenu_event, VIEW_CONTROLLER(this));
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_2);
-   hmi_key_on_release_event_connect(key, vc_freq_on_press_scan_event, VIEW_CONTROLLER(this));
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_3);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_vm_event, VIEW_CONTROLLER(this));
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_4);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_power_event, VIEW_CONTROLLER(this));
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_5);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_sql_event, VIEW_CONTROLLER(this));
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_6);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_rev_event, VIEW_CONTROLLER(this));
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_7);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_down_event, VIEW_CONTROLLER(this));
-
-   key = hmi_get_key(VIEW_CONTROLLER(this)->hmi, HMI_KEY_8);
-   hmi_key_on_press_event_connect(key, vc_freq_on_press_up_event, VIEW_CONTROLLER(this));
+void vc_freq_present(view_controller_t *vc) {
+   assert(vc != NULL);
+   vc_freq_keyb_set_cb(VC_FREQ(vc));
+   vc_freq_show(vc);
 }

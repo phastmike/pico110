@@ -75,18 +75,22 @@ void on_freq_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1: 
+         vc_id = 1;
          view = vcs[1];
          view_controller_present(view);
          break;
       case HMI_KEY_4:
+         vc_id = 3;
          view = vcs[3];
          view_controller_present(view);
          break;
       case HMI_KEY_5:
+         vc_id = 4;
          view = vcs[4];
          view_controller_present(view);
          break;
       case HMI_KEY_6:
+         vc_id = 9;
          view = vcs[9];
          view_controller_present(view);
          break;
@@ -102,10 +106,12 @@ void on_brightness_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 2;
          view = vcs[2];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          //NEED SETTER & GETTER
          //((vc_freq_t *) vc)->func_enabled = false;
@@ -123,10 +129,12 @@ void on_apo_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 3;
          view = vcs[3];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -142,10 +150,12 @@ void on_tune_step_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 4;
          view = vcs[4];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -161,10 +171,12 @@ void on_enc_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 5;
          view = vcs[5];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -181,10 +193,12 @@ void on_dec_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 6;
          view = vcs[6];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -200,10 +214,12 @@ void on_timeout_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 7;
          view = vcs[7];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -219,10 +235,12 @@ void on_rekey_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 8;
          view = vcs[8];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -238,10 +256,12 @@ void on_txadmit_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 9;
          view = vcs[9];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -257,10 +277,12 @@ void on_dup_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 10;
          view = vcs[10];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -276,10 +298,12 @@ void on_shift_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 11;
          view = vcs[11];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -295,10 +319,12 @@ void on_version_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
    switch(hmi_key_get_id(key)) {
       case HMI_KEY_1:
+         vc_id = 1;
          view = vcs[1];
          view_controller_present(view);
          break;
       case HMI_KEY_2:
+         vc_id = 0;
          view = vcs[0];
          view_controller_present(view);
          break;
@@ -324,9 +350,8 @@ int main() {
    printf("Start...\n");
 #endif
 
-   radio_t *radio = radio_new();
-   radio_init(radio);
    hmi_t *hmi = hmi_new();
+   radio_t *radio = radio_new();
 
    i2c0_init(false); // init without clock streching
    i2c_on_addr_set_connect(on_i2c_addr_request,M110(radio));
@@ -388,11 +413,13 @@ int main() {
          // FIXME: Needs border limit control if VFO mode
          // MR ONLY
          radio_radio_channel_up(radio);
+         vc_id = 0;
          view_controller_present(VIEW_CONTROLLER(vcs[0]));
          sleep_ms(200);
       } 
 
       keys = hmi_keys_scan(hmi);
+      view_controller_present (VIEW_CONTROLLER(vcs[vc_id]));
    }
 
    return 0;

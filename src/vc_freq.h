@@ -15,6 +15,8 @@
 #include "hmi.h"
 #include "radio.h"
 
+#define VC_FREQ(x)                    ((vc_freq_t *) x)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
