@@ -10,6 +10,7 @@
  */
 
 #include "hmi_key.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <pico/stdlib.h>
 

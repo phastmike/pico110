@@ -56,6 +56,7 @@ void radio_channel_init(radio_channel_t *radio_channel) {
    radio_channel->tx_admit = TXADMIT_ALWAYS; 
    radio_channel->low_power = 0;
    radio_channel->tune_step = tune_step_new();
+   // Tune step is 12.5 kHz by default
    //tune_step_next(radio_channel->tune_step);    // Set ts as 25kHz
 }
 

@@ -26,12 +26,18 @@ void view_controller_destroy(view_controller_t *vc) {
 }
 
 void view_controller_init(view_controller_t *vc, hmi_t *hmi, radio_t *radio) {
-   assert(hmi != NULL && radio != NULL);
+   assert(vc != NULL);
+   assert(hmi != NULL && radio != NULL); // redundant*
 
    vc->hmi = hmi;
    vc->radio = radio;
    vc->present = NULL;
    vc->exit_with_key = NULL;
+}
+
+void view_controller_show(view_controller_t *vc) {
+   assert(vc != NULL);
+   if (vc->show) vc->show(vc);
 }
 
 void view_controller_present(view_controller_t *vc) {

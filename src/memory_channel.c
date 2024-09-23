@@ -11,12 +11,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "memory_channel.h"
 
 struct _memory_channel_t {
    radio_channel_t radio_channel;
-   unsigned char *name;
    unsigned char id;
+   unsigned char *name;
 };
 
 memory_channel_t * memory_channel_new(void) {
@@ -28,7 +29,8 @@ memory_channel_t * memory_channel_new(void) {
 memory_channel_t * memory_channel_new_with(unsigned char id, unsigned char *name) {
    memory_channel_t *memory_channel = memory_channel_new();
    memory_channel->id = id;
-   memory_channel->name = name;
+   memory_channel->name = calloc(1, strlen(name));
+   memory_channel->name = strcpy(memory_channel->name, name) ;
    return memory_channel;
 }
 
@@ -39,7 +41,16 @@ void memory_channel_destroy(memory_channel_t *memory_channel) {
    free(memory_channel);
 }
 
-
 unsigned int memory_channel_get_size() {
    return sizeof(memory_channel_t);
+}
+
+int memory_channel_id_get(memory_channel_t *memory_channel) {
+   assert(memory_channel != NULL);
+   return memory_channel->id;
+}
+
+char * memory_channel_name_get(memory_channel_t *memory_channel) {
+   assert(memory_channel != NULL);
+   return memory_channel->name;
 }

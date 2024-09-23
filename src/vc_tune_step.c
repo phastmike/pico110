@@ -19,12 +19,14 @@ struct _vc_tune_step_t {
    view_controller_t vc;
 };
 
+// delegates
+void vc_tune_step_show(view_controller_t *vc);
 void vc_tune_step_present(view_controller_t *vc);
 
 vc_tune_step_t *vc_tune_step_new(hmi_t *hmi, radio_t *radio) {
    vc_tune_step_t *vc_tune_step = (vc_tune_step_t *) calloc(1, sizeof(vc_tune_step_t)); 
-   VIEW_CONTROLLER(vc_tune_step)->hmi = hmi;
-   VIEW_CONTROLLER(vc_tune_step)->radio = radio;
+   view_controller_init(VIEW_CONTROLLER(vc_tune_step), hmi, radio);
+   VIEW_CONTROLLER(vc_tune_step)->show = vc_tune_step_show;
    VIEW_CONTROLLER(vc_tune_step)->present = vc_tune_step_present;
    return vc_tune_step;
 }

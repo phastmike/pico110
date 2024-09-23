@@ -346,7 +346,8 @@ int main() {
     * Waits 10 seconds to give time to dump output to console with:
     * cat /dev/ttyACM0
     */
-   sleep_ms(10000);
+   //sleep_ms(10000);
+   sleep_ms(5000);
    printf("Start...\n");
 #endif
 
@@ -406,6 +407,7 @@ int main() {
 
    // MAINLOOP //
 
+   long long unsigned int count = 0;
    while(true) {
       tight_loop_contents();
       
@@ -419,7 +421,7 @@ int main() {
       } 
 
       keys = hmi_keys_scan(hmi);
-      view_controller_present (VIEW_CONTROLLER(vcs[vc_id]));
+      view_controller_show (VIEW_CONTROLLER(vcs[vc_id]));
    }
 
    return 0;

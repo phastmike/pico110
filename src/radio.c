@@ -15,7 +15,7 @@
 #include "memory_channel.h"
 
 struct _radio_t {
-   m110_t *m110;
+   m110_t m110;
    radio_channel_t *vfo;
    radio_channel_t *ch_ptr;   // points to working radio_channel, either vfo or a memory
    radio_mode_t mode;
@@ -37,7 +37,7 @@ void radio_init(radio_t *radio) {
    // so that the working state is preserved after power off
 
    radio->mode       = RADIO_MODE_VFO;
-   radio->vfo        = radio_channel_new(); // comes with defaults
+   radio_set_vfo(radio, radio_channel_new()); // Comes with defaults
    
    // Init pointers to NULL - Empty memories
    for (int i = 0; i < RADIO_NUMBER_OF_CHANNELS; i++) {
@@ -71,11 +71,11 @@ void radio_init(radio_t *radio) {
 
    radio->memory[8] = memory_channel_new_with(9,"CQ0UGMR");
    radio_channel_t *rc = RADIO_CHANNEL(radio->memory[8]);
-   radio_channel_freq_set(rc, 439.100);
    radio_channel_ctcss_rx_set(rc, CTCSS_67_0);
    radio_channel_ctcss_tx_set(rc, CTCSS_67_0);
    radio_channel_dup_set(rc, DUP_DOWN);
    radio_channel_shift_set(rc, 7.6);
+   radio_channel_freq_set(rc, 439.100);
 
    radio->memory[9] = memory_channel_new_with(10,"CQ0UBRG");
    rc = RADIO_CHANNEL(radio->memory[9]);
@@ -109,11 +109,11 @@ void radio_init(radio_t *radio) {
    radio_channel_dup_set(rc, DUP_UP);
    radio_channel_shift_set(rc, 5.0);
 
-   radio->memory_selected = 0;
 
    // Defaults to VFO;
    // also commits to m110
-   radio_set_active_channel(radio, radio->vfo); 
+   radio->memory_selected = 0;
+   radio_set_active_channel(radio, radio_get_vfo(radio)); 
 
    radio->scan_enabled = false;
 }
@@ -121,7 +121,7 @@ void radio_init(radio_t *radio) {
 void radio_destroy(radio_t *radio) {
    assert(radio != NULL);
 
-   if (radio->m110) m110_destroy(radio->m110);
+   //if (radio->m110) m110_destroy(radio->m110);
    if (radio->vfo)  radio_channel_destroy(radio->vfo);
    for (int i = 0; i < RADIO_NUMBER_OF_CHANNELS; i++) {
       if (radio->memory[i]) {
@@ -132,6 +132,16 @@ void radio_destroy(radio_t *radio) {
    free(radio);
 }
 
+radio_channel_t * radio_get_vfo(radio_t *radio) {
+   assert(radio != NULL);
+   return radio->vfo;
+}
+
+void radio_set_vfo(radio_t *radio, radio_channel_t *radio_channel) {
+   assert(radio != NULL);
+   radio->vfo = radio_channel;
+}
+
 radio_channel_t * radio_get_active_channel(radio_t *radio) {
    assert(radio != NULL);
    return radio->ch_ptr;
@@ -139,10 +149,11 @@ radio_channel_t * radio_get_active_channel(radio_t *radio) {
 
 void radio_set_active_channel(radio_t *radio, radio_channel_t *radio_channel) {
    assert(radio != NULL);
-   assert(radio_channel != NULL);
 
-   radio->ch_ptr = radio_channel;
-   radio_commit_radio_channel(radio, radio_channel);
+   if (radio_channel != NULL) {
+      radio->ch_ptr = radio_channel;
+      radio_commit_radio_channel(radio, radio_channel);
+   }
 }
 
 radio_mode_t radio_get_mode(radio_t *radio) {
@@ -157,7 +168,8 @@ void radio_set_mode(radio_t *radio, radio_mode_t mode) {
    switch(mode) {
       case RADIO_MODE_VFO:
          radio_channel_set_rev(radio->vfo, REV_OFF);
-         radio_set_active_channel(radio, radio->vfo);
+         radio_channel_set_rev(radio_get_vfo(radio), REV_OFF);
+         radio_set_active_channel(radio, radio_get_vfo(radio));
          break;
       case RADIO_MODE_MEMORY:
          radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
@@ -165,7 +177,7 @@ void radio_set_mode(radio_t *radio, radio_mode_t mode) {
          radio_set_active_channel(radio, rc); 
          break;
       default:
-         // Should not happen abut if so, do nothing
+         // Should not happen but if so, do nothing
          break;
    }
 }
@@ -200,16 +212,16 @@ void radio_commit_radio_channel(radio_t *radio, radio_channel_t *radio_channel) 
 
 char *radio_tune_step_get(radio_t *radio) {
    assert(radio != NULL);
-   return tune_step_get_as_string(radio_channel_tune_step_get(radio->vfo));
+   return tune_step_get_as_string(radio_channel_tune_step_get(radio_get_vfo(radio)));
 }
 void radio_tune_step_down(radio_t *radio) {
    assert(radio != NULL);
-   tune_step_prev(radio_channel_tune_step_get(radio->vfo));
+   tune_step_prev(radio_channel_tune_step_get(radio_get_vfo(radio)));
 }
 
 void radio_tune_step_up(radio_t *radio) {
    assert(radio != NULL);
-   tune_step_next(radio_channel_tune_step_get(radio->vfo));
+   tune_step_next(radio_channel_tune_step_get(radio_get_vfo(radio)));
 }
 
 void radio_timeout_down(radio_t *radio) {
@@ -298,31 +310,20 @@ void radio_radio_channel_down(radio_t *radio) {
    // Must check repeater mode, etc...
    // must move that logic elsewhere
 
-   int i,j;
-   int count;
-   int found = -1;
-  
    if (radio->mode == RADIO_MODE_MEMORY) { 
-      for (j = radio->memory_selected - 1; j >= 0 && found == -1; j--) {
-         if (radio->memory[j] != NULL) {
-            found = j;
-         }
+      if (radio->memory_selected - 1 < 0) {
+         radio->memory_selected = RADIO_NUMBER_OF_CHANNELS - 1;
+      } else {
+         do 
+            radio->memory_selected--;
+         while (radio->memory_selected >= 0 && radio->memory[radio->memory_selected] == NULL);
       }
 
-      if (found == -1) { 
-         for (j = RADIO_NUMBER_OF_CHANNELS - 1; j > radio->memory_selected && found == -1; j--) {
-            if (radio->memory[j]) {
-               found = j;
-            }
-         }
-      }
-      
-      if (found != -1) {
-         radio->memory_selected = found;
-         radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
+      radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
+      if (rc) {
          radio_channel_set_rev(rc, REV_OFF);
-         radio_set_active_channel(radio, rc); 
-      } 
+         radio_set_active_channel(radio, rc);
+      }
    } else if (radio->mode == RADIO_MODE_VFO) {
       radio_channel_t *rc = radio_get_active_channel(radio);
       if (radio_channel_get_rev(rc) == REV_ON) {
@@ -335,32 +336,20 @@ void radio_radio_channel_down(radio_t *radio) {
 }
 
 void radio_radio_channel_up(radio_t *radio) {
-   int i,j;
-   int count;
-   int found = -1;
-
    assert(radio != NULL);
-  
+
    if (radio->mode == RADIO_MODE_MEMORY) { 
-
-      for (j = radio->memory_selected + 1; j < RADIO_NUMBER_OF_CHANNELS && found == -1; j++) {
-         if (radio->memory[j] != NULL) {
-            found = j;
-         }
+      if (radio->memory_selected + 1 >= RADIO_NUMBER_OF_CHANNELS) {
+         radio->memory_selected = 0;
+      } else {
+         do
+            radio->memory_selected++;
+         while (radio->memory_selected < RADIO_NUMBER_OF_CHANNELS && radio->memory[radio->memory_selected] == NULL);
       }
 
-      if (found == -1) { 
-         for (j = 0 ; j <= radio->memory_selected - 1 && found == -1; j++) {
-            if (radio->memory[j]) {
-               found = j;
-            }
-         }
-      }
-      
-      if (found != -1) {
-         radio->memory_selected = found;
-         radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
-         radio_channel_set_rev(rc, REV_OFF);
+      radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
+      if (rc) {
+         radio_channel_set_rev(rc, REV_OFF); // why??
          radio_set_active_channel(radio, rc);
       }
    } else if (radio->mode == RADIO_MODE_VFO) {
@@ -418,3 +407,4 @@ void radio_get_size(void) {
    printf("SizeOf(memory_channel_t) = %d\n", memory_channel_get_size());
    printf("SizeOf(radio_t) = %d\n", sizeof(radio_t));
 }
+

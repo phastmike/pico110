@@ -19,11 +19,13 @@ struct _vc_dec_t {
    view_controller_t vc;
 };
 
+void vc_dec_show(view_controller_t *vc);
 void vc_dec_present(view_controller_t *vc);
 
 vc_dec_t *vc_dec_new(hmi_t *hmi, radio_t *radio) {
    vc_dec_t *this= (vc_dec_t *) calloc(1, sizeof(vc_dec_t));
    view_controller_init(VIEW_CONTROLLER(this), hmi, radio);
+   VIEW_CONTROLLER(this)->show = vc_dec_show;
    VIEW_CONTROLLER(this)->present = vc_dec_present;
    return this;
 }

@@ -20,6 +20,7 @@ struct _vc_freq_t {
    bool func_enabled;
 };
 
+void vc_freq_show(view_controller_t *vc);
 void vc_freq_present(view_controller_t *vc);
 void vc_freq_init(vc_freq_t *this, hmi_t *hmi, radio_t *radio);
 
@@ -50,6 +51,7 @@ unsigned char *freq2string(double freq) {
 void vc_freq_show(view_controller_t *vc) {
    assert(vc != NULL);
    radio_channel_t *rc = radio_get_active_channel(vc->radio);
+   if (rc == NULL) return;
    double freq = radio_channel_freq_rx_get(rc);
    unsigned char *s = freq2string(freq);
    hmi_display_text(vc->hmi, 0, s);
@@ -119,12 +121,14 @@ void vc_freq_on_press_vm_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_d
 
 void vc_freq_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
+   assert(VIEW_CONTROLLER(user_data)->radio != NULL);
    radio_radio_channel_down(VIEW_CONTROLLER(user_data)->radio);
    //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
+   assert(VIEW_CONTROLLER(user_data)->radio != NULL);
    radio_radio_channel_up(VIEW_CONTROLLER(user_data)->radio);
    //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
@@ -229,7 +233,7 @@ void vc_freq_on_press_sql_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 }
 
 void vc_freq_keyb_set_cb(vc_freq_t *vc) {
-   assert (vc != NULL && VIEW_CONTROLLER(vc)->hmi != NULL);
+   assert (vc != NULL && VIEW_CONTROLLER(vc)->hmi != NULL && VIEW_CONTROLLER(vc)->radio != NULL);
 
    hmi_keys_disconnect(VIEW_CONTROLLER(vc)->hmi);
 
@@ -264,6 +268,7 @@ void vc_freq_keyb_set_cb(vc_freq_t *vc) {
 void vc_freq_init(vc_freq_t *this, hmi_t *hmi, radio_t *radio) {
    assert(this != NULL);
    view_controller_init(VIEW_CONTROLLER(this), hmi, radio);
+   VIEW_CONTROLLER(this)->show = vc_freq_show;
    VIEW_CONTROLLER(this)->present = vc_freq_present;
    this->func_enabled = false;
 }

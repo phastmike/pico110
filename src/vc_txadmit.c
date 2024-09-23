@@ -19,12 +19,13 @@ struct _vc_txadmit_t {
    view_controller_t vc;
 };
 
+void vc_txadmit_show(view_controller_t *vc);
 void vc_txadmit_present(view_controller_t *vc);
 
 vc_txadmit_t *vc_txadmit_new(hmi_t *hmi, radio_t *radio) {
    vc_txadmit_t *vc_txadmit = (vc_txadmit_t *) calloc(1, sizeof(vc_txadmit_t)); 
-   VIEW_CONTROLLER(vc_txadmit)->hmi = hmi;
-   VIEW_CONTROLLER(vc_txadmit)->radio = radio;
+   view_controller_init(VIEW_CONTROLLER(vc_txadmit), hmi, radio);
+   VIEW_CONTROLLER(vc_txadmit)->show = vc_txadmit_show;
    VIEW_CONTROLLER(vc_txadmit)->present = vc_txadmit_present;
    return vc_txadmit;
 }

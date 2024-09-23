@@ -19,11 +19,14 @@ struct _vc_apo_t {
    view_controller_t vc;
 };
 
+// delegates
+void vc_apo_show(view_controller_t *vc);
 void vc_apo_present(view_controller_t *vc);
 
 vc_apo_t *vc_apo_new(hmi_t *hmi, radio_t *radio) {
    vc_apo_t *this = (vc_apo_t *) calloc (1, sizeof(vc_apo_t));
    view_controller_init(VIEW_CONTROLLER(this), hmi, radio);
+   VIEW_CONTROLLER(this)->show = vc_apo_show;
    VIEW_CONTROLLER(this)->present = vc_apo_present;
    return this;
 }

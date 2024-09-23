@@ -19,6 +19,7 @@ struct _vc_rekey_t {
    view_controller_t vc;
 };
 
+void vc_rekey_show(view_controller_t *vc);
 void vc_rekey_present(view_controller_t *vc);
 
 vc_rekey_t *vc_rekey_new(hmi_t *hmi, radio_t *radio) {

@@ -13,7 +13,7 @@
 
 #include "radio_channel.h"
 
-#define MEMORY_CHANNEL(x) ((memory_t *) x)
+#define MEMORY_CHANNEL(x) ((memory_channel_t *) x)
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,6 +25,8 @@ memory_channel_t *   memory_channel_new(void);
 memory_channel_t *   memory_channel_new_with(unsigned char id, unsigned char *name);
 void                 memory_channel_destroy(memory_channel_t *memory_channel);
 unsigned int         memory_channel_get_size();
+int                  memory_channel_id_get(memory_channel_t *memory_channel);
+char *               memory_channel_name_get(memory_channel_t *memory_channel);
 
 #ifdef __cplusplus
 }
