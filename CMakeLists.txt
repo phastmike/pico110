@@ -37,6 +37,7 @@ add_executable(pico110
 	src/vc_apo.c
 	src/vc_pll_na.c
 	src/vc_intro.c
+	src/memory.c
 )
 
 #This will enable output via USB and UART

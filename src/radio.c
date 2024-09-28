@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "radio.h"
+#include "memory.h"
 #include "rom_init.h"
 #include "memory_channel.h"
 
@@ -22,6 +23,7 @@ struct _radio_t {
    unsigned char memory_selected;
    memory_channel_t *memory[RADIO_NUMBER_OF_CHANNELS];
    bool scan_enabled;
+   memory_t *mem;
 };
 
 radio_t *radio_new(void) {
@@ -36,84 +38,13 @@ void radio_init(radio_t *radio) {
    // Many of the following values can be backed up
    // so that the working state is preserved after power off
 
-   radio->mode       = RADIO_MODE_VFO;
    radio_set_vfo(radio, radio_channel_new()); // Comes with defaults
+   radio->mem = memory_new();
+   memory_init(radio->mem);
+   radio_set_mode(radio, RADIO_MODE_VFO);
    
-   // Init pointers to NULL - Empty memories
-   for (int i = 0; i < RADIO_NUMBER_OF_CHANNELS; i++) {
-      radio->memory[i] = NULL;
-   }
-
-   // Fill memories with PMR frequencies
-   radio->memory[0] = memory_channel_new_with(1,"PMR 1");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[0]), 446.00625);
-
-   radio->memory[1] = memory_channel_new_with(2,"PMR 2");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[1]), 446.01875);
-
-   radio->memory[2] = memory_channel_new_with(3,"PMR 3");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[2]), 446.03125);
-
-   radio->memory[3] = memory_channel_new_with(4,"PMR 4");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[3]), 446.04375);
-   
-   radio->memory[4] = memory_channel_new_with(5,"PMR 5");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[4]), 446.05625);
-   
-   radio->memory[5] = memory_channel_new_with(6,"PMR 6");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[5]), 446.06875);
-   
-   radio->memory[6] = memory_channel_new_with(7,"PMR 7");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[6]), 446.08125);
-   
-   radio->memory[7] = memory_channel_new_with(8,"PMR 8");
-   radio_channel_freq_set(RADIO_CHANNEL(radio->memory[7]), 446.09375);
-
-   radio->memory[8] = memory_channel_new_with(9,"CQ0UGMR");
-   radio_channel_t *rc = RADIO_CHANNEL(radio->memory[8]);
-   radio_channel_ctcss_rx_set(rc, CTCSS_67_0);
-   radio_channel_ctcss_tx_set(rc, CTCSS_67_0);
-   radio_channel_dup_set(rc, DUP_DOWN);
-   radio_channel_shift_set(rc, 7.6);
-   radio_channel_freq_set(rc, 439.100);
-
-   radio->memory[9] = memory_channel_new_with(10,"CQ0UBRG");
-   rc = RADIO_CHANNEL(radio->memory[9]);
-   radio_channel_freq_set(rc, 438.800);
-   radio_channel_ctcss_rx_set(rc, CTCSS_67_0);
-   radio_channel_ctcss_tx_set(rc, CTCSS_67_0);
-   radio_channel_dup_set(rc, DUP_DOWN);
-   radio_channel_shift_set(rc, 7.6);
-
-   radio->memory[10] = memory_channel_new_with(11,"AMARANTE");
-   rc = RADIO_CHANNEL(radio->memory[10]);
-   radio_channel_freq_set(rc, 438.700);
-   radio_channel_ctcss_rx_set(rc, CTCSS_123_0);
-   radio_channel_ctcss_tx_set(rc, CTCSS_123_0);
-   radio_channel_dup_set(rc, DUP_DOWN);
-   radio_channel_shift_set(rc, 7.6);
-
-   radio->memory[11] = memory_channel_new_with(12,"VIANA");
-   rc = RADIO_CHANNEL(radio->memory[11]);
-   radio_channel_freq_set(rc, 438.650);
-   radio_channel_ctcss_rx_set(rc, CTCSS_67_0);
-   radio_channel_ctcss_tx_set(rc, CTCSS_67_0);
-   radio_channel_dup_set(rc, DUP_DOWN);
-   radio_channel_shift_set(rc, 7.6);
-
-   radio->memory[12] = memory_channel_new_with(13,"AUCHAN");
-   rc = RADIO_CHANNEL(radio->memory[12]);
-   radio_channel_freq_set(rc, 444.3625);
-   radio_channel_ctcss_rx_set(rc, CTCSS_107_2);
-   radio_channel_ctcss_tx_set(rc, CTCSS_107_2);
-   radio_channel_dup_set(rc, DUP_UP);
-   radio_channel_shift_set(rc, 5.0);
-
-
    // Defaults to VFO;
    // also commits to m110
-   radio->memory_selected = 0;
-   radio_set_active_channel(radio, radio_get_vfo(radio)); 
 
    radio->scan_enabled = false;
 }
@@ -172,7 +103,7 @@ void radio_set_mode(radio_t *radio, radio_mode_t mode) {
          radio_set_active_channel(radio, radio_get_vfo(radio));
          break;
       case RADIO_MODE_MEMORY:
-         radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
+         radio_channel_t *rc = RADIO_CHANNEL(memory_active_ch_get(radio->mem));
          radio_channel_set_rev(rc, REV_OFF);
          radio_set_active_channel(radio, rc); 
          break;
