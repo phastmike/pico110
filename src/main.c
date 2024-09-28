@@ -415,8 +415,8 @@ int main() {
          // FIXME: Needs border limit control if VFO mode
          // MR ONLY
          radio_radio_channel_up(radio);
-         vc_id = 0;
-         view_controller_present(VIEW_CONTROLLER(vcs[0]));
+         //vc_id = 0;
+         //view_controller_present(VIEW_CONTROLLER(vcs[0]));
          sleep_ms(200);
       } 
 
