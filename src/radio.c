@@ -242,19 +242,7 @@ void radio_radio_channel_down(radio_t *radio) {
    // must move that logic elsewhere
 
    if (radio->mode == RADIO_MODE_MEMORY) { 
-      if (radio->memory_selected - 1 < 0) {
-         radio->memory_selected = RADIO_NUMBER_OF_CHANNELS - 1;
-      } else {
-         do 
-            radio->memory_selected--;
-         while (radio->memory_selected >= 0 && radio->memory[radio->memory_selected] == NULL);
-      }
-
-      radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
-      if (rc) {
-         radio_channel_set_rev(rc, REV_OFF);
-         radio_set_active_channel(radio, rc);
-      }
+      radio_set_active_channel(radio,RADIO_CHANNEL(memory_next(radio->mem)));
    } else if (radio->mode == RADIO_MODE_VFO) {
       radio_channel_t *rc = radio_get_active_channel(radio);
       if (radio_channel_get_rev(rc) == REV_ON) {
@@ -270,19 +258,7 @@ void radio_radio_channel_up(radio_t *radio) {
    assert(radio != NULL);
 
    if (radio->mode == RADIO_MODE_MEMORY) { 
-      if (radio->memory_selected + 1 >= RADIO_NUMBER_OF_CHANNELS) {
-         radio->memory_selected = 0;
-      } else {
-         do
-            radio->memory_selected++;
-         while (radio->memory_selected < RADIO_NUMBER_OF_CHANNELS && radio->memory[radio->memory_selected] == NULL);
-      }
-
-      radio_channel_t *rc = RADIO_CHANNEL(radio->memory[radio->memory_selected]);
-      if (rc) {
-         radio_channel_set_rev(rc, REV_OFF); // why??
-         radio_set_active_channel(radio, rc);
-      }
+      radio_set_active_channel(radio,RADIO_CHANNEL(memory_prev(radio->mem)));
    } else if (radio->mode == RADIO_MODE_VFO) {
       radio_channel_t *rc = radio_get_active_channel(radio);
       if (radio_channel_get_rev(rc) == REV_ON) {

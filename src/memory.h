@@ -11,7 +11,7 @@
 #ifndef _MEMORY_H_
 #define _MEMORY_H_
 
-#include "radio_channel.h"
+#include "memory_channel.h"
 
 #define MEMORY(x)                    ((memory_t *) x)
 
@@ -25,8 +25,10 @@ extern "C" {
 
 memory_t *           memory_new(void);
 void                 memory_init(memory_t *mem);
-radio_channel_t *    memory_active_ch_get(memory_t *mem);
-radio_channel_t *    memory_get_ch(memory_t *mem, int ch);
+memory_channel_t *   memory_active_ch_get(memory_t *mem);
+memory_channel_t *   memory_get_ch(memory_t *mem, int ch);
+memory_channel_t *   memory_next(memory_t *mem);
+memory_channel_t *   memory_prev(memory_t *mem);
 
 #ifdef __cplusplus
 }

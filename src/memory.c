@@ -69,7 +69,7 @@ void memory_init(memory_t *mem) {
    radio_channel_dup_set(rc, DUP_DOWN);
    radio_channel_shift_set(rc, 7.6);
 
-   mem->ch[10] = memory_channel_new_with(11,"AMARANTE");
+   mem->ch[10] = memory_channel_new_with(10,"AMARANTE");
    rc = RADIO_CHANNEL(mem->ch[10]);
    radio_channel_freq_set(rc, 438.700);
    radio_channel_ctcss_rx_set(rc, CTCSS_123_0);
@@ -96,13 +96,82 @@ void memory_init(memory_t *mem) {
    mem->active_ch = mem->ch[0];
 }
 
-radio_channel_t *memory_active_ch_get(memory_t *mem) {
+memory_channel_t  *memory_active_ch_get(memory_t *mem) {
    assert(mem != NULL);
-   return RADIO_CHANNEL(mem->active_ch);
+   return mem->active_ch;
 }
 
-radio_channel_t *memory_get_ch(memory_t *mem, int ch) {
+void memory_active_ch_set(memory_t *mem, memory_channel_t *ch) {
+   assert(ch != NULL);
    assert(mem != NULL);
-   assert(ch >= 0 && ch <= MEMORY_NUMBER_OF_CHANNELS);
-   return RADIO_CHANNEL(mem->ch[ch]);
+   mem->active_ch = ch;
+}
+
+int memory_active_ch_get_id(memory_t *mem) {
+   assert(mem != NULL);
+   return memory_channel_id_get(memory_active_ch_get(mem));
+}
+
+memory_channel_t *memory_get_ch(memory_t *mem, int n) {
+   assert(mem != NULL);
+   assert(n >= 0 && n <= MEMORY_NUMBER_OF_CHANNELS);
+   return mem->ch[n];
+}
+
+memory_channel_t *memory_next(memory_t *mem) {
+   assert(mem != NULL);
+
+   int id_now;
+   int id_iter;
+   char found = 0;
+
+   // Must check repeater mode, etc...
+   // must move that logic elsewhere
+   
+   id_now = memory_active_ch_get_id(mem);
+
+   for (id_iter = id_now + 1; id_iter < MEMORY_NUMBER_OF_CHANNELS; id_iter++) {
+      if (memory_get_ch(mem, id_iter) != NULL) {
+         mem->active_ch = memory_get_ch(mem, id_iter);
+         return mem->active_ch;
+      }
+   }
+
+   for (id_iter = 0; id_iter < id_now; id_iter++) {
+      if (memory_get_ch(mem, id_iter) != NULL) {
+         mem->active_ch = memory_get_ch(mem,id_iter);
+         return mem->active_ch;
+      }
+   }
+
+   return NULL;
+}
+
+memory_channel_t *memory_prev(memory_t *mem) {
+   assert(mem != NULL);
+
+   int id_now;
+   int id_iter;
+   char found = 0;
+
+   // Must check repeater mode, etc...
+   // must move that logic elsewhere
+   
+   id_now = memory_active_ch_get_id(mem);
+
+   for (id_iter = id_now - 1; id_iter >= 0; id_iter--) {
+      if (memory_get_ch(mem, id_iter) != NULL) {
+         mem->active_ch = memory_get_ch(mem, id_iter);
+         return mem->active_ch;
+      }
+   }
+
+   for (id_iter = MEMORY_NUMBER_OF_CHANNELS - 1 ; id_iter >= id_now; id_iter--) {
+      if (memory_get_ch(mem, id_iter) != NULL) {
+         mem->active_ch = memory_get_ch(mem,id_iter);
+         return mem->active_ch;
+      }
+   }
+
+   return NULL;
 }
