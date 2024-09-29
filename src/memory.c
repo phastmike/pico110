@@ -24,11 +24,8 @@ memory_t *memory_new(void) {
 }
 
 void memory_init(memory_t *mem) {
-   // Init pointers to NULL - Empty memories
-   //for (int i = 0; i < RADIO_NUMBER_OF_CHANNELS; i++) {
-   //   mem->ch[i] = NULL;
-   //}
    // Fill memories with PMR frequencies
+   // and some local UHF ham repeaters/services
    mem->ch[0] = memory_channel_new_with(0,"PMR 1");
    radio_channel_freq_set(RADIO_CHANNEL(mem->ch[0]), 446.00625);
 
@@ -125,9 +122,6 @@ memory_channel_t *memory_next(memory_t *mem) {
    int id_iter;
    char found = 0;
 
-   // Must check repeater mode, etc...
-   // must move that logic elsewhere
-   
    id_now = memory_active_ch_get_id(mem);
 
    for (id_iter = id_now + 1; id_iter < MEMORY_NUMBER_OF_CHANNELS; id_iter++) {
@@ -154,9 +148,6 @@ memory_channel_t *memory_prev(memory_t *mem) {
    int id_iter;
    char found = 0;
 
-   // Must check repeater mode, etc...
-   // must move that logic elsewhere
-   
    id_now = memory_active_ch_get_id(mem);
 
    for (id_iter = id_now - 1; id_iter >= 0; id_iter--) {
