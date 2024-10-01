@@ -42,6 +42,7 @@ void view_controller_show(view_controller_t *vc) {
 
 void view_controller_present(view_controller_t *vc) {
    assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi);
    if (vc->present) vc->present(vc);
 }
 

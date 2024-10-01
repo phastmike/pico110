@@ -19,6 +19,13 @@
 
 #define RADIO_NUMBER_OF_CHANNELS    20
 
+/* Could find a finer solution for the variants
+ * Or fine tune for each end binary generated, 
+ * whatever suits, Frequency in MHz 
+ */
+#define RADIO_FREQ_MIN              ((double) 430.000)
+#define RADIO_FREQ_MAX              ((double) 450.000)
+
 #ifdef __cplusplus
 extern "C" {
 #endif

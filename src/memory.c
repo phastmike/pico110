@@ -166,3 +166,12 @@ memory_channel_t *memory_prev(memory_t *mem) {
 
    return NULL;
 }
+
+void memory_destroy(memory_t *mem) {
+   assert(mem != NULL);
+   for (int i = 0; i < MEMORY_NUMBER_OF_CHANNELS; i++) {
+      if (mem->ch[i] != NULL) free (mem->ch[i]);
+   }
+
+   free(mem);
+}

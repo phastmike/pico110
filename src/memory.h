@@ -25,6 +25,7 @@ extern "C" {
 
 memory_t *           memory_new(void);
 void                 memory_init(memory_t *mem);
+void                 memory_destroy(memory_t *mem);
 memory_channel_t *   memory_active_ch_get(memory_t *mem);
 memory_channel_t *   memory_get_ch(memory_t *mem, int ch);
 memory_channel_t *   memory_next(memory_t *mem);

@@ -248,8 +248,14 @@ void radio_radio_channel_down(radio_t *radio) {
       if (radio_channel_get_rev(rc) == REV_ON) {
          radio_channel_set_rev(rc, REV_OFF);
       }
-      // Add lower band limits here
-      radio_channel_freq_rx_set(rc, radio_channel_freq_rx_get(rc) - tune_step_get_as_MHz(radio_channel_tune_step_get(rc)));
+      // lower band limits here
+      double freq = radio_channel_freq_rx_get(rc) - tune_step_get_as_MHz(radio_channel_tune_step_get(rc)); 
+      if (freq >= RADIO_FREQ_MIN) {
+         radio_channel_freq_rx_set(rc, freq);
+         // What about tx
+      } else {
+         radio_channel_freq_rx_set(rc, RADIO_FREQ_MAX);
+      }
       radio_set_active_channel(radio, rc);
    }
 }
@@ -264,8 +270,14 @@ void radio_radio_channel_up(radio_t *radio) {
       if (radio_channel_get_rev(rc) == REV_ON) {
          radio_channel_set_rev(rc, REV_OFF);
       }
-      // Add upper band limits here
-      radio_channel_freq_rx_set(rc, radio_channel_freq_rx_get(rc) + tune_step_get_as_MHz(radio_channel_tune_step_get(rc)));
+      // upper band limits here
+      double freq = radio_channel_freq_rx_get(rc) + tune_step_get_as_MHz(radio_channel_tune_step_get(rc)); 
+      if (freq <= RADIO_FREQ_MAX) {
+         radio_channel_freq_rx_set(rc, freq);
+         // What about tx
+      } else {
+         radio_channel_freq_rx_set(rc, RADIO_FREQ_MIN);
+      }
       radio_set_active_channel(radio, rc);
    }
 }
