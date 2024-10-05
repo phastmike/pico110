@@ -20,9 +20,13 @@ struct _vc_freq_t {
    bool func_enabled;
 };
 
+/* Private function prototypes */
+
 void vc_freq_show(view_controller_t *vc);
 void vc_freq_present(view_controller_t *vc);
 void vc_freq_init(vc_freq_t *this, hmi_t *hmi, radio_t *radio);
+
+/****************************************************************************/
 
 vc_freq_t *vc_freq_new(hmi_t *hmi, radio_t *radio) {
    vc_freq_t *this = (vc_freq_t *) calloc(1, sizeof(vc_freq_t)); 
@@ -57,41 +61,19 @@ void vc_freq_show(view_controller_t *vc) {
    hmi_display_text(vc->hmi, 0, s);
    free(s);
 
-   if (radio_channel_dup_get(rc) == DUP_OFF) {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_OFF);
-   } else {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_ON);
-   }
-
    hmi_led_set(vc->hmi, HMI_LED_REV, radio_channel_get_rev(rc) ? HMI_LED_ON : HMI_LED_OFF);
+
    hmi_led_set(vc->hmi, HMI_LED_FMENU, ((vc_freq_t *)vc)->func_enabled ? HMI_LED_ON : HMI_LED_OFF);
+   hmi_led_set(vc->hmi, HMI_LED_DUP, radio_channel_dup_get(rc) == DUP_OFF ? HMI_LED_OFF : HMI_LED_ON);
+   hmi_led_set(vc->hmi, HMI_LED_MR, radio_get_mode(vc->radio) == RADIO_MODE_VFO ? HMI_LED_OFF : HMI_LED_ON);
+   hmi_led_set(vc->hmi, HMI_LED_LOW, radio_channel_low_power_get(rc) ? HMI_LED_ON : HMI_LED_OFF);
 
-   unsigned char mode = radio_get_mode(vc->radio);
-   switch(mode) {
-      case RADIO_MODE_VFO:
-         hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_OFF);
-         break;
-      case RADIO_MODE_MEMORY:
-         hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_ON);
-         break;
-      default:
-         //hmi_led_set(vc->hmi, HMI_LED_MR, HMI_LED_ON);
-         break;
-   }
-
-   vc_freq_t * view = (vc_freq_t *) vc;
-   
-   if (view->func_enabled) {
+   /* Hmmm why?  */
+   if (VC_FREQ(vc)->func_enabled) {
       radio_scan_set(vc->radio, false);
-      //hmi_led_set(vc->hmi, HMI_LED_SCAN, HMI_LED_OFF);
    }
 
-   if (radio_scan_get(vc->radio)) {
-      hmi_led_set(vc->hmi, HMI_LED_SCAN, HMI_LED_ON);
-   } else {
-      hmi_led_set(vc->hmi, HMI_LED_SCAN, HMI_LED_OFF);
-   }
-
+   hmi_led_set(vc->hmi, HMI_LED_SCAN, radio_scan_get(vc->radio) ? HMI_LED_ON : HMI_LED_OFF);
 }
 
 /* EVENTS */
@@ -115,22 +97,18 @@ void vc_freq_on_press_vm_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_d
       default:
          break;
    }
-
-   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    assert(VIEW_CONTROLLER(user_data)->radio != NULL);
    radio_radio_channel_down(VIEW_CONTROLLER(user_data)->radio);
-   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    assert(VIEW_CONTROLLER(user_data)->radio != NULL);
    radio_radio_channel_up(VIEW_CONTROLLER(user_data)->radio);
-   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
@@ -139,11 +117,8 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    //view_mode... a problem because it's outside of scope
    assert(key != NULL && user_data != NULL);
 
-   vc_freq_t *view = (vc_freq_t *) user_data;
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-
-   if (view->func_enabled) {
-      if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   if (VC_FREQ(user_data)->func_enabled) {
+      view_controller_leave(VIEW_CONTROLLER(user_data), key);
       return;
    }
 
@@ -151,71 +126,42 @@ void vc_freq_on_press_rev_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
 
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    radio_channel_set_rev(rc, !radio_channel_get_rev(rc));
-   radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
-   hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_REV, radio_channel_get_rev(rc) ? HMI_LED_ON : HMI_LED_OFF);
-   //vc_freq_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_freq_on_press_scan_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
 
-   hmi_t *hmi = VIEW_CONTROLLER(user_data)->hmi;
-   if (!hmi_display_get_enabled(hmi)) return;
-
-   vc_freq_t *view = (vc_freq_t *) user_data;
-
-   if (view->func_enabled) {
-      view->func_enabled = false;
-      //vc_freq_show(VIEW_CONTROLLER(user_data));
+   if (VC_FREQ(user_data)->func_enabled) {
+      VC_FREQ(user_data)->func_enabled = false;
       return;
    }
 
    radio_t *radio = RADIO(VIEW_CONTROLLER(user_data)->radio);
    if (radio_get_mode(radio) != RADIO_MODE_MEMORY) return;
    radio_scan_set(radio, !radio_scan_get(radio));
-   hmi_led_set(HMI(VIEW_CONTROLLER(user_data)->hmi), HMI_LED_SCAN, radio_scan_get(radio));  // HMI_LED_OFF
-
-      /*
-       * else if (keys & HMI_KEY_2 && hmi_display_get_enabled(hmi) && view_mode == VMODE_FUNC) {
-         vc_id = 0;
-         view_controller_present(vcs[vc_id]);
-         view_mode = VMODE_FREQ;
-         radio_set_mode(radio, previous_mode); 
-         hmi_led_set(hmi, HMI_LED_FMENU, HMI_LED_OFF);
-         radio_scan_set(radio, false);
-         hmi_led_set(hmi, HMI_LED_SCAN, HMI_LED_OFF);
-      */
 }
 
 void vc_freq_on_press_fmenu_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
 
-   vc_freq_t *view = (vc_freq_t *) user_data;
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-
-   if (view->func_enabled) {
-      if (vc->exit_with_key) vc->exit_with_key(vc, key);
-   } else {
-      view->func_enabled = ! view->func_enabled;
-      //vc_freq_show(VIEW_CONTROLLER(user_data));
+   if (VC_FREQ(user_data)->func_enabled) {
+      view_controller_leave(VIEW_CONTROLLER(user_data), key);
+      return;
    }
+
+   VC_FREQ(user_data)->func_enabled = !VC_FREQ(user_data)->func_enabled;
 }
 
 void vc_freq_on_press_power_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
          radio_t *radio = VIEW_CONTROLLER(user_data)->radio;
          radio_channel_t *rc = radio_get_active_channel(radio);
 
-         vc_freq_t *view = (vc_freq_t *) user_data;
-         view_controller_t *vc = VIEW_CONTROLLER(user_data);
-
-         if (view->func_enabled) {
-            if (vc->exit_with_key) vc->exit_with_key(vc,key);
+         if (VC_FREQ(user_data)->func_enabled) {
+            view_controller_leave(VIEW_CONTROLLER(user_data), key);
             return;
          }
 
          radio_channel_low_power_set(rc, !radio_channel_low_power_get(rc));
-         radio_set_active_channel(radio, rc);
-         hmi_led_set(VIEW_CONTROLLER(user_data)->hmi, HMI_LED_LOW, radio_channel_low_power_get(rc) ? HMI_LED_ON : HMI_LED_OFF);
 }
 
 void vc_freq_on_press_sql_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
@@ -224,8 +170,9 @@ void vc_freq_on_press_sql_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    vc_freq_t *view = (vc_freq_t *) user_data;
    view_controller_t *vc = VIEW_CONTROLLER(user_data);
 
-   if (view->func_enabled) {
-      if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   if (VC_FREQ(user_data)->func_enabled) {
+      view_controller_leave(VIEW_CONTROLLER(user_data), key);
+      return;
    } else {
       // DO something with SQL key
    }

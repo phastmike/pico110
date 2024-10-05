@@ -3,7 +3,7 @@
 /*
  * test.c
  * 
- * Pico 110 Eeprom emulation.
+ * Pico 110 Eeprom emulation project.
  *
  * José Miguel Fonte
  */
@@ -58,15 +58,8 @@ uint8_t on_i2c_read_byte(void *user_data) {
    return eeprom_serial_read_byte(EEPROM(m110));
 }
 
-
-typedef enum {
-   VMODE_FREQ,
-   VMODE_FUNC
-} vmode_t;
-
 view_controller_t ** vcs;
 int                  vc_id;
-unsigned int         vcs_size;
 
 void on_freq_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
    assert(vc != NULL);
@@ -113,8 +106,6 @@ void on_brightness_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
       case HMI_KEY_2:
          vc_id = 0;
          view = vcs[0];
-         //NEED SETTER & GETTER
-         //((vc_freq_t *) vc)->func_enabled = false;
          view_controller_present(view);
          break;
       default:
@@ -337,8 +328,6 @@ void on_version_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
 
 int main() {
    unsigned int keys;
-   vmode_t  view_mode;
-
    stdio_init_all();
 
 #ifdef DEBUG
@@ -355,9 +344,9 @@ int main() {
    radio_t *radio = radio_new();
 
    i2c0_init(false); // init without clock streching
-   i2c_on_addr_set_connect(on_i2c_addr_request,M110(radio));
-   i2c_on_write_byte_connect(on_i2c_write_byte,M110(radio));
-   i2c_on_read_byte_connect(on_i2c_read_byte,M110(radio));
+   i2c_on_addr_set_connect(on_i2c_addr_request, M110(radio));
+   i2c_on_write_byte_connect(on_i2c_write_byte, M110(radio));
+   i2c_on_read_byte_connect(on_i2c_read_byte, M110(radio));
 
    gpio_init(LED_PIN);
    gpio_set_dir(LED_PIN, GPIO_OUT);
@@ -384,8 +373,6 @@ int main() {
 
    vc_id = 0;
    vcs = &vcs_array[0];
-   vcs_size = sizeof(vcs_array)/sizeof(vcs_array[0]);
-   view_mode = VMODE_FREQ;
    view_controller_present(vcs[0]);
    radio_mode_t previous_mode = RADIO_MODE_VFO;
 

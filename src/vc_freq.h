@@ -21,7 +21,6 @@
 extern "C" {
 #endif
 
-
 typedef struct _vc_freq_t vc_freq_t;
 
 vc_freq_t *vc_freq_new(hmi_t *hmi, radio_t *radio);

@@ -46,6 +46,12 @@ void view_controller_present(view_controller_t *vc) {
    if (vc->present) vc->present(vc);
 }
 
+void view_controller_leave(view_controller_t *vc, hmi_key_t *key) {
+   assert(vc != NULL);
+   hmi_keys_disconnect(vc->hmi); // redundant here or at present - rule out
+   if (vc->exit_with_key) vc->exit_with_key(vc, key);
+} 
+
 void view_controller_exit_with_key_connect(view_controller_t *vc, view_controller_exit_with_key_cb_t callback) {
    assert(vc != NULL);
    vc->exit_with_key = callback;
