@@ -45,23 +45,18 @@ void vc_dec_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_
    assert(key != NULL && user_data != NULL);
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    ctcss_prev(radio_channel_ctcss_rx_get(rc));
-   radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
-   vc_dec_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_dec_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    radio_channel_t *rc = radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio);
    ctcss_next(radio_channel_ctcss_rx_get(rc));
-   radio_set_active_channel(VIEW_CONTROLLER(user_data)->radio, rc);
-   vc_dec_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_dec_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   hmi_keys_disconnect(VIEW_CONTROLLER(user_data)->hmi);
+   view_controller_leave(VIEW_CONTROLLER(user_data), key);
 }
 
 /* VIEW CONTROLLER present method */

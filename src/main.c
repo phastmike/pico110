@@ -59,7 +59,7 @@ uint8_t on_i2c_read_byte(void *user_data) {
 }
 
 view_controller_t ** vcs;
-int                  vc_id;
+unsigned int                  vc_id;
 
 void on_freq_exit_with_key(view_controller_t *vc, hmi_key_t *key) {
    assert(vc != NULL);
@@ -367,13 +367,12 @@ int main() {
       VIEW_CONTROLLER(vc_txadmit_new(hmi, radio)),
       VIEW_CONTROLLER(vc_dup_new(hmi, radio)),
       VIEW_CONTROLLER(vc_shift_new(hmi, radio)),
-      VIEW_CONTROLLER(vc_version_new(hmi, radio)),
-      //VIEW_CONTROLLER(vc_pll_na_new(hmi, radio)),
+      VIEW_CONTROLLER(vc_version_new(hmi, radio))
    };
 
    vc_id = 0;
    vcs = &vcs_array[0];
-   view_controller_present(vcs[0]);
+   view_controller_present(vcs[vc_id]);
    radio_mode_t previous_mode = RADIO_MODE_VFO;
 
    // Navigation logic is defined in these callbacks

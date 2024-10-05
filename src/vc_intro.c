@@ -55,11 +55,11 @@ void vc_intro_show(view_controller_t *vc) {
 /* EVENTS - key events can be removed */
 
 void vc_intro_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   vc_intro_show(VIEW_CONTROLLER(user_data));
+   //vc_intro_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_intro_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   vc_intro_show(VIEW_CONTROLLER(user_data));
+   //vc_intro_show(VIEW_CONTROLLER(user_data));
 }
 
 /* VIEW CONTROLLER present method */

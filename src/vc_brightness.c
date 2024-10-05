@@ -45,21 +45,18 @@ void vc_brightness_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void
    assert(key != NULL && user_data != NULL);
    unsigned char brightness = hmi_display_get_brightness(VIEW_CONTROLLER(user_data)->hmi);
    hmi_display_set_brightness(HMI(VIEW_CONTROLLER(user_data)->hmi), brightness - 1);  
-   vc_brightness_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_brightness_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    unsigned char brightness = hmi_display_get_brightness(VIEW_CONTROLLER(user_data)->hmi);
    hmi_display_set_brightness(HMI(VIEW_CONTROLLER(user_data)->hmi), brightness + 1);  
-   vc_brightness_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_brightness_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   hmi_keys_disconnect(VIEW_CONTROLLER(user_data)->hmi);
+   view_controller_leave(VIEW_CONTROLLER(user_data), key);
 }
 
 /* VIEW CONTROLLER present method */
@@ -83,6 +80,4 @@ void vc_brightness_present(view_controller_t *vc) {
 
    key = hmi_get_key(vc->hmi, HMI_KEY_8);
    hmi_key_on_press_event_connect(key, vc_brightness_on_press_up_event, vc);
-
-   vc_brightness_show(vc);
 }

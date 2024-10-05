@@ -55,11 +55,7 @@ void vc_dup_show(view_controller_t *vc) {
    hmi_display_text(vc->hmi, 0, string);
    free(string);
 
-   if (dup == DUP_OFF) {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_OFF);
-   } else {
-      hmi_led_set(vc->hmi, HMI_LED_DUP, HMI_LED_ON);
-   }
+   hmi_led_set(vc->hmi, HMI_LED_DUP, dup == DUP_OFF ? HMI_LED_OFF : HMI_LED_ON);
 }
 
 /* EVENTS */
@@ -67,20 +63,17 @@ void vc_dup_show(view_controller_t *vc) {
 void vc_dup_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    radio_dup_down(VIEW_CONTROLLER(user_data)->radio);
-   vc_dup_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_dup_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    radio_dup_up(VIEW_CONTROLLER(user_data)->radio);
-   vc_dup_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_dup_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   hmi_keys_disconnect(VIEW_CONTROLLER(user_data)->hmi);
+   view_controller_leave(VIEW_CONTROLLER(user_data), key);
 }
 
 /* VIEW CONTROLLER present method */
@@ -102,6 +95,4 @@ void vc_dup_present(view_controller_t *vc) {
 
    key = hmi_get_key(vc->hmi, HMI_KEY_8);
    hmi_key_on_press_event_connect(key, vc_dup_on_press_up_event, vc);
-
-   vc_dup_show(vc);
 }

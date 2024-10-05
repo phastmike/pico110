@@ -44,25 +44,20 @@ void vc_shift_show(view_controller_t *vc) {
 void vc_shift_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    double shift = radio_channel_shift_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)); 
-   shift -= 0.1;
-   radio_channel_shift_set(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio), shift);
-   vc_shift_show(VIEW_CONTROLLER(user_data));
+   radio_channel_shift_set(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio), shift - 0.1);
 }
 
 void vc_shift_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
    double shift = radio_channel_shift_get(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio)); 
-   shift += 0.1;
-   radio_channel_shift_set(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio), shift);
-   vc_shift_show(VIEW_CONTROLLER(user_data));
+   radio_channel_shift_set(radio_get_active_channel(VIEW_CONTROLLER(user_data)->radio), shift + 0.1);
 }
 
 
 void vc_shift_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   hmi_keys_disconnect(VIEW_CONTROLLER(user_data)->hmi);
+   view_controller_leave(VIEW_CONTROLLER(user_data), key);
 }
 
 /* VIEW CONTROLLER present method */
@@ -84,6 +79,4 @@ void vc_shift_present(view_controller_t *vc) {
 
    key = hmi_get_key(vc->hmi, HMI_KEY_8);
    hmi_key_on_press_event_connect(key, vc_shift_on_press_up_event, vc);
-
-   vc_shift_show(vc);
 }

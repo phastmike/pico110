@@ -25,6 +25,7 @@ void vc_version_present(view_controller_t *vc);
 vc_version_t *vc_version_new(hmi_t *hmi, radio_t *radio) {
    vc_version_t *vc_version = (vc_version_t *) calloc(1, sizeof(vc_version_t)); 
    view_controller_init(VIEW_CONTROLLER(vc_version), hmi, radio);
+   VIEW_CONTROLLER(vc_version)->show = vc_version_show;
    VIEW_CONTROLLER(vc_version)->present = vc_version_present;
    return vc_version;
 }
@@ -41,19 +42,16 @@ void vc_version_show(view_controller_t *vc) {
 
 void vc_version_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-   //vc_version_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_version_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-   //vc_version_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_version_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   hmi_keys_disconnect(VIEW_CONTROLLER(user_data)->hmi);
+   view_controller_leave(VIEW_CONTROLLER(user_data), key);
 }
 
 /* VIEW CONTROLLER present method */
@@ -75,6 +73,4 @@ void vc_version_present(view_controller_t *vc) {
 
    key = hmi_get_key(vc->hmi, HMI_KEY_8);
    hmi_key_on_press_event_connect(key, vc_version_on_press_up_event, vc);
-
-   vc_version_show(vc);
 }

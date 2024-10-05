@@ -47,16 +47,16 @@ void vc_pll_na_show(view_controller_t *vc) {
 /* EVENTS - key commands can be removed */
 
 void vc_pll_na_on_press_down_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   vc_pll_na_show(VIEW_CONTROLLER(user_data));
+   //vc_pll_na_show(VIEW_CONTROLLER(user_data));
 }
 
 void vc_pll_na_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
-   vc_pll_na_show(VIEW_CONTROLLER(user_data));
+   //vc_pll_na_show(VIEW_CONTROLLER(user_data));
 }
 
 /* VIEW CONTROLLER present method */
 
 void vc_pll_na_present(view_controller_t *vc) {
-   assert (vc != NULL);
-   vc_pll_na_show(vc);
+   //assert (vc != NULL);
+   //vc_pll_na_show(vc);
 }

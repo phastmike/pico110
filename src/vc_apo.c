@@ -53,13 +53,10 @@ void vc_apo_on_press_up_event(hmi_key_t *key, hmi_key_id_t key_id, void *user_da
 
 void vc_apo_on_press_generic_exit(hmi_key_t *key, hmi_key_id_t key_id, void *user_data) {
    assert(key != NULL && user_data != NULL);
-
    hmi_t *hmi = HMI(VIEW_CONTROLLER(user_data)->hmi);
-
    if (!hmi_display_get_enabled(hmi)) return;
-
-   view_controller_t *vc = VIEW_CONTROLLER(user_data);
-   if (vc->exit_with_key) vc->exit_with_key(vc, key);
+   hmi_keys_disconnect(hmi);
+   view_controller_leave(VIEW_CONTROLLER(user_data), key);
 }
 
 /* VIEW CONTROLLER present method */
