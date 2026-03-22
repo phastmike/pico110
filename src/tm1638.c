@@ -34,6 +34,7 @@ unsigned char tm1638_font[] = {
    0x70
 };
 
+/*
 struct _tm1638_t {
    unsigned char on;
    unsigned char stb;
@@ -41,6 +42,7 @@ struct _tm1638_t {
    unsigned char dio;
    unsigned char brightness; 
 };
+*/
 
 void tm1638_write_ctrl_cmd(tm1638_t *tm1638);
 

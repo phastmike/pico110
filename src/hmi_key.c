@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <pico/stdlib.h>
 
+/*
 struct _hmi_key_t {
    hmi_key_id_t id;
    unsigned char active;
@@ -22,6 +23,7 @@ struct _hmi_key_t {
    void (*on_key_release_event)(hmi_key_t *key, hmi_key_id_t key_id, void *user_data);;
    void *on_release_user_data;
 };
+*/
 
 hmi_key_t * hmi_key_new(hmi_key_id_t id) {
    hmi_key_t *key = (hmi_key_t *) calloc(1, sizeof(hmi_key_t));

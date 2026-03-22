@@ -18,7 +18,13 @@
 extern "C" {
 #endif
 
-typedef struct _tm1638_t tm1638_t;
+typedef struct _tm1638_t {
+   unsigned char on;
+   unsigned char stb;
+   unsigned char clk;
+   unsigned char dio;
+   unsigned char brightness; 
+} tm1638_t;
 
 tm1638_t *     tm1638_new(unsigned char stb, unsigned char clk, unsigned char dio, unsigned char brightness);
 void           tm1638_destroy(tm1638_t *tm1638);

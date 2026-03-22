@@ -31,7 +31,15 @@ typedef enum {
    HMI_KEY_8 =  1 << 7,
 } hmi_key_id_t;
 
-typedef struct _hmi_key_t hmi_key_t;
+typedef struct _hmi_key_t {
+   hmi_key_id_t id;
+   unsigned char active;
+   void (*on_key_press_event)(struct _hmi_key_t *key, hmi_key_id_t key_id, void *user_data);;
+   void *on_press_user_data;
+   void (*on_key_release_event)(struct _hmi_key_t *key, hmi_key_id_t key_id, void *user_data);;
+   void *on_release_user_data;
+} hmi_key_t;
+
 typedef void (*hmi_key_on_event_cb_t)(hmi_key_t *key, hmi_key_id_t key_id, void *user_data);
 
 hmi_key_t *       hmi_key_new(unsigned char id);

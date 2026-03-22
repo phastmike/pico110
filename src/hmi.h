@@ -13,6 +13,7 @@
 #define _HMI_H_
 
 #include "hmi_key.h"
+#include "tm1638.h"
 
 #define HMI(x)                ((hmi_t *) x)
 
@@ -35,7 +36,12 @@ typedef enum {
    HMI_LED_ON
 } hmi_led_status_t;
 
-typedef struct    _hmi_t hmi_t;
+typedef struct _hmi_t {
+   tm1638_t          tm1638;
+   unsigned char     led_status;
+   unsigned char     key_status;
+   hmi_key_t         key[HMI_NUMBER_OF_KEYS];
+} hmi_t;
 
 hmi_t *           hmi_new(void);
 void              hmi_destroy(hmi_t *hmi);
