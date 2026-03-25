@@ -393,6 +393,7 @@ int main() {
 
    // MAINLOOP //
 
+   int c = 0;
    long long unsigned int count = 0;
    while(true) {
       tight_loop_contents();
@@ -408,6 +409,12 @@ int main() {
 
       keys = hmi_keys_scan(hmi);
       view_controller_show (VIEW_CONTROLLER(vcs[vc_id]));
+      if (c >= 1000) {
+         tm1638_init(TM1638(hmi));
+         c = 0;
+      } else {
+         c++;
+      }
    }
 
    return 0;

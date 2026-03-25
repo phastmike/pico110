@@ -51,11 +51,18 @@ tm1638_t *tm1638_new(unsigned char stb, unsigned char clk, unsigned char dio, un
 
    tm1638_t *tm1638 = (tm1638_t *) calloc(1, sizeof(tm1638_t));
 
-   tm1638->on = TM1638_DISPL_ON;
    tm1638->stb = stb;
    tm1638->clk = clk;
    tm1638->dio = dio;
    tm1638->brightness = brightness;
+
+   tm1638_init(tm1638);
+
+   return tm1638;
+}
+
+void tm1638_init(tm1638_t *tm1638) {
+   tm1638->on = TM1638_DISPL_ON;
 
    gpio_init(tm1638->stb);
    gpio_set_dir(tm1638->stb, GPIO_OUT);
@@ -70,8 +77,6 @@ tm1638_t *tm1638_new(unsigned char stb, unsigned char clk, unsigned char dio, un
 
    tm1638_clear(tm1638);
    tm1638_write_ctrl_cmd(tm1638);
-
-   return tm1638;
 }
 
 void tm1638_destroy(tm1638_t *tm1638) {

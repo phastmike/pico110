@@ -28,6 +28,11 @@ hmi_t * hmi_new(void) {
    hmi_t *hmi = (hmi_t *) calloc(1, sizeof(hmi_t));
    assert(hmi != NULL);
    //hmi->tm1638 = tm1638_new(1, 2, 3, 1);
+   TM1638(hmi)->stb = 1;
+   TM1638(hmi)->clk = 2;
+   TM1638(hmi)->dio = 3;
+   TM1638(hmi)->brightness = 1;
+   tm1638_init(TM1638(hmi));
    hmi->led_status = 0x0;
    hmi->key_status = 0x0;
    for (int i = 0; i < HMI_NUMBER_OF_KEYS; i++) {
