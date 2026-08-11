@@ -50,14 +50,11 @@ With these modules we're able to indicate the frequency but with limited text re
 ![Menu](doc/images/menu.png "Pico110 prototype 1")
 
 This is a visual representation of the menu system. The unit boots and shows the 
-frequency, either VFO or Memory. Then, by pressing the keys we can operate the radio 
-as shown. The keys have a double function, a normal one and another when FUNC key was activated.
+frequency, either VFO or Memory. Then, by pressing the keys we can operate the radio as shown. The keys have a double function, a normal one and another when FUNC key is activated.
 
-For example, by pressing key 1 (MENU/NEXT) the radio enters in MENU mode (F Mode) which will
-be identified by the first led. Any other presses on the same key, will iterate over the menu.
+For example, by pressing key 1 (MENU/NEXT) the radio enters in MENU mode (F Mode) which will be identified by the first led. Any other presses on the same key, will iterate over the menu.
 
-When in this mode, pressing keys as indicated, will allow a jump to the corresponding menu
-and pressing key 2 will exit F/MENU mode.
+When in this mode, pressing keys as indicated, will allow a jump to the corresponding menu and pressing key 2 will exit F/MENU mode.
 
 ### Missing
 
